@@ -1,5 +1,7 @@
 package org.cirrus.infrastructure.workflow;
 
-public class DeleteNode {
+import software.amazon.awscdk.core.Stack;
+
+public class DeleteNode extends Stack {
 
 }

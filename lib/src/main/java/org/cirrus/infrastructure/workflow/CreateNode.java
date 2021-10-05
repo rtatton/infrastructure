@@ -1,74 +1,54 @@
 package org.cirrus.infrastructure.workflow;
 
-import java.util.Map;
-import software.amazon.awscdk.core.Duration;
 import software.amazon.awscdk.core.Stack;
-import software.amazon.awscdk.services.dynamodb.ITable;
-import software.amazon.awscdk.services.lambda.Runtime;
-import software.amazon.awscdk.services.sns.ITopic;
+import software.amazon.awscdk.services.stepfunctions.Choice;
+import software.amazon.awscdk.services.stepfunctions.Condition;
 import software.amazon.awscdk.services.stepfunctions.Fail;
 import software.amazon.awscdk.services.stepfunctions.IChainable;
-import software.amazon.awscdk.services.stepfunctions.State;
+import software.amazon.awscdk.services.stepfunctions.INextable;
+import software.amazon.awscdk.services.stepfunctions.Parallel;
 import software.amazon.awscdk.services.stepfunctions.StateMachine;
 import software.amazon.awscdk.services.stepfunctions.StateMachineType;
 import software.amazon.awscdk.services.stepfunctions.Succeed;
-import software.amazon.awscdk.services.stepfunctions.TaskInput;
 import software.amazon.awscdk.services.stepfunctions.TaskStateBase;
-import software.amazon.awscdk.services.stepfunctions.tasks.DynamoPutItem;
-import software.amazon.awscdk.services.stepfunctions.tasks.SnsPublish;
 import software.constructs.Construct;
 
 public class CreateNode extends Stack {
 
   private static final String CREATE_NODE = "CreateNode";
-  private static final String CREATE_FUNCTION = "CreateFunction"; // TODO
-  private static final String CREATE_FUNCTION_COMMENT = "Creates a Lambda function for a new node";
-  private static final String CREATE_FUNCTION_PATH = ""; // TODO
-  private static final String CREATE_QUEUE = "CreateQueue"; // TODO
-  private static final String CREATE_QUEUE_PATH = ""; // TODO
-  private static final String CREATE_QUEUE_COMMENT =
-      "Creates an SQS queue for a new node and adds it as an event source to the Lambda function";
-  private static final String CREATE_TOPIC = "CreateTopic"; // TODO
-  private static final String CREATE_TOPIC_PATH = ""; // TODO
-  private static final String CREATE_TOPIC_COMMENT =
-      "Creates an SNS topic for a new node and subscribes it to the network topic";
-  private static final String STORE_RESOURCE_IDS = "StoreResourceIds";
-  private static final String NOTIFY_NETWORK = "NotifyNetwork";
-  private static final String NOTIFY_NETWORK_COMMENT =
-      "Notifies all nodes in the network that a new node was created";
-  private static final String HANDLE_FUNCTION_FAILURE = "HandleCreateFunctionFailure";
-  private static final String HANDLE_FUNCTION_FAILURE_PATH = ""; // TODO
-  private static final String HANDLE_FUNCTION_FAILURE_COMMENT =
-      "Attempts to delete the created Lambda function and/or logs the failure event";
-  private static final String HANDLE_QUEUE_FAILURE = "HandleCreateQueueFailure";
-  private static final String HANDLE_QUEUE_FAILURE_PATH = ""; // TODO
-  private static final String HANDLE_QUEUE_FAILURE_COMMENT =
-      "Attempts to delete the created SQS queue and/or logs the failure event";
-  private static final String HANDLE_TOPIC_FAILURE = "HandleCreateTopicFailure";
-  private static final String HANDLE_TOPIC_FAILURE_PATH = ""; // TODO
-  private static final String HANDLE_TOPIC_FAILURE_COMMENT =
-      "Attempts to unsubscribe the created SQS queue, delete the created SNS topic, and/or logs the failure event";
-  private static final String HANDLE_STORE_RESOURCE_IDS_FAILURE = "";
-  private static final String HANDLE_STORE_RESOURCE_IDS_FAILURE_PATH = ""; // TODO
-  private static final String HANDLE_STORE_RESOURCE_IDS_FAILURE_COMMENT = ""; // TODO
-  private static final String HANDLE_NOTIFY_NETWORK_FAILURE = "HandleNotifyNetworkFailure";
-  private static final String HANDLE_NOTIFY_NETWORK_FAILURE_PATH = ""; // TODO
-  private static final String HANDLE_NOTIFY_NETWORK_FAILURE_COMMENT =
-      "Logs the failure to notify the network";
-  private static final String STORE_RESOURCE_IDS_COMMENT =
-      "Stores the Lambda function, SQS queue, and SNS topic IDs in the node registry";
-  private static final Runtime RUNTIME = Runtime.JAVA_11;
-  private static final Duration TIMEOUT = Duration.seconds(3);
+  private static final String CREATE_RESOURCES = "CreateResources";
+  private static final String INTEGRATE_RESOURCES = "IntegrateResources";
+  private static final String DELETE_RESOURCES = "DeleteResources";
+  private static final String INTEGRATE_OR_DELETE = "IntegrateOrDeleteResources";
+  private static final String SUCCESS = "Success";
+  private static final String FAILURE = "Failure";
+  private static final String FUNCTION = "function";
+  private static final String QUEUE = "queue";
+  private static final String TOPIC = "topic";
+  private static final String EMPTY = "";
   private static final StateMachineType TYPE = StateMachineType.STANDARD;
   private final Construct scope;
-  private final ITopic networkTopic; // TODO
-  private final ITable nodeRegistry; // TODO
+  private final FunctionStateFactory functionStateFactory;
+  private final QueueStateFactory queueStateFactory;
+  private final TopicStateFactory topicStateFactory;
+  private final NotifyStateFactory notifyStateFactory;
+  private final StorageStateFactory storageStateFactory;
 
-  public CreateNode(Construct scope, String id, ITopic networkTopic, ITable nodeRegistry) {
+  public CreateNode(
+      Construct scope,
+      String id,
+      FunctionStateFactory functionStateFactory,
+      QueueStateFactory queueStateFactory,
+      TopicStateFactory topicStateFactory,
+      NotifyStateFactory notifyStateFactory,
+      StorageStateFactory storageStateFactory) {
     super(scope, id);
     this.scope = scope;
-    this.networkTopic = networkTopic;
-    this.nodeRegistry = nodeRegistry;
+    this.functionStateFactory = functionStateFactory;
+    this.queueStateFactory = queueStateFactory;
+    this.topicStateFactory = topicStateFactory;
+    this.notifyStateFactory = notifyStateFactory;
+    this.storageStateFactory = storageStateFactory;
     createStateMachine();
   }
 
@@ -81,121 +61,111 @@ public class CreateNode extends Stack {
   }
 
   private IChainable definition() {
-    return createFunction()
-        .next(createQueue())
-        .next(createTopic())
-        .next(storeNodeResourceIds())
-        .next(notifyNetwork())
-        .next(success());
+    return createResources()
+        .next(integrateResourcesElseDeleteThenFail())
+        .next(storeIdsElseDeleteThenFail())
+        .next(notifyElseDeleteThenFail())
+        .next(succeed());
   }
 
-  private TaskStateBase createFunction() {
-    return createFunctionState().addCatch(handleFunctionFailure());
+  private INextable createResources() {
+    return Parallel.Builder.create(scope, CREATE_RESOURCES)
+        .build()
+        .branch(createFunction(), createQueue(), createTopic());
+  }
+
+  private IChainable integrateResourcesElseDeleteThenFail() {
+    return Choice.Builder.create(scope, INTEGRATE_OR_DELETE)
+        .build()
+        .when(anyEmpty(), deleteResourcesThenFail())
+        .otherwise(integrateResources().addCatch(deleteResourcesThenFail()));
+  }
+
+  private Parallel integrateResources() {
+    return Parallel.Builder.create(scope, INTEGRATE_RESOURCES)
+        .build()
+        .branch(addQueueToFunction(), subscribeQueueToTopic());
+  }
+
+  private IChainable addQueueToFunction() {
+    return functionStateFactory.addQueue();
+  }
+
+  private IChainable subscribeQueueToTopic() {
+    return topicStateFactory.subscribeQueue();
+  }
+
+  private IChainable createFunction() {
+    return functionStateFactory.createFunction();
   }
 
   private IChainable createQueue() {
-    return createQueueState().addCatch(handleQueueFailure());
+    return queueStateFactory.createQueue();
   }
 
   private IChainable createTopic() {
-    return createTopicState().addCatch(handleTopicFailure());
+    return topicStateFactory.createTopic();
   }
 
-  private IChainable storeNodeResourceIds() {
-    return storeResourceIdsState().addCatch(handleStoreResourceIdsFailure());
+  private Condition anyEmpty() {
+    return Condition.or(isEmpty(FUNCTION), isEmpty(QUEUE), isEmpty(TOPIC));
   }
 
-  private IChainable notifyNetwork() {
-    return notifyNetworkState().addCatch(handleNotifyNetworkFailure());
+  private Parallel deleteResources() {
+    return Parallel.Builder.create(scope, DELETE_RESOURCES)
+        .build()
+        .branch(deleteFunction(), deleteQueue(), deleteTopic());
   }
 
-  private IChainable handleFunctionFailure() {
-    return handleFunctionFailureState().next(failure());
+  private IChainable deleteResourcesThenFail() {
+    return deleteResources().next(fail());
   }
 
-  private IChainable handleQueueFailure() {
-    return handleQueueFailureState().next(handleFunctionFailure());
+  private TaskStateBase storeResourceIds() {
+    return storageStateFactory.storeResourceIds();
   }
 
-  private IChainable handleTopicFailure() {
-    return handleTopicFailureState().next(handleQueueFailure());
+  private TaskStateBase storeIdsElseDeleteThenFail() {
+    return storeResourceIds().addCatch(deleteResourcesThenFail());
   }
 
-  private IChainable handleStoreResourceIdsFailure() {
-    return handleStoreResourceIdsFailureState().next(handleTopicFailure());
+  private Condition isEmpty(String variable) {
+    return Condition.stringEquals(variable, EMPTY);
   }
 
-  private IChainable handleNotifyNetworkFailure() {
-    return handleNotifyNetworkFailureState().next(handleStoreResourceIdsFailure());
+  private IChainable deleteFunction() {
+    return functionStateFactory.deleteFunction();
   }
 
-  private TaskStateBase createFunctionState() {
-    return lambdaState(CREATE_FUNCTION, CREATE_FUNCTION_PATH, CREATE_FUNCTION_COMMENT);
+  private IChainable deleteQueue() {
+    return queueStateFactory.deleteQueue();
   }
 
-  private TaskStateBase createQueueState() {
-    return lambdaState(CREATE_QUEUE, CREATE_QUEUE_PATH, CREATE_QUEUE_COMMENT);
+  private IChainable deleteTopic() {
+    return topicStateFactory.deleteTopic();
   }
 
-  private TaskStateBase createTopicState() {
-    return lambdaState(CREATE_TOPIC, CREATE_TOPIC_PATH, CREATE_TOPIC_COMMENT);
+  private TaskStateBase notifyNetwork() {
+    return notifyStateFactory.notifyNetwork();
   }
 
-  private TaskStateBase storeResourceIdsState() {
-    return DynamoPutItem.Builder.create(scope, STORE_RESOURCE_IDS)
-        .table(nodeRegistry)
-        .item(Map.of()) // TODO
-        .timeout(TIMEOUT)
-        .comment(STORE_RESOURCE_IDS_COMMENT)
-        .build();
+  private IChainable notifyElseDeleteThenFail() {
+    return notifyNetwork().addCatch(deleteResourcesThenIdsThenFail());
   }
 
-  private TaskStateBase notifyNetworkState() {
-    return SnsPublish.Builder.create(scope, NOTIFY_NETWORK)
-        .topic(networkTopic)
-        .message(TaskInput.fromText("")) // TODO
-        .timeout(TIMEOUT)
-        .comment(NOTIFY_NETWORK_COMMENT)
-        .build();
+  private IChainable succeed() {
+    return Succeed.Builder.create(scope, SUCCESS).build();
   }
 
-  private State success() {
-    // TODO
-    return Succeed.Builder.create(scope, "").build();
+  private IChainable deleteResourcesThenIdsThenFail() {
+    return deleteResources().next(deleteResourceIds()).next(fail());
   }
 
-  private TaskStateBase handleFunctionFailureState() {
-    return lambdaState(
-        HANDLE_FUNCTION_FAILURE, HANDLE_FUNCTION_FAILURE_PATH, HANDLE_FUNCTION_FAILURE_COMMENT);
+  private IChainable deleteResourceIds() {
+    return storageStateFactory.deleteResourceIds();
   }
 
-  private TaskStateBase handleQueueFailureState() {
-    return lambdaState(
-        HANDLE_QUEUE_FAILURE, HANDLE_QUEUE_FAILURE_PATH, HANDLE_QUEUE_FAILURE_COMMENT);
-  }
-
-  private TaskStateBase handleTopicFailureState() {
-    return lambdaState(
-        HANDLE_TOPIC_FAILURE, HANDLE_TOPIC_FAILURE_PATH, HANDLE_TOPIC_FAILURE_COMMENT);
-  }
-
-  private TaskStateBase handleStoreResourceIdsFailureState() {
-    return lambdaState(
-        HANDLE_STORE_RESOURCE_IDS_FAILURE,
-        HANDLE_STORE_RESOURCE_IDS_FAILURE_PATH,
-        HANDLE_STORE_RESOURCE_IDS_FAILURE_COMMENT);
-  }
-
-  private TaskStateBase handleNotifyNetworkFailureState() {
-    return LambdaStateBuilder.create(scope)
-        .setFunctionName(HANDLE_NOTIFY_NETWORK_FAILURE)
-        .setCodePath(HANDLE_NOTIFY_NETWORK_FAILURE_PATH)
-        .setComment(HANDLE_NOTIFY_NETWORK_FAILURE_COMMENT)
-        .build();
-  }
-
-  private State failure() {
-    // TODO
-    return Fail.Builder.create(scope, "").build();
+  private IChainable fail() {
+    return Fail.Builder.create(scope, FAILURE).build();
   }
 }
