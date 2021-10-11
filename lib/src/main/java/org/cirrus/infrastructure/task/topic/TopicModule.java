@@ -3,6 +3,7 @@ package org.cirrus.infrastructure.task.topic;
 import dagger.Module;
 import dagger.Provides;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -18,6 +19,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
+import software.amazon.awssdk.services.sns.model.SubscribeRequest;
 
 @Module
 final class TopicModule {
@@ -30,6 +32,7 @@ final class TopicModule {
   private static final AwsCredentialsProvider CREDENTIALS_PROVIDER =
       StaticCredentialsProvider.create(CREDENTIALS);
   private static final Map<String, String> ATTRIBUTES = Map.of();
+  private static final String SUBSCRIPTION_PROTOCOL = "sqs";
   private static final Logger logger = LoggerFactory.getLogger("TopicLogger");
 
   private TopicModule() {}
@@ -55,6 +58,16 @@ final class TopicModule {
   @Provides
   public static Function<String, DeleteTopicRequest> provideDeleteRequester() {
     return topicId -> DeleteTopicRequest.builder().topicArn(topicId).build();
+  }
+
+  @Provides
+  public static BiFunction<String, String, SubscribeRequest> provideSubscribeRequester() {
+    return (topicId, queueId) ->
+        SubscribeRequest.builder()
+            .topicArn(topicId)
+            .endpoint(queueId)
+            .protocol(SUBSCRIPTION_PROTOCOL)
+            .build();
   }
 
   @Provides

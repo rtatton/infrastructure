@@ -12,5 +12,7 @@ interface TopicComponent {
 
   DeleteTopicFactory newDeleteTopicFactory();
 
+  SubscribeQueueFactory newSubscribeQueueFactory();
+
   Consumer<Throwable> newLogger();
 }

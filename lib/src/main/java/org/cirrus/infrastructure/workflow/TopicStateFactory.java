@@ -12,7 +12,7 @@ public final class TopicStateFactory {
   private static final String DELETE_TOPIC_PATH = "../task/topic/DeleteTopicTask";
   private static final String DELETE_TOPIC_COMMENT = "Deletes an SNS topic";
   private static final String SUBSCRIBE_QUEUE = "SubscribeQueue";
-  private static final String SUBSCRIBE_QUEUE_PATH = ""; // TODO
+  private static final String SUBSCRIBE_QUEUE_PATH = "../task/topic/SubscribeQueueTask";
   private static final String SUBSCRIBE_QUEUE_COMMENT = "Subscribes an SQS queue to an SNS topic";
   private final Construct scope;
 
