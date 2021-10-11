@@ -6,10 +6,10 @@ import software.constructs.Construct;
 public final class TopicStateFactory {
 
   private static final String CREATE_TOPIC = "CreateTopic";
-  private static final String CREATE_TOPIC_PATH = ""; // TODO
+  private static final String CREATE_TOPIC_PATH = "../task/topic/CreateTopicTask";
   private static final String CREATE_TOPIC_COMMENT = "Creates an SNS topic";
-  private static final String DELETE_TOPIC = "CreateTopic";
-  private static final String DELETE_TOPIC_PATH = ""; // TODO
+  private static final String DELETE_TOPIC = "DeleteTopic";
+  private static final String DELETE_TOPIC_PATH = "../task/topic/DeleteTopicTask";
   private static final String DELETE_TOPIC_COMMENT = "Deletes an SNS topic";
   private static final String SUBSCRIBE_QUEUE = "SubscribeQueue";
   private static final String SUBSCRIBE_QUEUE_PATH = ""; // TODO

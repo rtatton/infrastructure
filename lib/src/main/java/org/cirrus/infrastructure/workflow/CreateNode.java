@@ -25,7 +25,6 @@ public class CreateNode extends Stack {
   private static final String FUNCTION = "function";
   private static final String QUEUE = "queue";
   private static final String TOPIC = "topic";
-  private static final String EMPTY = "";
   private static final StateMachineType TYPE = StateMachineType.STANDARD;
   private final Construct scope;
   private final FunctionStateFactory functionStateFactory;
@@ -77,7 +76,7 @@ public class CreateNode extends Stack {
   private IChainable integrateResourcesElseDeleteThenFail() {
     return Choice.Builder.create(scope, INTEGRATE_OR_DELETE)
         .build()
-        .when(anyEmpty(), deleteResourcesThenFail())
+        .when(anyNull(), deleteResourcesThenFail())
         .otherwise(integrateResources().addCatch(deleteResourcesThenFail()));
   }
 
@@ -107,8 +106,8 @@ public class CreateNode extends Stack {
     return topicStateFactory.createTopic();
   }
 
-  private Condition anyEmpty() {
-    return Condition.or(isEmpty(FUNCTION), isEmpty(QUEUE), isEmpty(TOPIC));
+  private Condition anyNull() {
+    return Condition.or(isNull(FUNCTION), isNull(QUEUE), isNull(TOPIC));
   }
 
   private Parallel deleteResources() {
@@ -129,8 +128,8 @@ public class CreateNode extends Stack {
     return storeResourceIds().addCatch(deleteResourcesThenFail());
   }
 
-  private Condition isEmpty(String variable) {
-    return Condition.stringEquals(variable, EMPTY);
+  private Condition isNull(String variable) {
+    return Condition.isNull(variable);
   }
 
   private IChainable deleteFunction() {

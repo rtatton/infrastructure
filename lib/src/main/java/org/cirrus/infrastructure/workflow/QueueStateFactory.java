@@ -5,11 +5,11 @@ import software.constructs.Construct;
 
 public final class QueueStateFactory {
 
-  private static final String CREATE_QUEUE = "CreateQueue"; // TODO
-  private static final String CREATE_QUEUE_PATH = ""; // TODO
+  private static final String CREATE_QUEUE = "CreateQueue";
+  private static final String CREATE_QUEUE_PATH = "../task/queue/CreateQueueTask";
   private static final String CREATE_QUEUE_COMMENT = "Creates an SQS queue";
-  private static final String DELETE_QUEUE = "CreateQueue"; // TODO
-  private static final String DELETE_QUEUE_PATH = ""; // TODO
+  private static final String DELETE_QUEUE = "DeleteQueue";
+  private static final String DELETE_QUEUE_PATH = "../task/queue/DeleteQueueTask";
   private static final String DELETE_QUEUE_COMMENT = "Deletes an SQS queue";
   private final Construct scope;
 
