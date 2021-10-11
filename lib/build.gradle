@@ -22,11 +22,19 @@ repositories {
 
 // Versions of all dependencies, organized in descending alphabetical order.
 def versions = [
-        Cirrus: "0.1.0",
-        Cdk   : "1.125.0",
-        Guava : "30.1-jre",
-        Java  : "11",
-        JUnit : "5.7.2"
+        Aws         : "2.17.+",
+        Cirrus      : "0.1.0",
+        Cdk         : "1.125.+",
+        Dagger      : "2.37",
+        Guava       : "30.1-jre",
+        Immutables  : "2.8.+",
+        Jackson     : "2.12.+",
+        Java        : "11",
+        Javax       : "1",
+        JUnit       : "5.7.+",
+        LambdaCore  : "1.2.+",
+        LambdaEvents: "3.10.+",
+        Slf4j       : "1.7.+"
 ]
 
 // GitHub organization for publishing to GitHub Packages
@@ -45,12 +53,24 @@ java {
 }
 
 dependencies {
+    annotationProcessor "com.google.dagger:dagger-compiler:$versions.Dagger"
+    annotationProcessor "org.immutables:value:$versions.Immutables"
+    implementation "com.amazonaws:aws-lambda-java-core:$versions.LambdaCore"
+    implementation "com.amazonaws:aws-lambda-java-events:$versions.LambdaEvents"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$versions.Jackson"
+    implementation "com.google.dagger:dagger:$versions.Dagger"
+    implementation "org.immutables:value:$versions.Immutables"
+    implementation "org.slf4j:slf4j-api:$versions.Slf4j"
     implementation "com.google.guava:guava:$versions.Guava"
     implementation "software.amazon.awscdk:core:$versions.Cdk"
     implementation "software.amazon.awscdk:lambda:$versions.Cdk"
     implementation "software.amazon.awscdk:stepfunctions:$versions.Cdk"
     implementation "software.amazon.awscdk:stepfunctions-tasks:$versions.Cdk"
-    // Use JUnit Jupiter for testing.
+    implementation "software.amazon.awssdk:dynamodb:$versions.Aws"
+    implementation "software.amazon.awssdk:lambda:$versions.Aws"
+    implementation "software.amazon.awssdk:sns:$versions.Aws"
+    implementation "software.amazon.awssdk:sqs:$versions.Aws"
+    implementation "javax.inject:javax.inject:$versions.Javax"
     testImplementation "org.junit.jupiter:junit-jupiter:$versions.JUnit"
 }
 
