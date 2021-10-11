@@ -2,20 +2,16 @@ package org.cirrus.infrastructure.task.resource;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.function.Consumer;
-import org.cirrus.infrastructure.task.exception.ObjectMappingException;
+import org.cirrus.infrastructure.task.util.Mapping;
 
 public abstract class DeleteResourceTask implements RequestHandler<String, String> {
 
   private final ResourceType type;
-  private final ObjectMapper mapper;
   private final Consumer<Throwable> logger;
 
-  public DeleteResourceTask(ResourceType type, ObjectMapper mapper, Consumer<Throwable> logger) {
+  public DeleteResourceTask(ResourceType type, Consumer<Throwable> logger) {
     this.type = type;
-    this.mapper = mapper;
     this.logger = logger;
   }
 
@@ -29,12 +25,7 @@ public abstract class DeleteResourceTask implements RequestHandler<String, Strin
   }
 
   public DeleteResourceInput mapInput(String input) {
-    try {
-      return mapper.readValue(input, DeleteResourceInput.class);
-    } catch (JsonProcessingException exception) {
-      logger.accept(exception);
-      throw new ObjectMappingException();
-    }
+    return Mapping.read(input, DeleteResourceInput.class, logger);
   }
 
   public String getResourceId(DeleteResourceInput input) {
@@ -48,11 +39,6 @@ public abstract class DeleteResourceTask implements RequestHandler<String, Strin
   }
 
   public String mapOutput(DeleteResourceOutput output) {
-    try {
-      return mapper.writeValueAsString(output);
-    } catch (JsonProcessingException exception) {
-      logger.accept(exception);
-      throw new ObjectMappingException();
-    }
+    return Mapping.write(output, logger);
   }
 }
