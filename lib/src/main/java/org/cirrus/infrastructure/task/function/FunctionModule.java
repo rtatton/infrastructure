@@ -2,6 +2,7 @@ package org.cirrus.infrastructure.task.function;
 
 import dagger.Module;
 import dagger.Provides;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -15,6 +16,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
+import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingRequest;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.FunctionCode;
@@ -37,6 +39,8 @@ final class FunctionModule {
   private static final int TIMEOUT_IN_SECONDS = 3;
   private static final String FUNCTION_ROLE = "";
   private static final String IMAGE_URI = "";
+  private static final int BATCH_SIZE = 10;
+  private static final int MAX_BATCHING_WINDOW_IN_SECONDS = 10;
   private static final FunctionCode CODE = FunctionCode.builder().imageUri(IMAGE_URI).build();
   private static final Logger logger = LoggerFactory.getLogger("FunctionLogger");
 
@@ -68,9 +72,20 @@ final class FunctionModule {
   }
 
   @Provides
-  @Singleton
   public static Function<String, DeleteFunctionRequest> provideDeleteRequester() {
     return functionId -> DeleteFunctionRequest.builder().functionName(functionId).build();
+  }
+
+  @Provides
+  public static BiFunction<String, String, CreateEventSourceMappingRequest>
+      provideEventSourceRequester() {
+    return (functionId, queueId) ->
+        CreateEventSourceMappingRequest.builder()
+            .functionName(functionId)
+            .eventSourceArn(queueId)
+            .batchSize(BATCH_SIZE)
+            .maximumBatchingWindowInSeconds(MAX_BATCHING_WINDOW_IN_SECONDS)
+            .build();
   }
 
   @Provides

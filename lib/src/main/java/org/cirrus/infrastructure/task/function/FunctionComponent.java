@@ -12,5 +12,7 @@ interface FunctionComponent {
 
   DeleteFunctionFactory newDeleteFunctionFactory();
 
+  AddQueueFactory newAddQueueFactory();
+
   Consumer<Throwable> newLogger();
 }

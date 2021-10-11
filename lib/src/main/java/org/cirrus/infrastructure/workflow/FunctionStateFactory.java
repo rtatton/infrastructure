@@ -12,7 +12,7 @@ public final class FunctionStateFactory {
   private static final String DELETE_FUNCTION_PATH = "../task/function/DeleteFunctionTask";
   private static final String DELETE_FUNCTION_COMMENT = "Deletes a Lambda function";
   private static final String ADD_QUEUE = "AddQueue";
-  private static final String ADD_QUEUE_PATH = ""; // TODO
+  private static final String ADD_QUEUE_PATH = "../task/function/AddQueueTask";
   private static final String ADD_QUEUE_COMMENT =
       "Adds an SQS queue as an event-source mapping to a Lambda function";
   private final Construct scope;
