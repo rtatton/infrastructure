@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.function.Consumer;
 import org.cirrus.infrastructure.task.exception.ObjectMappingException;
 
-public final class Mapping {
+public final class MappingUtil {
 
   public static <T> T read(String content, Class<T> cls, Consumer<Throwable> logger) {
     ObjectMapper mapper = create();

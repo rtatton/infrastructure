@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.cirrus.infrastructure.task.util.Command;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
@@ -40,7 +40,7 @@ public final class DeleteFunction implements Command<Void> {
   public Void run() {
     DeleteFunctionRequest request = requester.apply(functionId);
     Future<DeleteFunctionResponse> response = receiver.deleteFunction(request);
-    Resources.logIfError(response, logger);
+    ResourceUtil.logIfError(response, logger);
     return null;
   }
 }

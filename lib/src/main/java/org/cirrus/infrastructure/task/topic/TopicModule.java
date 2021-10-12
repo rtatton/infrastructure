@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.inject.Singleton;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -50,7 +50,7 @@ final class TopicModule {
   public static Supplier<CreateTopicRequest> provideCreateRequester() {
     return () ->
         CreateTopicRequest.builder()
-            .name(Resources.createRandomId())
+            .name(ResourceUtil.createRandomId())
             .attributes(ATTRIBUTES)
             .build();
   }

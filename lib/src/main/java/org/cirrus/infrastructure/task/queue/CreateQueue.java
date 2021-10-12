@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.task.util.Command;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
@@ -33,6 +33,6 @@ public final class CreateQueue implements Command<String> {
   public String run() {
     CreateQueueRequest createQueueRequest = requester.get();
     Future<CreateQueueResponse> response = receiver.createQueue(createQueueRequest);
-    return Resources.getIdOrNull(response, CreateQueueResponse::queueUrl, logger);
+    return ResourceUtil.getIdOrNull(response, CreateQueueResponse::queueUrl, logger);
   }
 }

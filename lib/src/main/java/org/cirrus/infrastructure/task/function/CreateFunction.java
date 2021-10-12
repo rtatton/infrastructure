@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.task.util.Command;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
@@ -35,6 +35,6 @@ public final class CreateFunction implements Command<String> {
   public String run() {
     CreateFunctionRequest request = requester.get();
     Future<CreateFunctionResponse> response = receiver.createFunction(request);
-    return Resources.getIdOrNull(response, CreateFunctionResponse::functionName, logger);
+    return ResourceUtil.getIdOrNull(response, CreateFunctionResponse::functionName, logger);
   }
 }

@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.cirrus.infrastructure.task.util.Command;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicResponse;
@@ -40,7 +40,7 @@ public final class DeleteTopic implements Command<Void> {
   public Void run() {
     DeleteTopicRequest request = requester.apply(topicId);
     Future<DeleteTopicResponse> response = receiver.deleteTopic(request);
-    Resources.logIfError(response, logger);
+    ResourceUtil.logIfError(response, logger);
     return null;
   }
 }

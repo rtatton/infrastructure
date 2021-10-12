@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import java.util.function.Consumer;
 import org.cirrus.infrastructure.task.util.Command;
-import org.cirrus.infrastructure.task.util.Mapping;
+import org.cirrus.infrastructure.task.util.MappingUtil;
 
 public class CreateResourceTask implements RequestHandler<String, String> {
 
@@ -28,7 +28,7 @@ public class CreateResourceTask implements RequestHandler<String, String> {
   }
 
   public CreateResourceInput mapInput(String input) {
-    return Mapping.read(input, CreateResourceInput.class, logger);
+    return MappingUtil.read(input, CreateResourceInput.class, logger);
   }
 
   public CreateResourceOutput createOutput(CreateResourceInput input, String resourceId) {
@@ -40,6 +40,6 @@ public class CreateResourceTask implements RequestHandler<String, String> {
   }
 
   public String mapOutput(CreateResourceOutput output) {
-    return Mapping.write(output, logger);
+    return MappingUtil.write(output, logger);
   }
 }

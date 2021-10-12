@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import org.cirrus.infrastructure.task.util.Command;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sns.model.SubscribeRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeResponse;
@@ -43,7 +43,7 @@ public final class SubscribeQueue implements Command<Void> {
   public Void run() {
     SubscribeRequest request = requester.apply(topicId, queueId);
     Future<SubscribeResponse> response = receiver.subscribe(request);
-    Resources.logIfError(response, logger);
+    ResourceUtil.logIfError(response, logger);
     return null;
   }
 }

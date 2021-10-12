@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.inject.Singleton;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -59,7 +59,7 @@ final class FunctionModule {
   public static Supplier<CreateFunctionRequest> provideCreateRequester() {
     return () ->
         CreateFunctionRequest.builder()
-            .functionName(Resources.createRandomId())
+            .functionName(ResourceUtil.createRandomId())
             .packageType(PACKAGE_TYPE)
             .code(CODE)
             .handler(HANDLER_NAME)

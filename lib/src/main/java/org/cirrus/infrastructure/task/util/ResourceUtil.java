@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public final class Resources {
+public final class ResourceUtil {
 
   public static String createRandomId() {
     return UUID.randomUUID().toString();

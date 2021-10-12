@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.task.util.Command;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
@@ -33,6 +33,6 @@ public final class CreateTopic implements Command<String> {
   public String run() {
     CreateTopicRequest request = requester.get();
     Future<CreateTopicResponse> response = receiver.createTopic(request);
-    return Resources.getIdOrNull(response, CreateTopicResponse::topicArn, logger);
+    return ResourceUtil.getIdOrNull(response, CreateTopicResponse::topicArn, logger);
   }
 }

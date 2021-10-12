@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.cirrus.infrastructure.task.util.Command;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
@@ -40,7 +40,7 @@ public final class DeleteQueue implements Command<Void> {
   public Void run() {
     DeleteQueueRequest request = requester.apply(queueId);
     Future<DeleteQueueResponse> response = receiver.deleteQueue(request);
-    Resources.logIfError(response, logger);
+    ResourceUtil.logIfError(response, logger);
     return null;
   }
 }

@@ -3,7 +3,7 @@ package org.cirrus.infrastructure.task.resource;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import java.util.function.Consumer;
-import org.cirrus.infrastructure.task.util.Mapping;
+import org.cirrus.infrastructure.task.util.MappingUtil;
 
 public abstract class DeleteResourceTask implements RequestHandler<String, String> {
 
@@ -25,7 +25,7 @@ public abstract class DeleteResourceTask implements RequestHandler<String, Strin
   }
 
   public DeleteResourceInput mapInput(String input) {
-    return Mapping.read(input, DeleteResourceInput.class, logger);
+    return MappingUtil.read(input, DeleteResourceInput.class, logger);
   }
 
   public String getResourceId(DeleteResourceInput input) {
@@ -39,6 +39,6 @@ public abstract class DeleteResourceTask implements RequestHandler<String, Strin
   }
 
   public String mapOutput(DeleteResourceOutput output) {
-    return Mapping.write(output, logger);
+    return MappingUtil.write(output, logger);
   }
 }

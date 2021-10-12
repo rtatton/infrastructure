@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import org.cirrus.infrastructure.task.util.Command;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingRequest;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
@@ -42,7 +42,7 @@ public final class AddQueue implements Command<Void> {
   public Void run() {
     CreateEventSourceMappingRequest request = requester.apply(functionId, queueId);
     Future<CreateEventSourceMappingResponse> response = receiver.createEventSourceMapping(request);
-    Resources.logIfError(response, logger);
+    ResourceUtil.logIfError(response, logger);
     return null;
   }
 }

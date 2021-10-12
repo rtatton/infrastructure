@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.inject.Singleton;
-import org.cirrus.infrastructure.task.util.Resources;
+import org.cirrus.infrastructure.task.util.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -48,7 +48,7 @@ final class QueueModule {
   public static Supplier<CreateQueueRequest> provideCreateRequester() {
     return () ->
         CreateQueueRequest.builder()
-            .queueName(Resources.createRandomId())
+            .queueName(ResourceUtil.createRandomId())
             .attributes(ATTRIBUTES)
             .build();
   }
