@@ -72,11 +72,13 @@ final class FunctionModule {
   }
 
   @Provides
+  @Singleton
   public static Function<String, DeleteFunctionRequest> provideDeleteRequester() {
     return functionId -> DeleteFunctionRequest.builder().functionName(functionId).build();
   }
 
   @Provides
+  @Singleton
   public static BiFunction<String, String, CreateEventSourceMappingRequest>
       provideEventSourceRequester() {
     return (functionId, queueId) ->

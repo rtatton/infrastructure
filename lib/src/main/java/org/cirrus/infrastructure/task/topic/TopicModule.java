@@ -56,11 +56,13 @@ final class TopicModule {
   }
 
   @Provides
+  @Singleton
   public static Function<String, DeleteTopicRequest> provideDeleteRequester() {
     return topicId -> DeleteTopicRequest.builder().topicArn(topicId).build();
   }
 
   @Provides
+  @Singleton
   public static BiFunction<String, String, SubscribeRequest> provideSubscribeRequester() {
     return (topicId, queueId) ->
         SubscribeRequest.builder()
