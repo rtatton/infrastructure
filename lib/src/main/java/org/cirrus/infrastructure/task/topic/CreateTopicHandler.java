@@ -2,15 +2,15 @@ package org.cirrus.infrastructure.task.topic;
 
 import java.util.function.Consumer;
 import org.cirrus.infrastructure.task.Command;
-import org.cirrus.infrastructure.task.resource.CreateResourceTask;
+import org.cirrus.infrastructure.task.resource.CreateResourceHandler;
 import org.cirrus.infrastructure.task.resource.Resource;
 
-public final class CreateTopicTask extends CreateResourceTask {
+public final class CreateTopicHandler extends CreateResourceHandler {
 
   private static final Command<String> command = CreateTopicCommand.create();
   private static final Consumer<Throwable> logger = DaggerTopicComponent.create().getLogger();
 
-  public CreateTopicTask() {
+  public CreateTopicHandler() {
     super(Resource.TOPIC, command, logger);
   }
 }

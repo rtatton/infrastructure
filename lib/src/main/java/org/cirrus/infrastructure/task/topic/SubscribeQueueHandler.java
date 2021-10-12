@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import org.cirrus.infrastructure.task.resource.Resource;
 import org.cirrus.infrastructure.task.util.MappingUtil;
 
-public final class SubscribeQueueTask implements RequestHandler<String, String> {
+public final class SubscribeQueueHandler implements RequestHandler<String, String> {
 
   private static final Consumer<Throwable> logger = DaggerTopicComponent.create().getLogger();
 

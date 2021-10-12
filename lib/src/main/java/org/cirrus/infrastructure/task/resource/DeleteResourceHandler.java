@@ -5,12 +5,12 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import java.util.function.Consumer;
 import org.cirrus.infrastructure.task.util.MappingUtil;
 
-public abstract class DeleteResourceTask implements RequestHandler<String, String> {
+public abstract class DeleteResourceHandler implements RequestHandler<String, String> {
 
   private final Resource type;
   private final Consumer<Throwable> logger;
 
-  public DeleteResourceTask(Resource type, Consumer<Throwable> logger) {
+  public DeleteResourceHandler(Resource type, Consumer<Throwable> logger) {
     this.type = type;
     this.logger = logger;
   }

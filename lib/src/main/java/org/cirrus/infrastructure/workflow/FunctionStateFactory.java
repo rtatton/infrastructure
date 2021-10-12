@@ -6,13 +6,13 @@ import software.constructs.Construct;
 public final class FunctionStateFactory {
 
   private static final String CREATE_FUNCTION = "CreateFunction";
-  private static final String CREATE_FUNCTION_PATH = "../task/function/CreateFunctionTask";
+  private static final String CREATE_FUNCTION_PATH = "../task/function/CreateFunctionHandler";
   private static final String CREATE_FUNCTION_COMMENT = "Creates a Lambda function";
   private static final String DELETE_FUNCTION = "DeleteFunction";
-  private static final String DELETE_FUNCTION_PATH = "../task/function/DeleteFunctionTask";
+  private static final String DELETE_FUNCTION_PATH = "../task/function/DeleteFunctionHandler";
   private static final String DELETE_FUNCTION_COMMENT = "Deletes a Lambda function";
   private static final String ADD_QUEUE = "AddQueue";
-  private static final String ADD_QUEUE_PATH = "../task/function/AddQueueTask";
+  private static final String ADD_QUEUE_PATH = "../task/function/AddQueueHandler";
   private static final String ADD_QUEUE_COMMENT =
       "Adds an SQS queue as an event-source mapping to a Lambda function";
   private final Construct scope;

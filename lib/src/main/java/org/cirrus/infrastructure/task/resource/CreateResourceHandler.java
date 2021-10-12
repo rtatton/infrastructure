@@ -6,13 +6,13 @@ import java.util.function.Consumer;
 import org.cirrus.infrastructure.task.Command;
 import org.cirrus.infrastructure.task.util.MappingUtil;
 
-public class CreateResourceTask implements RequestHandler<String, String> {
+public class CreateResourceHandler implements RequestHandler<String, String> {
 
   private final Resource type;
   private final Command<String> command;
   private final Consumer<Throwable> logger;
 
-  public CreateResourceTask(Resource type, Command<String> command, Consumer<Throwable> logger) {
+  public CreateResourceHandler(Resource type, Command<String> command, Consumer<Throwable> logger) {
     this.type = type;
     this.command = command;
     this.logger = logger;
