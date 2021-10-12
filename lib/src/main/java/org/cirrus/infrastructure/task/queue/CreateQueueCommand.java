@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 
-public final class CreateQueue implements Command<String> {
+public final class CreateQueueCommand implements Command<String> {
 
   private static final QueueComponent component = DaggerQueueComponent.create();
   private final SqsAsyncClient receiver;
@@ -18,7 +18,7 @@ public final class CreateQueue implements Command<String> {
   private final Consumer<Throwable> logger;
 
   @Inject
-  CreateQueue(
+  CreateQueueCommand(
       SqsAsyncClient receiver, Supplier<CreateQueueRequest> requester, Consumer<Throwable> logger) {
     this.receiver = receiver;
     this.requester = requester;
@@ -26,7 +26,7 @@ public final class CreateQueue implements Command<String> {
   }
 
   public static Command<String> create() {
-    return component.getCreateQueue();
+    return component.getCreateQueueCommand();
   }
 
   @Override

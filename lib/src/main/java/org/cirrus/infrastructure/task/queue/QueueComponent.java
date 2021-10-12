@@ -8,9 +8,9 @@ import javax.inject.Singleton;
 @Component(modules = {QueueModule.class})
 interface QueueComponent {
 
-  CreateQueue getCreateQueue();
+  CreateQueueCommand getCreateQueueCommand();
 
-  DeleteQueueFactory getDeleteQueueFactory();
+  DeleteQueueCommandFactory getDeleteQueueCommandFactory();
 
   Consumer<Throwable> getLogger();
 }

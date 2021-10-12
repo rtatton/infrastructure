@@ -11,9 +11,9 @@ import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingRequest;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
 
-public final class AddQueue implements Command<Void> {
-  private static final AddQueueFactory factory =
-      DaggerFunctionComponent.create().getAddQueueFactory();
+public final class AddQueueCommand implements Command<Void> {
+  private static final AddQueueCommandFactory factory =
+      DaggerFunctionComponent.create().getAddQueueCommandFactory();
   private final LambdaAsyncClient receiver;
   private final BiFunction<String, String, CreateEventSourceMappingRequest> requester;
   private final Consumer<Throwable> logger;
@@ -21,7 +21,7 @@ public final class AddQueue implements Command<Void> {
   private final String queueId;
 
   @AssistedInject
-  AddQueue(
+  AddQueueCommand(
       LambdaAsyncClient receiver,
       BiFunction<String, String, CreateEventSourceMappingRequest> requester,
       Consumer<Throwable> logger,

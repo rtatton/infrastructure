@@ -33,7 +33,7 @@ public class AddQueueTask implements RequestHandler<String, String> {
   }
 
   private void addQueue(String functionId, String queueId) {
-    AddQueue.create(functionId, queueId).run();
+    AddQueueCommand.create(functionId, queueId).run();
   }
 
   private AddQueueOutput createOutput(AddQueueInput input) {

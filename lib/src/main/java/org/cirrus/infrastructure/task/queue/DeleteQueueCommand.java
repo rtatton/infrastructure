@@ -11,17 +11,17 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
 
-public final class DeleteQueue implements Command<Void> {
+public final class DeleteQueueCommand implements Command<Void> {
 
-  private static final DeleteQueueFactory factory =
-      DaggerQueueComponent.create().getDeleteQueueFactory();
+  private static final DeleteQueueCommandFactory factory =
+      DaggerQueueComponent.create().getDeleteQueueCommandFactory();
   private final SqsAsyncClient receiver;
   private final Function<String, DeleteQueueRequest> requester;
   private final Consumer<Throwable> logger;
   private final String queueId;
 
   @AssistedInject
-  DeleteQueue(
+  DeleteQueueCommand(
       SqsAsyncClient receiver,
       Function<String, DeleteQueueRequest> requester,
       Consumer<Throwable> logger,

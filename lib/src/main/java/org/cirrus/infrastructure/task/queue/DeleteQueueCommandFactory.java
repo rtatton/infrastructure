@@ -4,7 +4,7 @@ import dagger.assisted.Assisted;
 import dagger.assisted.AssistedFactory;
 
 @AssistedFactory
-interface DeleteQueueFactory {
+interface DeleteQueueCommandFactory {
 
-  DeleteQueue create(@Assisted String queueId);
+  DeleteQueueCommand create(@Assisted String queueId);
 }

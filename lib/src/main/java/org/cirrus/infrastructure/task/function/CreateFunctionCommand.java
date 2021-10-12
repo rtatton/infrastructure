@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
 
-public final class CreateFunction implements Command<String> {
+public final class CreateFunctionCommand implements Command<String> {
 
   private static final FunctionComponent component = DaggerFunctionComponent.create();
   private final LambdaAsyncClient receiver;
@@ -18,7 +18,7 @@ public final class CreateFunction implements Command<String> {
   private final Consumer<Throwable> logger;
 
   @Inject
-  CreateFunction(
+  CreateFunctionCommand(
       LambdaAsyncClient receiver,
       Supplier<CreateFunctionRequest> requester,
       Consumer<Throwable> logger) {
@@ -28,7 +28,7 @@ public final class CreateFunction implements Command<String> {
   }
 
   public static Command<String> create() {
-    return component.getCreateFunction();
+    return component.getCreateFunctionCommand();
   }
 
   @Override

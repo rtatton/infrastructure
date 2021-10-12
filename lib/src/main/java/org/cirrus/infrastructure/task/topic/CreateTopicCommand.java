@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
 
-public final class CreateTopic implements Command<String> {
+public final class CreateTopicCommand implements Command<String> {
 
   private static final TopicComponent component = DaggerTopicComponent.create();
   private final SnsAsyncClient receiver;
@@ -18,7 +18,7 @@ public final class CreateTopic implements Command<String> {
   private final Consumer<Throwable> logger;
 
   @Inject
-  CreateTopic(
+  CreateTopicCommand(
       SnsAsyncClient receiver, Supplier<CreateTopicRequest> requester, Consumer<Throwable> logger) {
     this.receiver = receiver;
     this.requester = requester;
@@ -26,7 +26,7 @@ public final class CreateTopic implements Command<String> {
   }
 
   public static Command<String> create() {
-    return component.getCreateTopic();
+    return component.getCreateTopicCommand();
   }
 
   @Override

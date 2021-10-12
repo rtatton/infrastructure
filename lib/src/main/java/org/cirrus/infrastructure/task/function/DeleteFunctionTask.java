@@ -14,6 +14,6 @@ public final class DeleteFunctionTask extends DeleteResourceTask {
 
   @Override
   public void deleteResource(String functionId) {
-    DeleteFunction.create(functionId).run();
+    DeleteFunctionCommand.create(functionId).run();
   }
 }

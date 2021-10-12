@@ -33,7 +33,7 @@ public final class SubscribeQueueTask implements RequestHandler<String, String> 
   }
 
   private void subscribeQueue(String topicId, String queueId) {
-    SubscribeQueue.create(topicId, queueId).run();
+    SubscribeQueueCommand.create(topicId, queueId).run();
   }
 
   private SubscribeQueueOutput createOutput(SubscribeQueueInput input) {

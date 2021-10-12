@@ -11,10 +11,10 @@ import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sns.model.SubscribeRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 
-public final class SubscribeQueue implements Command<Void> {
+public final class SubscribeQueueCommand implements Command<Void> {
 
-  private static final SubscribeQueueFactory factory =
-      DaggerTopicComponent.create().getSubscribeQueueFactory();
+  private static final SubscribeQueueCommandFactory factory =
+      DaggerTopicComponent.create().getSubscribeQueueCommandFactory();
   private final SnsAsyncClient receiver;
   private final BiFunction<String, String, SubscribeRequest> requester;
   private final Consumer<Throwable> logger;
@@ -22,7 +22,7 @@ public final class SubscribeQueue implements Command<Void> {
   private final String queueId;
 
   @AssistedInject
-  SubscribeQueue(
+  SubscribeQueueCommand(
       SnsAsyncClient receiver,
       BiFunction<String, String, SubscribeRequest> requester,
       Consumer<Throwable> logger,

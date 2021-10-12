@@ -14,6 +14,6 @@ public class DeleteQueueTask extends DeleteResourceTask {
 
   @Override
   public void deleteResource(String queueId) {
-    DeleteQueue.create(queueId).run();
+    DeleteQueueCommand.create(queueId).run();
   }
 }

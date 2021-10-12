@@ -8,11 +8,11 @@ import javax.inject.Singleton;
 @Component(modules = {FunctionModule.class})
 interface FunctionComponent {
 
-  CreateFunction getCreateFunction();
+  CreateFunctionCommand getCreateFunctionCommand();
 
-  DeleteFunctionFactory getDeleteFunctionFactory();
+  DeleteFunctionCommandFactory getDeleteFunctionCommandFactory();
 
-  AddQueueFactory getAddQueueFactory();
+  AddQueueCommandFactory getAddQueueCommandFactory();
 
   Consumer<Throwable> getLogger();
 }

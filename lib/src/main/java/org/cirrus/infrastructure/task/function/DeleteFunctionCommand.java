@@ -11,17 +11,17 @@ import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
 
-public final class DeleteFunction implements Command<Void> {
+public final class DeleteFunctionCommand implements Command<Void> {
 
-  private static final DeleteFunctionFactory factory =
-      DaggerFunctionComponent.create().getDeleteFunctionFactory();
+  private static final DeleteFunctionCommandFactory factory =
+      DaggerFunctionComponent.create().getDeleteFunctionCommandFactory();
   private final LambdaAsyncClient receiver;
   private final Function<String, DeleteFunctionRequest> requester;
   private final Consumer<Throwable> logger;
   private final String functionId;
 
   @AssistedInject
-  DeleteFunction(
+  DeleteFunctionCommand(
       LambdaAsyncClient receiver,
       Function<String, DeleteFunctionRequest> requester,
       Consumer<Throwable> logger,

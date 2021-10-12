@@ -14,6 +14,6 @@ public final class DeleteTopicTask extends DeleteResourceTask {
 
   @Override
   public void deleteResource(String topicId) {
-    DeleteTopic.create(topicId).run();
+    DeleteTopicCommand.create(topicId).run();
   }
 }

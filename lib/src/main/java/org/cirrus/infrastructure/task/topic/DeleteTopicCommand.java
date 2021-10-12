@@ -11,17 +11,17 @@ import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicResponse;
 
-public final class DeleteTopic implements Command<Void> {
+public final class DeleteTopicCommand implements Command<Void> {
 
-  private static final DeleteTopicFactory factory =
-      DaggerTopicComponent.create().getDeleteTopicFactory();
+  private static final DeleteTopicCommandFactory factory =
+      DaggerTopicComponent.create().getDeleteTopicCommandFactory();
   private final SnsAsyncClient receiver;
   private final Function<String, DeleteTopicRequest> requester;
   private final Consumer<Throwable> logger;
   private final String topicId;
 
   @AssistedInject
-  DeleteTopic(
+  DeleteTopicCommand(
       SnsAsyncClient receiver,
       Function<String, DeleteTopicRequest> requester,
       Consumer<Throwable> logger,

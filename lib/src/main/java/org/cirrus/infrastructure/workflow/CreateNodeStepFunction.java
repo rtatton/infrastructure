@@ -1,6 +1,5 @@
 package org.cirrus.infrastructure.workflow;
 
-import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.services.stepfunctions.Choice;
 import software.amazon.awscdk.services.stepfunctions.Condition;
 import software.amazon.awscdk.services.stepfunctions.Fail;
@@ -13,7 +12,7 @@ import software.amazon.awscdk.services.stepfunctions.Succeed;
 import software.amazon.awscdk.services.stepfunctions.TaskStateBase;
 import software.constructs.Construct;
 
-public class CreateNode extends Stack {
+public class CreateNodeStepFunction extends Construct {
 
   private static final String CREATE_NODE_STACK = "CreateNodeStack";
   private static final String CREATE_NODE = "CreateNode";
@@ -34,7 +33,7 @@ public class CreateNode extends Stack {
   private final NotifyStateFactory notifyStateFactory;
   private final StorageStateFactory storageStateFactory;
 
-  public CreateNode(
+  public CreateNodeStepFunction(
       Construct scope,
       FunctionStateFactory functionStateFactory,
       QueueStateFactory queueStateFactory,

@@ -4,7 +4,7 @@ import dagger.assisted.Assisted;
 import dagger.assisted.AssistedFactory;
 
 @AssistedFactory
-interface DeleteTopicFactory {
+interface DeleteTopicCommandFactory {
 
-  DeleteTopic create(@Assisted String topicId);
+  DeleteTopicCommand create(@Assisted String topicId);
 }
