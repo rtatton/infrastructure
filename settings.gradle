@@ -8,6 +8,6 @@
  */
 
 rootProject.name = "infrastructure"
-include "lib"
+include "core"
 include "handlers"
 
