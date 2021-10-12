@@ -28,7 +28,7 @@ public final class CreateFunction implements Command<String> {
   }
 
   public static Command<String> create() {
-    return component.newCreateFunction();
+    return component.getCreateFunction();
   }
 
   @Override

@@ -26,7 +26,7 @@ public final class CreateTopic implements Command<String> {
   }
 
   public static Command<String> create() {
-    return component.newCreateTopic();
+    return component.getCreateTopic();
   }
 
   @Override

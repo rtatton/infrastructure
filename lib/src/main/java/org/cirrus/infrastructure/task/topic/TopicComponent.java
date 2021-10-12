@@ -8,11 +8,11 @@ import javax.inject.Singleton;
 @Component(modules = {TopicModule.class})
 interface TopicComponent {
 
-  CreateTopic newCreateTopic();
+  CreateTopic getCreateTopic();
 
-  DeleteTopicFactory newDeleteTopicFactory();
+  DeleteTopicFactory getDeleteTopicFactory();
 
-  SubscribeQueueFactory newSubscribeQueueFactory();
+  SubscribeQueueFactory getSubscribeQueueFactory();
 
-  Consumer<Throwable> newLogger();
+  Consumer<Throwable> getLogger();
 }

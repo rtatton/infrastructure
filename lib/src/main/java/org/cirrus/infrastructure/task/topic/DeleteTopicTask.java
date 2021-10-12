@@ -6,7 +6,7 @@ import org.cirrus.infrastructure.task.resource.Resource;
 
 public final class DeleteTopicTask extends DeleteResourceTask {
 
-  private static final Consumer<Throwable> logger = DaggerTopicComponent.create().newLogger();
+  private static final Consumer<Throwable> logger = DaggerTopicComponent.create().getLogger();
 
   public DeleteTopicTask() {
     super(Resource.TOPIC, logger);

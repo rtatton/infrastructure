@@ -8,7 +8,7 @@ import org.cirrus.infrastructure.task.resource.Resource;
 public final class CreateTopicTask extends CreateResourceTask {
 
   private static final Command<String> command = CreateTopic.create();
-  private static final Consumer<Throwable> logger = DaggerTopicComponent.create().newLogger();
+  private static final Consumer<Throwable> logger = DaggerTopicComponent.create().getLogger();
 
   public CreateTopicTask() {
     super(Resource.TOPIC, command, logger);

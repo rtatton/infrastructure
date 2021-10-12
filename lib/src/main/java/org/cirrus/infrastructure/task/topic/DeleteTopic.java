@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.sns.model.DeleteTopicResponse;
 public final class DeleteTopic implements Command<Void> {
 
   private static final DeleteTopicFactory factory =
-      DaggerTopicComponent.create().newDeleteTopicFactory();
+      DaggerTopicComponent.create().getDeleteTopicFactory();
   private final SnsAsyncClient receiver;
   private final Function<String, DeleteTopicRequest> requester;
   private final Consumer<Throwable> logger;

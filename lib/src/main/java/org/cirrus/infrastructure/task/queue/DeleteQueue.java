@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
 public final class DeleteQueue implements Command<Void> {
 
   private static final DeleteQueueFactory factory =
-      DaggerQueueComponent.create().newDeleteQueueFactory();
+      DaggerQueueComponent.create().getDeleteQueueFactory();
   private final SqsAsyncClient receiver;
   private final Function<String, DeleteQueueRequest> requester;
   private final Consumer<Throwable> logger;

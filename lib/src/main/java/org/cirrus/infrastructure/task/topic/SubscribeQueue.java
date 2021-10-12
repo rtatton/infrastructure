@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 public final class SubscribeQueue implements Command<Void> {
 
   private static final SubscribeQueueFactory factory =
-      DaggerTopicComponent.create().newSubscribeQueueFactory();
+      DaggerTopicComponent.create().getSubscribeQueueFactory();
   private final SnsAsyncClient receiver;
   private final BiFunction<String, String, SubscribeRequest> requester;
   private final Consumer<Throwable> logger;

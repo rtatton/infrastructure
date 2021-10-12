@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
 public final class DeleteFunction implements Command<Void> {
 
   private static final DeleteFunctionFactory factory =
-      DaggerFunctionComponent.create().newDeleteFunctionFactory();
+      DaggerFunctionComponent.create().getDeleteFunctionFactory();
   private final LambdaAsyncClient receiver;
   private final Function<String, DeleteFunctionRequest> requester;
   private final Consumer<Throwable> logger;

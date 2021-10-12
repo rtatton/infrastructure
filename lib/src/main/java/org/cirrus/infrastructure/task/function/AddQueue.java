@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResp
 
 public final class AddQueue implements Command<Void> {
   private static final AddQueueFactory factory =
-      DaggerFunctionComponent.create().newAddQueueFactory();
+      DaggerFunctionComponent.create().getAddQueueFactory();
   private final LambdaAsyncClient receiver;
   private final BiFunction<String, String, CreateEventSourceMappingRequest> requester;
   private final Consumer<Throwable> logger;

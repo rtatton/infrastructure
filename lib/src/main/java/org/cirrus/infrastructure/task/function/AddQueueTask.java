@@ -8,7 +8,7 @@ import org.cirrus.infrastructure.task.util.MappingUtil;
 
 public class AddQueueTask implements RequestHandler<String, String> {
 
-  private static final Consumer<Throwable> logger = DaggerFunctionComponent.create().newLogger();
+  private static final Consumer<Throwable> logger = DaggerFunctionComponent.create().getLogger();
 
   @Override
   public String handleRequest(String input, Context context) {

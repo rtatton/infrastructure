@@ -26,7 +26,7 @@ public final class CreateQueue implements Command<String> {
   }
 
   public static Command<String> create() {
-    return component.newCreateQueue();
+    return component.getCreateQueue();
   }
 
   @Override
