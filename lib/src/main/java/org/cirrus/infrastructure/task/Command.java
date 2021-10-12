@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.task.util;
+package org.cirrus.infrastructure.task;
 
 @FunctionalInterface
 public interface Command<T> {

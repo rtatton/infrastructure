@@ -17,7 +17,7 @@ public abstract class CreateResourceOutput {
 
   public abstract String getResourceId();
 
-  public abstract ResourceType getType();
+  public abstract Resource getType();
 
   public interface Builder {
 
@@ -27,6 +27,6 @@ public abstract class CreateResourceOutput {
 
     Builder setResourceId(String resourceId);
 
-    Builder setType(ResourceType type);
+    Builder setType(Resource type);
   }
 }

@@ -15,7 +15,7 @@ public abstract class CreateResourceInput {
 
   public abstract String getName();
 
-  public abstract ResourceType getType();
+  public abstract Resource getType();
 
   public interface Builder {
 

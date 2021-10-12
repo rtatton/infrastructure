@@ -3,13 +3,13 @@ package org.cirrus.infrastructure.task.function;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import java.util.function.Consumer;
-import org.cirrus.infrastructure.task.resource.ResourceType;
+import org.cirrus.infrastructure.task.resource.Resource;
 import org.cirrus.infrastructure.task.util.MappingUtil;
 
 public class AddQueueTask implements RequestHandler<String, String> {
 
-  private static final ResourceType FUNCTION = ResourceType.FUNCTION;
-  private static final ResourceType QUEUE = ResourceType.QUEUE;
+  private static final Resource FUNCTION = Resource.FUNCTION;
+  private static final Resource QUEUE = Resource.QUEUE;
   private static final Consumer<Throwable> logger = DaggerFunctionComponent.create().newLogger();
 
   @Override
@@ -46,7 +46,7 @@ public class AddQueueTask implements RequestHandler<String, String> {
     return MappingUtil.write(output, logger);
   }
 
-  private String getResourceId(AddQueueInput input, ResourceType type) {
+  private String getResourceId(AddQueueInput input, Resource type) {
     return input.getTypedOutputs().get(type).getResourceId();
   }
 }

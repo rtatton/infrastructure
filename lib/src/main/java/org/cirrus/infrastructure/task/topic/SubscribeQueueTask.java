@@ -3,13 +3,13 @@ package org.cirrus.infrastructure.task.topic;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import java.util.function.Consumer;
-import org.cirrus.infrastructure.task.resource.ResourceType;
+import org.cirrus.infrastructure.task.resource.Resource;
 import org.cirrus.infrastructure.task.util.MappingUtil;
 
 public final class SubscribeQueueTask implements RequestHandler<String, String> {
 
-  private static final ResourceType TOPIC = ResourceType.TOPIC;
-  private static final ResourceType QUEUE = ResourceType.QUEUE;
+  private static final Resource TOPIC = Resource.TOPIC;
+  private static final Resource QUEUE = Resource.QUEUE;
   private static final Consumer<Throwable> logger = DaggerTopicComponent.create().newLogger();
 
   @Override
@@ -46,7 +46,7 @@ public final class SubscribeQueueTask implements RequestHandler<String, String> 
     return MappingUtil.write(output, logger);
   }
 
-  private String getResourceId(SubscribeQueueInput input, ResourceType type) {
+  private String getResourceId(SubscribeQueueInput input, Resource type) {
     return input.getTypedOutputs().get(type).getResourceId();
   }
 }

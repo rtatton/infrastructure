@@ -7,10 +7,10 @@ import org.cirrus.infrastructure.task.util.MappingUtil;
 
 public abstract class DeleteResourceTask implements RequestHandler<String, String> {
 
-  private final ResourceType type;
+  private final Resource type;
   private final Consumer<Throwable> logger;
 
-  public DeleteResourceTask(ResourceType type, Consumer<Throwable> logger) {
+  public DeleteResourceTask(Resource type, Consumer<Throwable> logger) {
     this.type = type;
     this.logger = logger;
   }

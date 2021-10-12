@@ -5,7 +5,7 @@ import dagger.assisted.AssistedInject;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import org.cirrus.infrastructure.task.util.Command;
+import org.cirrus.infrastructure.task.Command;
 import org.cirrus.infrastructure.task.util.ResourceUtil;
 import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sns.model.SubscribeRequest;

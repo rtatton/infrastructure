@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.task.resource;
 
-public enum ResourceType {
+public enum Resource {
   FUNCTION,
   QUEUE,
   TOPIC

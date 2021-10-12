@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.cirrus.infrastructure.task.resource.CreateResourceOutput;
-import org.cirrus.infrastructure.task.resource.ResourceType;
+import org.cirrus.infrastructure.task.resource.Resource;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -21,7 +21,7 @@ public abstract class SubscribeQueueOutput {
   }
 
   @Value.Derived
-  public Map<ResourceType, CreateResourceOutput> getTypedOutputs() {
+  public Map<Resource, CreateResourceOutput> getTypedOutputs() {
     return getOutputs().stream()
         .map(o -> new SimpleEntry<>(o.getType(), o))
         .collect(ImmutableMap.toImmutableMap(Entry::getKey, Entry::getValue));

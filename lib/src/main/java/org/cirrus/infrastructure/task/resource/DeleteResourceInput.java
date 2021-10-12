@@ -19,7 +19,7 @@ public abstract class DeleteResourceInput {
   }
 
   @Value.Derived
-  public Map<ResourceType, CreateResourceOutput> getTypedOutputs() {
+  public Map<Resource, CreateResourceOutput> getTypedOutputs() {
     return getOutputs().stream()
         .map(o -> new SimpleEntry<>(o.getType(), o))
         .collect(ImmutableMap.toImmutableMap(Entry::getKey, Entry::getValue));
