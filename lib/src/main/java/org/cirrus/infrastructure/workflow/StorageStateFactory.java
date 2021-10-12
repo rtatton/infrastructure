@@ -32,7 +32,7 @@ public final class StorageStateFactory {
     return new StorageStateFactory(scope, nodeRegistry);
   }
 
-  public TaskStateBase storeResourceIds() {
+  public TaskStateBase newStoreResourceIdsState() {
     return DynamoPutItem.Builder.create(scope, STORE_RESOURCE_IDS)
         .table(nodeRegistry)
         .item(NODE_REGISTRY_ITEM)
@@ -41,7 +41,7 @@ public final class StorageStateFactory {
         .build();
   }
 
-  public TaskStateBase deleteResourceIds() {
+  public TaskStateBase newDeleteResourceIdsState() {
     return DynamoDeleteItem.Builder.create(scope, DELETE_RESOURCE_IDS)
         .table(nodeRegistry)
         .key(DELETE_KEY)

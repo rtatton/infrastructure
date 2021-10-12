@@ -24,7 +24,7 @@ public final class NotifyStateFactory {
     return new NotifyStateFactory(scope, networkTopic);
   }
 
-  public TaskStateBase getNotifyNetworkState() {
+  public TaskStateBase newNotifyNetworkState() {
     return SnsPublish.Builder.create(scope, NOTIFY_NETWORK)
         .topic(networkTopic)
         .message(TaskInput.fromText("")) // TODO
