@@ -24,7 +24,7 @@ public final class TopicStateFactory {
     return new TopicStateFactory(scope);
   }
 
-  public TaskStateBase createTopic() {
+  public TaskStateBase getCreateTopicState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(CREATE_TOPIC)
         .setCodePath(CREATE_TOPIC_PATH)
@@ -32,7 +32,7 @@ public final class TopicStateFactory {
         .build();
   }
 
-  public TaskStateBase deleteTopic() {
+  public TaskStateBase getDeleteTopicState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(DELETE_TOPIC)
         .setCodePath(DELETE_TOPIC_PATH)
@@ -40,7 +40,7 @@ public final class TopicStateFactory {
         .build();
   }
 
-  public TaskStateBase subscribeQueue() {
+  public TaskStateBase getSubscribeQueueState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(SUBSCRIBE_QUEUE)
         .setCodePath(SUBSCRIBE_QUEUE_PATH)

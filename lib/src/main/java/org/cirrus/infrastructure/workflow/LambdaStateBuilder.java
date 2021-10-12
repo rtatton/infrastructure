@@ -15,6 +15,7 @@ import software.amazon.awscdk.services.stepfunctions.tasks.LambdaInvoke;
 import software.constructs.Construct;
 
 public final class LambdaStateBuilder {
+
   private static final Runtime RUNTIME = Runtime.JAVA_11;
   private static final Duration TIMEOUT = Duration.seconds(3);
   private final Construct scope;

@@ -25,7 +25,7 @@ public final class FunctionStateFactory {
     return new FunctionStateFactory(scope);
   }
 
-  public TaskStateBase createFunction() {
+  public TaskStateBase getCreateFunctionState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(CREATE_FUNCTION)
         .setCodePath(CREATE_FUNCTION_PATH)
@@ -33,7 +33,7 @@ public final class FunctionStateFactory {
         .build();
   }
 
-  public TaskStateBase deleteFunction() {
+  public TaskStateBase getDeleteFunctionState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(DELETE_FUNCTION)
         .setCodePath(DELETE_FUNCTION_PATH)
@@ -41,7 +41,7 @@ public final class FunctionStateFactory {
         .build();
   }
 
-  public TaskStateBase addQueue() {
+  public TaskStateBase getAddQueueState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(ADD_QUEUE)
         .setCodePath(ADD_QUEUE_PATH)

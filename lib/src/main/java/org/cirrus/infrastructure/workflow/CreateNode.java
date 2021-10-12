@@ -15,6 +15,7 @@ import software.constructs.Construct;
 
 public class CreateNode extends Stack {
 
+  private static final String CREATE_NODE_STACK = "CreateNodeStack";
   private static final String CREATE_NODE = "CreateNode";
   private static final String CREATE_RESOURCES = "CreateResources";
   private static final String INTEGRATE_RESOURCES = "IntegrateResources";
@@ -35,13 +36,12 @@ public class CreateNode extends Stack {
 
   public CreateNode(
       Construct scope,
-      String id,
       FunctionStateFactory functionStateFactory,
       QueueStateFactory queueStateFactory,
       TopicStateFactory topicStateFactory,
       NotifyStateFactory notifyStateFactory,
       StorageStateFactory storageStateFactory) {
-    super(scope, id);
+    super(scope, CREATE_NODE_STACK);
     this.scope = scope;
     this.functionStateFactory = functionStateFactory;
     this.queueStateFactory = queueStateFactory;
@@ -87,23 +87,23 @@ public class CreateNode extends Stack {
   }
 
   private IChainable addQueueToFunction() {
-    return functionStateFactory.addQueue();
+    return functionStateFactory.getAddQueueState();
   }
 
   private IChainable subscribeQueueToTopic() {
-    return topicStateFactory.subscribeQueue();
+    return topicStateFactory.getSubscribeQueueState();
   }
 
   private IChainable createFunction() {
-    return functionStateFactory.createFunction();
+    return functionStateFactory.getCreateFunctionState();
   }
 
   private IChainable createQueue() {
-    return queueStateFactory.createQueue();
+    return queueStateFactory.getCreateQueueState();
   }
 
   private IChainable createTopic() {
-    return topicStateFactory.createTopic();
+    return topicStateFactory.getCreateTopicState();
   }
 
   private Condition anyNull() {
@@ -133,19 +133,19 @@ public class CreateNode extends Stack {
   }
 
   private IChainable deleteFunction() {
-    return functionStateFactory.deleteFunction();
+    return functionStateFactory.getDeleteFunctionState();
   }
 
   private IChainable deleteQueue() {
-    return queueStateFactory.deleteQueue();
+    return queueStateFactory.getDeleteQueueState();
   }
 
   private IChainable deleteTopic() {
-    return topicStateFactory.deleteTopic();
+    return topicStateFactory.getDeleteTopicState();
   }
 
   private TaskStateBase notifyNetwork() {
-    return notifyStateFactory.notifyNetwork();
+    return notifyStateFactory.getNotifyNetworkState();
   }
 
   private IChainable notifyElseDeleteThenFail() {
