@@ -9,3 +9,5 @@
 
 rootProject.name = "infrastructure"
 include "lib"
+include "handlers"
+
