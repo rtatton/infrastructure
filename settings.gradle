@@ -9,5 +9,17 @@
 
 rootProject.name = "infrastructure"
 include "core"
-include "handlers"
+include "create-resource-handler"
+include "delete-resource-handler"
+include "handler-util"
+include "create-function-handler"
+include "delete-function-handler"
+include "add-queue-handler"
+include "create-queue-handler"
+include "delete-queue-handler"
+include "create-topic-handler"
+include "delete-topic-handler"
+include "subscribe-queue-handler"
+include "create-topic-handler"
+include "delete-topic-handler"
 
