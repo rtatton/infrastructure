@@ -15,7 +15,7 @@ import software.constructs.Construct;
 
 public class CreateNodeStepFunction extends Construct {
 
-  private static final String ID = "CreateNodeConstruct";
+  private static final String ID = "CreateNodeStepFunctionConstruct";
   private static final String STEP_FUNCTION_ID = "CreateNodeStepFunction";
   private static final String CREATE_RESOURCES = "CreateResources";
   private static final String INTEGRATE_RESOURCES = "IntegrateResources";
@@ -23,9 +23,9 @@ public class CreateNodeStepFunction extends Construct {
   private static final String INTEGRATE_OR_DELETE = "IntegrateOrDeleteResources";
   private static final String SUCCESS = "Success";
   private static final String FAILURE = "Failure";
-  private static final String FUNCTION = "function";
-  private static final String QUEUE = "queue";
-  private static final String TOPIC = "topic";
+  private static final String FUNCTION_ID = "functionId";
+  private static final String QUEUE_ID = "queueId";
+  private static final String TOPIC_ID = "topicId";
   private static final StateMachineType TYPE = StateMachineType.STANDARD;
   private final Construct scope;
   private final FunctionStateFactory functionStateFactory;
@@ -105,7 +105,7 @@ public class CreateNodeStepFunction extends Construct {
   }
 
   private Condition anyNull() {
-    return Condition.or(isNull(FUNCTION), isNull(QUEUE), isNull(TOPIC));
+    return Condition.or(isNull(FUNCTION_ID), isNull(QUEUE_ID), isNull(TOPIC_ID));
   }
 
   private Parallel deleteResources() {
