@@ -12,7 +12,7 @@ import software.amazon.awscdk.services.stepfunctions.Succeed;
 import software.amazon.awscdk.services.stepfunctions.TaskStateBase;
 import software.constructs.Construct;
 
-public class CreateNodeStepFunction extends Construct {
+public class CreateNodeWorkflow extends Construct {
 
   private static final String CREATE_NODE_STACK = "CreateNodeStack";
   private static final String CREATE_NODE = "CreateNode";
@@ -33,7 +33,7 @@ public class CreateNodeStepFunction extends Construct {
   private final NotifyStateFactory notifyStateFactory;
   private final StorageStateFactory storageStateFactory;
 
-  public CreateNodeStepFunction(
+  public CreateNodeWorkflow(
       Construct scope,
       FunctionStateFactory functionStateFactory,
       QueueStateFactory queueStateFactory,
