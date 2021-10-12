@@ -14,8 +14,8 @@ import software.constructs.Construct;
 
 public class CreateNodeStepFunction extends Construct {
 
-  private static final String CREATE_NODE_STACK = "CreateNodeStack";
-  private static final String CREATE_NODE = "CreateNode";
+  private static final String ID = "CreateNodeConstruct";
+  private static final String STEP_FUNCTION_ID = "CreateNodeStepFunction";
   private static final String CREATE_RESOURCES = "CreateResources";
   private static final String INTEGRATE_RESOURCES = "IntegrateResources";
   private static final String DELETE_RESOURCES = "DeleteResources";
@@ -40,7 +40,7 @@ public class CreateNodeStepFunction extends Construct {
       TopicStateFactory topicStateFactory,
       NotifyStateFactory notifyStateFactory,
       StorageStateFactory storageStateFactory) {
-    super(scope, CREATE_NODE_STACK);
+    super(scope, ID);
     this.scope = scope;
     this.functionStateFactory = functionStateFactory;
     this.queueStateFactory = queueStateFactory;
@@ -51,8 +51,8 @@ public class CreateNodeStepFunction extends Construct {
   }
 
   private void createStateMachine() {
-    StateMachine.Builder.create(scope, CREATE_NODE)
-        .stateMachineName(CREATE_NODE)
+    StateMachine.Builder.create(scope, STEP_FUNCTION_ID)
+        .stateMachineName(STEP_FUNCTION_ID)
         .stateMachineType(TYPE)
         .definition(definition())
         .build();
