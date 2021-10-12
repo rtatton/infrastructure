@@ -7,11 +7,10 @@ import org.cirrus.infrastructure.task.resource.Resource;
 
 public final class CreateFunctionTask extends CreateResourceTask {
 
-  private static final Resource TYPE = Resource.FUNCTION;
   private static final Command<String> command = CreateFunction.create();
   private static final Consumer<Throwable> logger = DaggerFunctionComponent.create().newLogger();
 
   public CreateFunctionTask() {
-    super(TYPE, command, logger);
+    super(Resource.FUNCTION, command, logger);
   }
 }

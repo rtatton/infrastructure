@@ -6,11 +6,10 @@ import org.cirrus.infrastructure.task.resource.Resource;
 
 public final class DeleteFunctionTask extends DeleteResourceTask {
 
-  private static final Resource TYPE = Resource.FUNCTION;
   private static final Consumer<Throwable> logger = DaggerFunctionComponent.create().newLogger();
 
   public DeleteFunctionTask() {
-    super(TYPE, logger);
+    super(Resource.FUNCTION, logger);
   }
 
   @Override

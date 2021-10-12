@@ -8,8 +8,6 @@ import org.cirrus.infrastructure.task.util.MappingUtil;
 
 public class AddQueueTask implements RequestHandler<String, String> {
 
-  private static final Resource FUNCTION = Resource.FUNCTION;
-  private static final Resource QUEUE = Resource.QUEUE;
   private static final Consumer<Throwable> logger = DaggerFunctionComponent.create().newLogger();
 
   @Override
@@ -27,11 +25,11 @@ public class AddQueueTask implements RequestHandler<String, String> {
   }
 
   private String getFunctionId(AddQueueInput input) {
-    return getResourceId(input, FUNCTION);
+    return getResourceId(input, Resource.FUNCTION);
   }
 
   private String getQueueId(AddQueueInput input) {
-    return getResourceId(input, QUEUE);
+    return getResourceId(input, Resource.QUEUE);
   }
 
   private void addQueue(String functionId, String queueId) {

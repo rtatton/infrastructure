@@ -7,11 +7,10 @@ import org.cirrus.infrastructure.task.resource.Resource;
 
 public final class CreateQueueTask extends CreateResourceTask {
 
-  private static final Resource TYPE = Resource.QUEUE;
   private static final Command<String> command = CreateQueue.create();
   private static final Consumer<Throwable> logger = DaggerQueueComponent.create().newLogger();
 
   public CreateQueueTask() {
-    super(TYPE, command, logger);
+    super(Resource.QUEUE, command, logger);
   }
 }

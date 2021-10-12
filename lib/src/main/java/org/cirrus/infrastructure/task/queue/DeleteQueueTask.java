@@ -6,11 +6,10 @@ import org.cirrus.infrastructure.task.resource.Resource;
 
 public class DeleteQueueTask extends DeleteResourceTask {
 
-  private static final Resource TYPE = Resource.QUEUE;
   private static final Consumer<Throwable> logger = DaggerQueueComponent.create().newLogger();
 
   public DeleteQueueTask() {
-    super(TYPE, logger);
+    super(Resource.QUEUE, logger);
   }
 
   @Override
