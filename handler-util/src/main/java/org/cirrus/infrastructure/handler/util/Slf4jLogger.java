@@ -2,16 +2,12 @@ package org.cirrus.infrastructure.handler.util;
 
 import org.slf4j.LoggerFactory;
 
-public final class DefaultLogger implements Logger {
+final class Slf4jLogger implements Logger {
 
   private final org.slf4j.Logger logger;
 
-  private DefaultLogger(String name) {
+  public Slf4jLogger(String name) {
     this.logger = LoggerFactory.getLogger(name);
-  }
-
-  public static DefaultLogger of(String name) {
-    return new DefaultLogger(name);
   }
 
   @Override

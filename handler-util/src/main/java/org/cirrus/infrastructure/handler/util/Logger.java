@@ -3,7 +3,7 @@ package org.cirrus.infrastructure.handler.util;
 public interface Logger {
 
   static Logger of(String name) {
-    return DefaultLogger.of(name);
+    return new Slf4jLogger(name);
   }
 
   default void debug(String format, Object... args) {
