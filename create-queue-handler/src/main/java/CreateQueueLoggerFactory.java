@@ -2,9 +2,9 @@ import org.cirrus.infrastructure.handler.util.Logger;
 
 final class CreateQueueLoggerFactory {
 
-  private static final Logger logger = DaggerCreateQueueComponent.create().getLogger();
+  private static final CreateQueueComponent component = DaggerCreateQueueComponent.create();
 
   public static Logger create() {
-    return logger;
+    return component.getLogger();
   }
 }
