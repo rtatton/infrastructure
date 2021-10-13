@@ -1,17 +1,18 @@
-package org.cirrus.infrastructure.task.resource;
+package org.cirrus.infrastructure.handler.resource;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.cirrus.infrastructure.handler.util.Resource;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class DeleteResourceInput {
+public abstract class CreateResourcesOutput {
 
   public static Builder newBuilder() {
-    return ImmutableDeleteResourceInput.newBuilder();
+    return ImmutableCreateResourcesOutput.newBuilder();
   }
 
   @Value.Derived
@@ -31,6 +32,6 @@ public abstract class DeleteResourceInput {
 
     Builder addOutputs(CreateResourceOutput... elements);
 
-    DeleteResourceInput build();
+    CreateResourcesOutput build();
   }
 }
