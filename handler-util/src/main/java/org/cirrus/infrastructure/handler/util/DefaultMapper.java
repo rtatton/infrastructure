@@ -3,10 +3,19 @@ package org.cirrus.infrastructure.handler.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public final class MappingUtil {
+public final class DefaultMapper implements Mapper {
 
-  public static <T> T read(String content, Class<T> cls, Logger logger) {
-    ObjectMapper mapper = create();
+  private final ObjectMapper mapper;
+
+  private DefaultMapper() {
+    this.mapper = new ObjectMapper();
+  }
+
+  public static DefaultMapper create() {
+    return new DefaultMapper();
+  }
+
+  public <T> T read(String content, Class<T> cls, Logger logger) {
     try {
       return mapper.readValue(content, cls);
     } catch (JsonProcessingException exception) {
@@ -15,12 +24,7 @@ public final class MappingUtil {
     }
   }
 
-  public static ObjectMapper create() {
-    return new ObjectMapper();
-  }
-
-  public static String write(Object value, Logger logger) {
-    ObjectMapper mapper = create();
+  public String write(Object value, Logger logger) {
     try {
       return mapper.writeValueAsString(value);
     } catch (JsonProcessingException exception) {

@@ -4,10 +4,11 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.cirrus.infrastructure.handler.resource.CreateResourcesOutput;
 import org.cirrus.infrastructure.handler.util.Logger;
-import org.cirrus.infrastructure.handler.util.MappingUtil;
+import org.cirrus.infrastructure.handler.util.Mapper;
 
 public abstract class DeleteResourceHandler implements RequestHandler<String, String> {
 
+  private static final Mapper mapper = Mapper.create();
   private final Logger logger;
 
   public DeleteResourceHandler(Logger logger) {
@@ -22,7 +23,7 @@ public abstract class DeleteResourceHandler implements RequestHandler<String, St
   }
 
   public CreateResourcesOutput mapInput(String input) {
-    return MappingUtil.read(input, CreateResourcesOutput.class, logger);
+    return mapper.read(input, CreateResourcesOutput.class, logger);
   }
 
   public abstract void deleteResource(CreateResourcesOutput input);

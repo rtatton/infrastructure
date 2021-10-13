@@ -3,11 +3,12 @@ package org.cirrus.infrastructure.handler.resource;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.cirrus.infrastructure.handler.util.Logger;
-import org.cirrus.infrastructure.handler.util.MappingUtil;
+import org.cirrus.infrastructure.handler.util.Mapper;
 import org.cirrus.infrastructure.handler.util.Resource;
 
 public abstract class CreateResourceHandler implements RequestHandler<String, String> {
 
+  private static final Mapper mapper = Mapper.create();
   private final Resource type;
   private final Logger logger;
 
@@ -25,7 +26,7 @@ public abstract class CreateResourceHandler implements RequestHandler<String, St
   }
 
   public CreateResourceInput mapInput(String input) {
-    return MappingUtil.read(input, CreateResourceInput.class, logger);
+    return mapper.read(input, CreateResourceInput.class, logger);
   }
 
   public abstract String createResource(CreateResourceInput input);
@@ -39,6 +40,6 @@ public abstract class CreateResourceHandler implements RequestHandler<String, St
   }
 
   public String mapOutput(CreateResourceOutput output) {
-    return MappingUtil.write(output, logger);
+    return mapper.write(output, logger);
   }
 }

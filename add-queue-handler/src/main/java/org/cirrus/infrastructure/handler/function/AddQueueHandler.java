@@ -4,11 +4,12 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.cirrus.infrastructure.handler.resource.CreateResourcesOutput;
 import org.cirrus.infrastructure.handler.util.Logger;
-import org.cirrus.infrastructure.handler.util.MappingUtil;
+import org.cirrus.infrastructure.handler.util.Mapper;
 import org.cirrus.infrastructure.handler.util.Resource;
 
 public class AddQueueHandler implements RequestHandler<String, String> {
 
+  private static final Mapper mapper = Mapper.create();
   private static final Logger logger = AddQueueLoggerFactory.create();
 
   @Override
@@ -19,7 +20,7 @@ public class AddQueueHandler implements RequestHandler<String, String> {
   }
 
   private CreateResourcesOutput mapInput(String input) {
-    return MappingUtil.read(input, CreateResourcesOutput.class, logger);
+    return mapper.read(input, CreateResourcesOutput.class, logger);
   }
 
   private void addQueue(CreateResourcesOutput input) {
