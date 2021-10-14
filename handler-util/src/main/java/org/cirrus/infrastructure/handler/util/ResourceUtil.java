@@ -7,6 +7,10 @@ import java.util.function.Function;
 
 public final class ResourceUtil {
 
+  private ResourceUtil() {
+    // No-op
+  }
+
   public static String createRandomId() {
     return UUID.randomUUID().toString();
   }
