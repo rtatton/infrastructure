@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 @Module
-public class ClientModule {
+public final class ClientModule {
 
   private static final Region REGION = Region.US_EAST_2;
   private static final String ACCESS_KEY = "";
@@ -22,6 +22,10 @@ public class ClientModule {
       AwsBasicCredentials.create(ACCESS_KEY, SECRETE_KEY);
   private static final AwsCredentialsProvider CREDENTIALS_PROVIDER =
       StaticCredentialsProvider.create(CREDENTIALS);
+
+  private ClientModule() {
+    // No-op
+  }
 
   @Provides
   @Singleton
