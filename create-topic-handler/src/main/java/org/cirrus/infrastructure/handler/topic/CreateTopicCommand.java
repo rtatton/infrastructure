@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.sns.SnsAsyncClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
 
-final class CreateTopicCommand implements Command<String> {
+public final class CreateTopicCommand implements Command<String> {
 
   private static final CreateTopicComponent component = DaggerCreateTopicComponent.create();
   private final SnsAsyncClient receiver;

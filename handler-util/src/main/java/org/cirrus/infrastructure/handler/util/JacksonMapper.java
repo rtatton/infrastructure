@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.UncheckedIOException;
 
-final class JacksonMapper implements Mapper {
+public final class JacksonMapper implements Mapper {
 
   private final ObjectMapper mapper;
 

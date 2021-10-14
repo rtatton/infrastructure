@@ -13,7 +13,9 @@ final class AddQueueModule {
   private static final int BATCH_SIZE = 10;
   private static final int MAX_BATCHING_WINDOW_IN_SECONDS = 10;
 
-  private AddQueueModule() {}
+  private AddQueueModule() {
+    // No-op
+  }
 
   @Provides
   @Singleton

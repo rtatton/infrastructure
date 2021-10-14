@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
 
-final class CreateFunctionCommand implements Command<String> {
+public final class CreateFunctionCommand implements Command<String> {
 
   private static final CreateFunctionComponent component = DaggerCreateFunctionComponent.create();
   private final LambdaAsyncClient receiver;

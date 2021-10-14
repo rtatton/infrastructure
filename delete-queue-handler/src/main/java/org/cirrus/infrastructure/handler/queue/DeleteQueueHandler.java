@@ -5,7 +5,7 @@ import org.cirrus.infrastructure.handler.resource.delete.DeleteResourceHandler;
 import org.cirrus.infrastructure.handler.util.Logger;
 import org.cirrus.infrastructure.handler.util.Resource;
 
-public class DeleteQueueHandler extends DeleteResourceHandler {
+public final class DeleteQueueHandler extends DeleteResourceHandler {
 
   private static final Logger logger = DeleteQueueLoggerFactory.create();
 

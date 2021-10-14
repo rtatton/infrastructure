@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
 
-final class DeleteQueueCommand implements Command<Void> {
+public final class DeleteQueueCommand implements Command<Void> {
 
   private static final DeleteQueueComponent component = DaggerDeleteQueueComponent.create();
   private final SqsAsyncClient receiver;

@@ -10,7 +10,9 @@ import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 @Module
 final class DeleteTopicModule {
 
-  private DeleteTopicModule() {}
+  private DeleteTopicModule() {
+    // No-op
+  }
 
   @Provides
   @Singleton

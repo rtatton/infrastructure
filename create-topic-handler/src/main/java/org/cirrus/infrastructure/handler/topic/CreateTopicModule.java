@@ -14,7 +14,9 @@ final class CreateTopicModule {
 
   private static final Map<String, String> ATTRIBUTES = Map.of();
 
-  private CreateTopicModule() {}
+  private CreateTopicModule() {
+    // No-op
+  }
 
   @Provides
   public static Supplier<CreateTopicRequest> provideCreateRequester() {

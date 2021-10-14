@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 
-final class CreateQueueCommand implements Command<String> {
+public final class CreateQueueCommand implements Command<String> {
 
   private static final CreateQueueComponent component = DaggerCreateQueueComponent.create();
   private final SqsAsyncClient receiver;

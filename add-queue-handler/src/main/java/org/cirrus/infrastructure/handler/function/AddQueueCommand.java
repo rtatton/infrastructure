@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingRequest;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
 
-final class AddQueueCommand implements Command<Void> {
+public final class AddQueueCommand implements Command<Void> {
 
   private static final AddQueueComponent component = DaggerAddQueueComponent.create();
   private final LambdaAsyncClient receiver;

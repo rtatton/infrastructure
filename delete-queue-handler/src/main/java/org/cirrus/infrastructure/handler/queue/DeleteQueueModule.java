@@ -10,7 +10,9 @@ import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 @Module
 final class DeleteQueueModule {
 
-  private DeleteQueueModule() {}
+  private DeleteQueueModule() {
+    // No-op
+  }
 
   @Provides
   @Singleton

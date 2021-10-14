@@ -15,7 +15,9 @@ final class CreateQueueModule {
 
   private static final Map<QueueAttributeName, String> ATTRIBUTES = Map.of();
 
-  private CreateQueueModule() {}
+  private CreateQueueModule() {
+    // No-op
+  }
 
   @Provides
   public static Supplier<CreateQueueRequest> provideCreateRequester() {

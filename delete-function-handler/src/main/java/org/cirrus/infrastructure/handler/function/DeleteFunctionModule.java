@@ -10,7 +10,9 @@ import software.amazon.awssdk.services.lambda.model.DeleteFunctionRequest;
 @Module
 final class DeleteFunctionModule {
 
-  private DeleteFunctionModule() {}
+  private DeleteFunctionModule() {
+    // No-op
+  }
 
   @Provides
   @Singleton

@@ -7,7 +7,7 @@ import org.cirrus.infrastructure.handler.util.Logger;
 import org.cirrus.infrastructure.handler.util.Mapper;
 import org.cirrus.infrastructure.handler.util.Resource;
 
-public class AddQueueHandler implements RequestHandler<String, String> {
+public final class AddQueueHandler implements RequestHandler<String, String> {
 
   private static final Mapper mapper = Mapper.create();
   private static final Logger logger = AddQueueLoggerFactory.create();

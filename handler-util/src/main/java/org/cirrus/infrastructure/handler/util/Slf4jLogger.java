@@ -2,7 +2,7 @@ package org.cirrus.infrastructure.handler.util;
 
 import org.slf4j.LoggerFactory;
 
-final class Slf4jLogger implements Logger {
+public final class Slf4jLogger implements Logger {
 
   private final org.slf4j.Logger logger;
 

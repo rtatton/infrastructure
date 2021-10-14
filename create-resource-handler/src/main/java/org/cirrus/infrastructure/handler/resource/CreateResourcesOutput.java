@@ -18,7 +18,7 @@ public abstract class CreateResourcesOutput {
   @Value.Derived
   public Map<Resource, CreateResourceOutput> getTypedOutputs() {
     return getOutputs().stream()
-        .map(o -> new SimpleEntry<>(o.getType(), o))
+        .map(output -> new SimpleEntry<>(output.getType(), output))
         .collect(ImmutableMap.toImmutableMap(Entry::getKey, Entry::getValue));
   }
 

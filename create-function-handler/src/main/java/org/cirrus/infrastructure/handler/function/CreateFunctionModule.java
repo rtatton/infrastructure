@@ -22,9 +22,12 @@ final class CreateFunctionModule {
   private static final String IMAGE_URI = "";
   private static final FunctionCode CODE = FunctionCode.builder().imageUri(IMAGE_URI).build();
 
-  private CreateFunctionModule() {}
+  private CreateFunctionModule() {
+    // No-op
+  }
 
   @Provides
+  @Singleton
   public static Supplier<CreateFunctionRequest> provideCreateRequester() {
     return () ->
         CreateFunctionRequest.builder()
