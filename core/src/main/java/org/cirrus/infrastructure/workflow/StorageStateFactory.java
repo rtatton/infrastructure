@@ -1,6 +1,7 @@
 package org.cirrus.infrastructure.workflow;
 
 import java.util.Map;
+import org.cirrus.infrastructure.handler.util.Keys;
 import software.amazon.awscdk.core.Duration;
 import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.stepfunctions.TaskStateBase;
@@ -18,10 +19,10 @@ public final class StorageStateFactory {
   private static final String DELETE_RESOURCE_IDS_COMMENT =
       "Deletes the Lambda function, SQS queue, and SNS topic IDs of a node in the node registry";
   private static final Duration TIMEOUT = Duration.seconds(3);
-  private static final Map<String, DynamoAttributeValue> NODE_REGISTRY_ITEM = getNodeRegistryItem();
+  private static final Map<String, DynamoAttributeValue> ITEM_SCHEMA = getItemSchema();
   private static final Map<String, DynamoAttributeValue> DELETE_KEY = getDeleteKey();
   private final Construct scope;
-  private final ITable nodeRegistry; // TODO
+  private final ITable nodeRegistry;
 
   private StorageStateFactory(Construct scope, ITable nodeRegistry) {
     this.scope = scope;
@@ -35,7 +36,7 @@ public final class StorageStateFactory {
   public TaskStateBase newStoreResourceIdsState() {
     return DynamoPutItem.Builder.create(scope, STORE_RESOURCE_IDS)
         .table(nodeRegistry)
-        .item(NODE_REGISTRY_ITEM)
+        .item(ITEM_SCHEMA)
         .timeout(TIMEOUT)
         .comment(STORE_RESOURCE_IDS_COMMENT)
         .build();
@@ -50,15 +51,15 @@ public final class StorageStateFactory {
         .build();
   }
 
-  private static Map<String, DynamoAttributeValue> getNodeRegistryItem() {
+  private static Map<String, DynamoAttributeValue> getItemSchema() {
     return Map.of(
-        "nodeId", DynamoAttributeValue.fromString("$[0].name"),
-        "functionId", DynamoAttributeValue.fromString("$[0].functionId"),
-        "queueId", DynamoAttributeValue.fromString("$[1].queueId"),
-        "topicId", DynamoAttributeValue.fromString("$[2].topicId"));
+        Keys.NODE_KEY, DynamoAttributeValue.fromString(Keys.NODE_KEY_PATH),
+        Keys.FUNCTION_KEY, DynamoAttributeValue.fromString(Keys.FUNCTION_KEY_PATH),
+        Keys.QUEUE_KEY, DynamoAttributeValue.fromString(Keys.QUEUE_KEY_PATH),
+        Keys.TOPIC_KEY, DynamoAttributeValue.fromString(Keys.TOPIC_KEY_PATH));
   }
 
   private static Map<String, DynamoAttributeValue> getDeleteKey() {
-    return Map.of("nodeId", DynamoAttributeValue.fromString("$[0].name"));
+    return Map.of(Keys.NODE_KEY, DynamoAttributeValue.fromString(Keys.NODE_KEY_PATH));
   }
 }

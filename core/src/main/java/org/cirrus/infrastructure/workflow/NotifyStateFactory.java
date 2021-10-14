@@ -9,11 +9,11 @@ import software.constructs.Construct;
 
 public final class NotifyStateFactory {
 
-  private static final String NOTIFY_NETWORK = "NotifyNetwork";
+  private static final String CONSTRUCT_ID = "NotifyNetwork";
   private static final String NOTIFY_NETWORK_COMMENT = "Notifies all nodes of an event";
   private static final Duration TIMEOUT = Duration.seconds(3);
   private final Construct scope;
-  private final ITopic networkTopic; // TODO
+  private final ITopic networkTopic;
 
   private NotifyStateFactory(Construct scope, ITopic networkTopic) {
     this.scope = scope;
@@ -25,7 +25,7 @@ public final class NotifyStateFactory {
   }
 
   public TaskStateBase newNotifyNetworkState() {
-    return SnsPublish.Builder.create(scope, NOTIFY_NETWORK)
+    return SnsPublish.Builder.create(scope, CONSTRUCT_ID)
         .topic(networkTopic)
         .message(TaskInput.fromText("")) // TODO
         .timeout(TIMEOUT)

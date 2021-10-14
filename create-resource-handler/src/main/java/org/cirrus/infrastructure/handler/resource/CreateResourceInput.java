@@ -1,5 +1,7 @@
 package org.cirrus.infrastructure.handler.resource;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.cirrus.infrastructure.handler.util.Keys;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -9,6 +11,7 @@ public abstract class CreateResourceInput {
     return ImmutableCreateResourceInput.newBuilder();
   }
 
+  @JsonProperty(Keys.NODE_INPUT_KEY)
   public abstract String getName();
 
   public interface Builder {

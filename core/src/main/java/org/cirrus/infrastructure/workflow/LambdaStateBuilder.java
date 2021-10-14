@@ -37,7 +37,9 @@ public final class LambdaStateBuilder {
   }
 
   private void checkFields() {
+    Preconditions.checkNotNull(functionName);
     Preconditions.checkNotNull(codePath);
+    Preconditions.checkNotNull(comment);
   }
 
   private TaskStateBase createState() {

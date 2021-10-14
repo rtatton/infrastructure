@@ -1,6 +1,9 @@
 package org.cirrus.infrastructure.workflow;
 
 import com.google.common.base.Preconditions;
+import java.util.Map;
+import org.cirrus.infrastructure.handler.util.Keys;
+import org.cirrus.infrastructure.handler.util.Resource;
 import software.amazon.awscdk.services.stepfunctions.Choice;
 import software.amazon.awscdk.services.stepfunctions.Condition;
 import software.amazon.awscdk.services.stepfunctions.Fail;
@@ -15,7 +18,7 @@ import software.constructs.Construct;
 
 public class CreateNodeStepFunction extends Construct {
 
-  private static final String ID = "CreateNodeStepFunctionConstruct";
+  private static final String CONSTRUCT_ID = "CreateNodeStepFunctionConstruct";
   private static final String STEP_FUNCTION_ID = "CreateNodeStepFunction";
   private static final String CREATE_RESOURCES = "CreateResources";
   private static final String INTEGRATE_RESOURCES = "IntegrateResources";
@@ -23,9 +26,6 @@ public class CreateNodeStepFunction extends Construct {
   private static final String INTEGRATE_OR_DELETE = "IntegrateOrDeleteResources";
   private static final String SUCCESS = "Success";
   private static final String FAILURE = "Failure";
-  private static final String FUNCTION_ID = "functionId";
-  private static final String QUEUE_ID = "queueId";
-  private static final String TOPIC_ID = "topicId";
   private static final StateMachineType TYPE = StateMachineType.STANDARD;
   private final Construct scope;
   private final FunctionStateFactory functionStateFactory;
@@ -35,7 +35,7 @@ public class CreateNodeStepFunction extends Construct {
   private final StorageStateFactory storageStateFactory;
 
   private CreateNodeStepFunction(Builder builder) {
-    super(builder.scope, ID);
+    super(builder.scope, CONSTRUCT_ID);
     this.scope = builder.scope;
     this.functionStateFactory = builder.functionStateFactory;
     this.queueStateFactory = builder.queueStateFactory;
@@ -66,9 +66,8 @@ public class CreateNodeStepFunction extends Construct {
   }
 
   private INextable createResources() {
-    return Parallel.Builder.create(scope, CREATE_RESOURCES)
-        .build()
-        .branch(createFunction(), createQueue(), createTopic());
+    IChainable[] ordered = sort(createFunction(), createQueue(), createTopic());
+    return Parallel.Builder.create(scope, CREATE_RESOURCES).build().branch(ordered);
   }
 
   private IChainable integrateResourcesElseDeleteThenFail() {
@@ -78,10 +77,10 @@ public class CreateNodeStepFunction extends Construct {
         .otherwise(integrateResources().addCatch(deleteResourcesThenFail()));
   }
 
-  private Parallel integrateResources() {
-    return Parallel.Builder.create(scope, INTEGRATE_RESOURCES)
-        .build()
-        .branch(addQueueToFunction(), subscribeQueueToTopic());
+  private IChainable[] sort(IChainable function, IChainable queue, IChainable topic) {
+    Map<Resource, IChainable> tasks =
+        Map.of(Resource.FUNCTION, function, Resource.QUEUE, queue, Resource.TOPIC, topic);
+    return Keys.sort(tasks).toArray(new IChainable[3]);
   }
 
   private IChainable addQueueToFunction() {
@@ -104,14 +103,38 @@ public class CreateNodeStepFunction extends Construct {
     return topicStateFactory.newCreateTopicState();
   }
 
+  private Parallel integrateResources() {
+    IChainable[] tasks = sort(addQueueToFunction(), subscribeQueueToTopic());
+    return Parallel.Builder.create(scope, INTEGRATE_RESOURCES).build().branch(tasks);
+  }
+
+  private IChainable[] sort(IChainable function, IChainable topic) {
+    Map<Resource, IChainable> tasks = Map.of(Resource.FUNCTION, function, Resource.TOPIC, topic);
+    return Keys.sort(tasks).toArray(new IChainable[2]);
+  }
+
   private Condition anyNull() {
-    return Condition.or(isNull(FUNCTION_ID), isNull(QUEUE_ID), isNull(TOPIC_ID));
+    Condition[] conditions =
+        sort(
+            isNull(Keys.FUNCTION_KEY_PATH),
+            isNull(Keys.QUEUE_KEY_PATH),
+            isNull(Keys.TOPIC_KEY_PATH));
+    return Condition.or(conditions);
+  }
+
+  private Condition[] sort(Condition function, Condition queue, Condition topic) {
+    Map<Resource, Condition> conditions =
+        Map.of(Resource.FUNCTION, function, Resource.QUEUE, queue, Resource.TOPIC, topic);
+    return Keys.sort(conditions).toArray(new Condition[3]);
+  }
+
+  private Condition isNull(String variable) {
+    return Condition.isNull(variable);
   }
 
   private Parallel deleteResources() {
-    return Parallel.Builder.create(scope, DELETE_RESOURCES)
-        .build()
-        .branch(deleteFunction(), deleteQueue(), deleteTopic());
+    IChainable[] tasks = sort(deleteFunction(), deleteQueue(), deleteTopic());
+    return Parallel.Builder.create(scope, DELETE_RESOURCES).build().branch(tasks);
   }
 
   private IChainable deleteResourcesThenFail() {
@@ -124,10 +147,6 @@ public class CreateNodeStepFunction extends Construct {
 
   private TaskStateBase storeIdsElseDeleteThenFail() {
     return storeResourceIds().addCatch(deleteResourcesThenFail());
-  }
-
-  private Condition isNull(String variable) {
-    return Condition.isNull(variable);
   }
 
   private IChainable deleteFunction() {

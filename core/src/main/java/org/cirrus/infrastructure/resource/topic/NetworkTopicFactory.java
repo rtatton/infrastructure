@@ -6,7 +6,7 @@ import software.constructs.Construct;
 
 public class NetworkTopicFactory {
 
-  private static final String DISPLAY_NAME = "NetworkTopic";
+  private static final String TOPIC_ID = "NetworkTopic";
   private final Construct scope;
 
   private NetworkTopicFactory(Construct scope) {
@@ -18,6 +18,6 @@ public class NetworkTopicFactory {
   }
 
   public ITopic create() {
-    return Topic.Builder.create(scope, DISPLAY_NAME).displayName(DISPLAY_NAME).build();
+    return Topic.Builder.create(scope, TOPIC_ID).displayName(TOPIC_ID).build();
   }
 }

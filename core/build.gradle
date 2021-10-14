@@ -9,6 +9,7 @@ def versions = [
 ]
 
 dependencies {
+    implementation project(":handler-util")
     implementation "com.google.guava:guava:$versions.Guava"
     implementation "software.amazon.awscdk:core:$versions.Cdk"
     implementation "software.amazon.awscdk:lambda:$versions.Cdk"
