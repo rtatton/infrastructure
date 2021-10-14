@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.workflow;
+package org.cirrus.infrastructure.resource.function;
 
 import com.google.common.base.Preconditions;
 import java.util.List;

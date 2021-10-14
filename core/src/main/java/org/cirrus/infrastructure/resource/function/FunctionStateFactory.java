@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.workflow;
+package org.cirrus.infrastructure.resource.function;
 
 import software.amazon.awscdk.services.stepfunctions.TaskStateBase;
 import software.constructs.Construct;

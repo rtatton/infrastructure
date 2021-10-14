@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.workflow;
+package org.cirrus.infrastructure.resource.topic;
 
 import software.amazon.awscdk.core.Duration;
 import software.amazon.awscdk.services.sns.ITopic;

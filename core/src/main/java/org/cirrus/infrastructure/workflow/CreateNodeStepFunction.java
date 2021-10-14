@@ -2,6 +2,11 @@ package org.cirrus.infrastructure.workflow;
 
 import com.google.common.base.Preconditions;
 import java.util.Map;
+import org.cirrus.infrastructure.resource.function.FunctionStateFactory;
+import org.cirrus.infrastructure.resource.queue.QueueStateFactory;
+import org.cirrus.infrastructure.resource.storage.StorageStateFactory;
+import org.cirrus.infrastructure.resource.topic.NotifyStateFactory;
+import org.cirrus.infrastructure.resource.topic.TopicStateFactory;
 import org.cirrus.infrastructure.util.Keys;
 import org.cirrus.infrastructure.util.Resource;
 import software.amazon.awscdk.services.stepfunctions.Choice;

@@ -1,13 +1,13 @@
 package org.cirrus.infrastructure.stack;
 
+import org.cirrus.infrastructure.resource.function.FunctionStateFactory;
+import org.cirrus.infrastructure.resource.queue.QueueStateFactory;
 import org.cirrus.infrastructure.resource.storage.NodeRegistryFactory;
+import org.cirrus.infrastructure.resource.storage.StorageStateFactory;
 import org.cirrus.infrastructure.resource.topic.NetworkTopicFactory;
+import org.cirrus.infrastructure.resource.topic.NotifyStateFactory;
+import org.cirrus.infrastructure.resource.topic.TopicStateFactory;
 import org.cirrus.infrastructure.workflow.CreateNodeStepFunction;
-import org.cirrus.infrastructure.workflow.FunctionStateFactory;
-import org.cirrus.infrastructure.workflow.NotifyStateFactory;
-import org.cirrus.infrastructure.workflow.QueueStateFactory;
-import org.cirrus.infrastructure.workflow.StorageStateFactory;
-import org.cirrus.infrastructure.workflow.TopicStateFactory;
 import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.sns.ITopic;

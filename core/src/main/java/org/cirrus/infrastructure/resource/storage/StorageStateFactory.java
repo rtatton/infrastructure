@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.workflow;
+package org.cirrus.infrastructure.resource.storage;
 
 import java.util.Map;
 import org.cirrus.infrastructure.util.Keys;
