@@ -12,7 +12,9 @@ final class SubscribeQueueModule {
 
   private static final String SUBSCRIPTION_PROTOCOL = "sqs";
 
-  private SubscribeQueueModule() {}
+  private SubscribeQueueModule() {
+    // No-op
+  }
 
   @Provides
   @Singleton
