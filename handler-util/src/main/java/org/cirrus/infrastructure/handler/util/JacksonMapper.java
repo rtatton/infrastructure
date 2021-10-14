@@ -2,6 +2,7 @@ package org.cirrus.infrastructure.handler.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.UncheckedIOException;
 
 final class JacksonMapper implements Mapper {
 
@@ -16,7 +17,7 @@ final class JacksonMapper implements Mapper {
       return mapper.readValue(content, cls);
     } catch (JsonProcessingException exception) {
       logger.error(exception.getLocalizedMessage());
-      throw new ObjectMappingException();
+      throw new UncheckedIOException(exception);
     }
   }
 
@@ -25,7 +26,7 @@ final class JacksonMapper implements Mapper {
       return mapper.writeValueAsString(value);
     } catch (JsonProcessingException exception) {
       logger.error(exception.getLocalizedMessage());
-      throw new ObjectMappingException();
+      throw new UncheckedIOException(exception);
     }
   }
 }
