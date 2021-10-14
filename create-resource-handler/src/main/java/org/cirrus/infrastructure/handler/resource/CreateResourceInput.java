@@ -1,7 +1,7 @@
 package org.cirrus.infrastructure.handler.resource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.cirrus.infrastructure.handler.util.Keys;
+import org.cirrus.infrastructure.util.Keys;
 import org.immutables.value.Value;
 
 @Value.Immutable

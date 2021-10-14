@@ -2,8 +2,8 @@ package org.cirrus.infrastructure.handler.topic;
 
 import org.cirrus.infrastructure.handler.resource.CreateResourceHandler;
 import org.cirrus.infrastructure.handler.resource.CreateResourceInput;
-import org.cirrus.infrastructure.handler.util.Logger;
-import org.cirrus.infrastructure.handler.util.Resource;
+import org.cirrus.infrastructure.util.Logger;
+import org.cirrus.infrastructure.util.Resource;
 
 public final class CreateTopicHandler extends CreateResourceHandler {
 

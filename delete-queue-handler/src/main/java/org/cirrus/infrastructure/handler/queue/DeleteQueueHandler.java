@@ -2,8 +2,8 @@ package org.cirrus.infrastructure.handler.queue;
 
 import org.cirrus.infrastructure.handler.resource.CreateResourcesOutput;
 import org.cirrus.infrastructure.handler.resource.delete.DeleteResourceHandler;
-import org.cirrus.infrastructure.handler.util.Logger;
-import org.cirrus.infrastructure.handler.util.Resource;
+import org.cirrus.infrastructure.util.Logger;
+import org.cirrus.infrastructure.util.Resource;
 
 public final class DeleteQueueHandler extends DeleteResourceHandler {
 

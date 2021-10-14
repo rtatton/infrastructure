@@ -4,7 +4,7 @@ import dagger.Module;
 import dagger.Provides;
 import java.util.function.Function;
 import javax.inject.Singleton;
-import org.cirrus.infrastructure.handler.util.Logger;
+import org.cirrus.infrastructure.util.Logger;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionRequest;
 
 @Module

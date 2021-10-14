@@ -5,7 +5,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.cirrus.infrastructure.handler.util.Resource;
+import org.cirrus.infrastructure.util.Resource;
 import org.immutables.value.Value;
 
 @Value.Immutable

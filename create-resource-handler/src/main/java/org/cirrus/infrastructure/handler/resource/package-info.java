@@ -1,4 +1,4 @@
 @ImmutableStyle
 package org.cirrus.infrastructure.handler.resource;
 
-import org.cirrus.infrastructure.handler.util.ImmutableStyle;
+import org.cirrus.infrastructure.util.ImmutableStyle;

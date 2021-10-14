@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.handler.util;
+package org.cirrus.infrastructure.util;
 
 @FunctionalInterface
 public interface Command<T> {

@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.topic;
 
-import org.cirrus.infrastructure.handler.util.Logger;
+import org.cirrus.infrastructure.util.Logger;
 
 public final class CreateTopicLoggerFactory {
 

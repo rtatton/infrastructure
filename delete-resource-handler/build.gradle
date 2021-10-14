@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     api project(":create-resource-handler")
-    api project(":handler-util")
+    api project(":util")
 }

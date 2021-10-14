@@ -5,8 +5,8 @@ import dagger.Provides;
 import java.util.Map;
 import java.util.function.Supplier;
 import javax.inject.Singleton;
-import org.cirrus.infrastructure.handler.util.Logger;
-import org.cirrus.infrastructure.handler.util.ResourceUtil;
+import org.cirrus.infrastructure.util.Logger;
+import org.cirrus.infrastructure.util.ResourceUtil;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 
 @Module

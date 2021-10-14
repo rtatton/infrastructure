@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.handler.util;
+package org.cirrus.infrastructure.util;
 
 import dagger.Module;
 import dagger.Provides;

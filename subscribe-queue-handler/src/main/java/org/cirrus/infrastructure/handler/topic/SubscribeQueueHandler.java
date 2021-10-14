@@ -3,9 +3,9 @@ package org.cirrus.infrastructure.handler.topic;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.cirrus.infrastructure.handler.resource.CreateResourcesOutput;
-import org.cirrus.infrastructure.handler.util.Logger;
-import org.cirrus.infrastructure.handler.util.Mapper;
-import org.cirrus.infrastructure.handler.util.Resource;
+import org.cirrus.infrastructure.util.Logger;
+import org.cirrus.infrastructure.util.Mapper;
+import org.cirrus.infrastructure.util.Resource;
 
 public final class SubscribeQueueHandler implements RequestHandler<String, String> {
 

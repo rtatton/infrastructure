@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.handler.util;
+package org.cirrus.infrastructure.util;
 
 import java.util.ArrayList;
 import java.util.List;

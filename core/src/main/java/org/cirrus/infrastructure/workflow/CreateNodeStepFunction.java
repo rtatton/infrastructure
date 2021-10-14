@@ -2,8 +2,8 @@ package org.cirrus.infrastructure.workflow;
 
 import com.google.common.base.Preconditions;
 import java.util.Map;
-import org.cirrus.infrastructure.handler.util.Keys;
-import org.cirrus.infrastructure.handler.util.Resource;
+import org.cirrus.infrastructure.util.Keys;
+import org.cirrus.infrastructure.util.Resource;
 import software.amazon.awscdk.services.stepfunctions.Choice;
 import software.amazon.awscdk.services.stepfunctions.Condition;
 import software.amazon.awscdk.services.stepfunctions.Fail;

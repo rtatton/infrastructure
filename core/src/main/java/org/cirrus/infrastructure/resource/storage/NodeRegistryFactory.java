@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.resource.storage;
 
-import org.cirrus.infrastructure.handler.util.Keys;
+import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awscdk.services.dynamodb.Attribute;
 import software.amazon.awscdk.services.dynamodb.AttributeType;
 import software.amazon.awscdk.services.dynamodb.BillingMode;

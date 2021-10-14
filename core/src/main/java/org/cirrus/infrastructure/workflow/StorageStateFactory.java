@@ -1,7 +1,7 @@
 package org.cirrus.infrastructure.workflow;
 
 import java.util.Map;
-import org.cirrus.infrastructure.handler.util.Keys;
+import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awscdk.core.Duration;
 import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.stepfunctions.TaskStateBase;
