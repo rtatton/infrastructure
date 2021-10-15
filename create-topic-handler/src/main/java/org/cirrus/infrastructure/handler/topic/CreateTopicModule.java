@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 final class CreateTopicModule {
 
   private static final Map<String, String> ATTRIBUTES = Map.of();
+  private static final String LOGGER_NAME = "CreateTopic";
 
   private CreateTopicModule() {
     // No-op
@@ -30,6 +31,6 @@ final class CreateTopicModule {
   @Provides
   @Singleton
   public static Logger provideLogger() {
-    return Logger.of("CreateTopic");
+    return Logger.of(LOGGER_NAME);
   }
 }

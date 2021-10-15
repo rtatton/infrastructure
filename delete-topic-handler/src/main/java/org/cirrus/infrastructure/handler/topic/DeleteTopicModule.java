@@ -10,6 +10,8 @@ import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 @Module
 final class DeleteTopicModule {
 
+  private static final String LOGGER_NAME = "DeleteTopic";
+
   private DeleteTopicModule() {
     // No-op
   }
@@ -23,6 +25,6 @@ final class DeleteTopicModule {
   @Provides
   @Singleton
   public static Logger provideLogger() {
-    return Logger.of("DeleteTopic");
+    return Logger.of(LOGGER_NAME);
   }
 }

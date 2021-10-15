@@ -10,6 +10,8 @@ import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 @Module
 final class DeleteQueueModule {
 
+  private static final String LOGGER_NAME = "DeleteQueue";
+
   private DeleteQueueModule() {
     // No-op
   }
@@ -23,6 +25,6 @@ final class DeleteQueueModule {
   @Provides
   @Singleton
   public static Logger provideLogger() {
-    return Logger.of("DeleteQueue");
+    return Logger.of(LOGGER_NAME);
   }
 }

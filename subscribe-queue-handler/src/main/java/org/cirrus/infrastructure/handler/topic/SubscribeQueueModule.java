@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.sns.model.SubscribeRequest;
 final class SubscribeQueueModule {
 
   private static final String SUBSCRIPTION_PROTOCOL = "sqs";
+  private static final String LOGGER_NAME = "SubscribeQueue";
 
   private SubscribeQueueModule() {
     // No-op
@@ -30,6 +31,6 @@ final class SubscribeQueueModule {
   @Provides
   @Singleton
   public static Logger provideLogger() {
-    return Logger.of("SubscribeQueue");
+    return Logger.of(LOGGER_NAME);
   }
 }

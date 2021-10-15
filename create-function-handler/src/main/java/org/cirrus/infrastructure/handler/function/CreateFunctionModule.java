@@ -23,6 +23,7 @@ final class CreateFunctionModule {
   private static final String IMAGE_URI = ""; // TODO Move to API
   private static final Runtime RUNTIME = Runtime.JAVA11; // TODO Move to API
   private static final FunctionCode CODE = FunctionCode.builder().imageUri(IMAGE_URI).build();
+  private static final String LOGGER_NAME = "CreateFunction";
 
   private CreateFunctionModule() {
     // No-op
@@ -49,6 +50,6 @@ final class CreateFunctionModule {
   @Provides
   @Singleton
   public static Logger provideLogger() {
-    return Logger.of("CreateFunction");
+    return Logger.of(LOGGER_NAME);
   }
 }

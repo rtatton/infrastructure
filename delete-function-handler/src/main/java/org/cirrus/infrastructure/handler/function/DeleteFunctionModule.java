@@ -10,6 +10,8 @@ import software.amazon.awssdk.services.lambda.model.DeleteFunctionRequest;
 @Module
 final class DeleteFunctionModule {
 
+  private static final String LOGGER_NAME = "DeleteFunction";
+
   private DeleteFunctionModule() {
     // No-op
   }
@@ -23,6 +25,6 @@ final class DeleteFunctionModule {
   @Provides
   @Singleton
   public static Logger provideLogger() {
-    return Logger.of("DeleteFunction");
+    return Logger.of(LOGGER_NAME);
   }
 }

@@ -14,6 +14,7 @@ import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 final class CreateQueueModule {
 
   private static final Map<QueueAttributeName, String> ATTRIBUTES = Map.of();
+  private static final String LOGGER_NAME = "CreateQueue";
 
   private CreateQueueModule() {
     // No-op
@@ -31,6 +32,6 @@ final class CreateQueueModule {
   @Provides
   @Singleton
   public static Logger provideLogger() {
-    return Logger.of("CreateQueue");
+    return Logger.of(LOGGER_NAME);
   }
 }
