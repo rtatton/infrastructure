@@ -6,13 +6,13 @@ import software.constructs.Construct;
 public final class FunctionStateFactory {
 
   private static final String CREATE_FUNCTION = "CreateFunction";
-  private static final String CREATE_FUNCTION_PATH = "../task/function/CreateFunctionHandler";
+  private static final String CREATE_FUNCTION_PATH = "./create-function-handler/";
   private static final String CREATE_FUNCTION_COMMENT = "Creates a Lambda function";
   private static final String DELETE_FUNCTION = "DeleteFunction";
-  private static final String DELETE_FUNCTION_PATH = "../task/function/DeleteFunctionHandler";
+  private static final String DELETE_FUNCTION_PATH = "./delete-function-handler/";
   private static final String DELETE_FUNCTION_COMMENT = "Deletes a Lambda function";
   private static final String ADD_QUEUE = "AddQueue";
-  private static final String ADD_QUEUE_PATH = "../task/function/AddQueueHandler";
+  private static final String ADD_QUEUE_PATH = "./add-queue-handler/";
   private static final String ADD_QUEUE_COMMENT =
       "Adds an SQS queue as an event-source mapping to a Lambda function";
   private final Construct scope;
@@ -28,7 +28,7 @@ public final class FunctionStateFactory {
   public TaskStateBase newCreateFunctionState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(CREATE_FUNCTION)
-        .setCodePath(CREATE_FUNCTION_PATH)
+        .setCodeDirFromRoot(CREATE_FUNCTION_PATH)
         .setComment(CREATE_FUNCTION_COMMENT)
         .build();
   }
@@ -36,7 +36,7 @@ public final class FunctionStateFactory {
   public TaskStateBase newDeleteFunctionState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(DELETE_FUNCTION)
-        .setCodePath(DELETE_FUNCTION_PATH)
+        .setCodeDirFromRoot(DELETE_FUNCTION_PATH)
         .setComment(DELETE_FUNCTION_COMMENT)
         .build();
   }
@@ -44,7 +44,7 @@ public final class FunctionStateFactory {
   public TaskStateBase newAddQueueState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(ADD_QUEUE)
-        .setCodePath(ADD_QUEUE_PATH)
+        .setCodeDirFromRoot(ADD_QUEUE_PATH)
         .setComment(ADD_QUEUE_COMMENT)
         .build();
   }
