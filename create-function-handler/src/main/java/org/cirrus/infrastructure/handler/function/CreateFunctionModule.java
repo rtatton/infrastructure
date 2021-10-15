@@ -15,11 +15,11 @@ import software.amazon.awssdk.services.lambda.model.Runtime;
 final class CreateFunctionModule {
 
   private static final String HANDLER_NAME = ""; // TODO Move to API
-  private static final String CODE_SIGNING_CONFIG_ARN = "";
+  private static final String CODE_SIGNING_CONFIG_ARN = ""; // TODO
   private static final int MEMORY_SIZE_IN_MB = 256; // TODO Move to API
   private static final PackageType PACKAGE_TYPE = PackageType.IMAGE; // TODO Move to API
   private static final int TIMEOUT_IN_SECONDS = 3; // TODO Move to API
-  private static final String FUNCTION_ROLE = "";
+  private static final String FUNCTION_ROLE = ""; // TODO
   private static final String IMAGE_URI = ""; // TODO Move to API
   private static final Runtime RUNTIME = Runtime.JAVA11; // TODO Move to API
   // TODO Move to API

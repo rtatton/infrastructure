@@ -10,8 +10,8 @@ import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingRequ
 @Module
 final class AddQueueModule {
 
-  private static final int BATCH_SIZE = 10;
-  private static final int MAX_BATCHING_WINDOW_IN_SECONDS = 10;
+  private static final int BATCH_SIZE = 10; // TODO Move to API
+  private static final int MAX_BATCHING_WINDOW_IN_SECONDS = 10; // TODO Move to API
   private static final String LOGGER_NAME = "AddQueue";
 
   private AddQueueModule() {

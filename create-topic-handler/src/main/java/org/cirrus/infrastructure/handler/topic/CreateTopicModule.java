@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 @Module
 final class CreateTopicModule {
 
-  private static final Map<String, String> ATTRIBUTES = Map.of();
+  private static final Map<String, String> ATTRIBUTES = Map.of("Policy", ""); // TODO
   private static final String LOGGER_NAME = "CreateTopic";
 
   private CreateTopicModule() {
