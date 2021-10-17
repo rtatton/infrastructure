@@ -1,5 +1,6 @@
 plugins {
     id "cirrus-handler"
+    id "java-test-fixtures"
 }
 
 // Versions of all dependencies, organized in descending alphabetical order.
