@@ -26,16 +26,15 @@ public final class LambdaStateBuilder {
   private static final String BASH = "bash";
   private static final String OPTION_C = "-c";
   private static final String CD_THEN_BUILD_THEN_COPY_FORMAT =
-      "cd %s && ./gradlew build && cp build/distributions/lambda.zip %s";
-  private static final String BUILD_THEN_LS_THEN_COPY =
-      "./gradlew build && ls /asset-output/ && cp build/distributions/lambda.zip /asset-output/";
+      "cd ./%1$s && ./gradlew build && cp build/distributions/%1$s.zip %2$s";
+  private static final String BUILD_THEN_LS_THEN_COPY_FORMAT =
+      "./gradlew build && ls /asset-output/ && cp build/distributions/%s.zip /asset-output/";
   private static final String HANDLER_PACKAGE_FORMAT = "org.cirrus.infrastructure.handler.%s";
-  private static final List<String> CONTAINER_COMMAND = getContainerCommand();
   private static final Runtime RUNTIME = Runtime.JAVA_11;
   private static final Duration TIMEOUT = Duration.seconds(3);
   private final Construct scope;
   private String functionName;
-  private String codeDirFromRoot;
+  private String codeDirectoryName;
   private String comment;
 
   private LambdaStateBuilder(Construct scope) {
@@ -55,7 +54,7 @@ public final class LambdaStateBuilder {
 
   private void checkFields() {
     Preconditions.checkNotNull(functionName);
-    Preconditions.checkNotNull(codeDirFromRoot);
+    Preconditions.checkNotNull(codeDirectoryName);
     Preconditions.checkNotNull(comment);
   }
 
@@ -69,7 +68,7 @@ public final class LambdaStateBuilder {
 
   private IFunction createFunction() {
     return Function.Builder.create(scope, functionName)
-        .code(Code.fromAsset(codeDirFromRoot, getAssetOptions()))
+        .code(Code.fromAsset(codeDirectoryName, getAssetOptions()))
         .architectures(List.of(Architecture.ARM_64))
         .runtime(RUNTIME)
         .timeout(TIMEOUT)
@@ -83,7 +82,7 @@ public final class LambdaStateBuilder {
 
   private AssetOptions getAssetOptions() {
     return AssetOptions.builder()
-        .assetHashType(AssetHashType.SOURCE)
+        .assetHashType(AssetHashType.OUTPUT)
         .bundling(getBundlingOptions())
         .build();
   }
@@ -95,7 +94,7 @@ public final class LambdaStateBuilder {
   private BundlingOptions getBundlingOptions() {
     return BundlingOptions.builder()
         .local((outputPath, bundlingOptions) -> tryLocalBundling(outputPath))
-        .command(CONTAINER_COMMAND)
+        .command(getContainerCommand())
         .image(RUNTIME.getBundlingImage())
         .user(USER)
         .outputType(BundlingOutput.ARCHIVED)
@@ -119,16 +118,20 @@ public final class LambdaStateBuilder {
     }
   }
 
+  private List<String> getContainerCommand() {
+    return List.of(SH, OPTION_C, getBuildThenLsThenCopyCommand());
+  }
+
+  private String getBuildThenLsThenCopyCommand() {
+    return String.format(BUILD_THEN_LS_THEN_COPY_FORMAT, codeDirectoryName);
+  }
+
   private ProcessBuilder getBuilder(String outputPath) {
-    return new ProcessBuilder(BASH, OPTION_C, cdThenBuildThenCopy(outputPath));
+    return new ProcessBuilder(BASH, OPTION_C, getCdThenBuildThenCopyCommand(outputPath));
   }
 
-  private String cdThenBuildThenCopy(String outputPath) {
-    return String.format(CD_THEN_BUILD_THEN_COPY_FORMAT, codeDirFromRoot, outputPath);
-  }
-
-  private static List<String> getContainerCommand() {
-    return List.of(SH, OPTION_C, BUILD_THEN_LS_THEN_COPY);
+  private String getCdThenBuildThenCopyCommand(String outputPath) {
+    return String.format(CD_THEN_BUILD_THEN_COPY_FORMAT, codeDirectoryName, outputPath);
   }
 
   /** Sets the name of the function that will be used as part of the logical ID of the construct. */
@@ -137,9 +140,9 @@ public final class LambdaStateBuilder {
     return this;
   }
 
-  /** Sets the path to the top-level directory container the build files and source code. */
-  public LambdaStateBuilder setCodeDirFromRoot(String codeDirFromRoot) {
-    this.codeDirFromRoot = codeDirFromRoot;
+  /** Sets the name of the top-level directory that contains the build files and source code. */
+  public LambdaStateBuilder setCodeDirectoryName(String codeDirectoryName) {
+    this.codeDirectoryName = codeDirectoryName;
     return this;
   }
 
