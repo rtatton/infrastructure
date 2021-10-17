@@ -16,12 +16,10 @@ java {
 
 // Versions of all dependencies, organized in descending alphabetical order.
 def versions = [
-        ProGuard: "7.1.+",
-        JUnit   : "5.7.+",
+        JUnit: "5.7.+",
 ]
 
 dependencies {
-    compileOnly "com.guardsquare:proguard-gradle:$versions.ProGuard"
     testImplementation "org.junit.jupiter:junit-jupiter:$versions.JUnit"
 }
 
