@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.resource.storage;
+package org.cirrus.infrastructure.factory;
 
 import java.util.Map;
 import org.cirrus.infrastructure.util.Keys;

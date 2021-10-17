@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.resource.storage;
+package org.cirrus.infrastructure.factory;
 
 import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awscdk.services.dynamodb.Attribute;

@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.resource.function;
+package org.cirrus.infrastructure.factory;
 
 import software.amazon.awscdk.services.stepfunctions.TaskStateBase;
 import software.constructs.Construct;

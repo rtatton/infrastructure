@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.resource.function;
+package org.cirrus.infrastructure.factory;
 
 import com.google.common.base.Preconditions;
 import java.io.IOException;

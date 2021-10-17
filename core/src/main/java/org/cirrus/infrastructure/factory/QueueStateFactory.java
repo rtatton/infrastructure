@@ -1,6 +1,5 @@
-package org.cirrus.infrastructure.resource.queue;
+package org.cirrus.infrastructure.factory;
 
-import org.cirrus.infrastructure.resource.function.LambdaStateBuilder;
 import software.amazon.awscdk.services.stepfunctions.TaskStateBase;
 import software.constructs.Construct;
 
