@@ -6,13 +6,13 @@ import software.constructs.Construct;
 public final class FunctionStateFactory {
 
   private static final String CREATE_FUNCTION = "CreateFunction";
-  private static final String CREATE_FUNCTION_PATH = "./create-function-handler/";
+  private static final String CREATE_FUNCTION_DIR = "create-function-handler";
   private static final String CREATE_FUNCTION_COMMENT = "Creates a Lambda function";
   private static final String DELETE_FUNCTION = "DeleteFunction";
-  private static final String DELETE_FUNCTION_PATH = "./delete-function-handler/";
+  private static final String DELETE_FUNCTION_DIR = "delete-function-handler";
   private static final String DELETE_FUNCTION_COMMENT = "Deletes a Lambda function";
   private static final String ADD_QUEUE = "AddQueue";
-  private static final String ADD_QUEUE_PATH = "./add-queue-handler/";
+  private static final String ADD_QUEUE_DIR = "add-queue-handler";
   private static final String ADD_QUEUE_COMMENT =
       "Adds an SQS queue as an event-source mapping to a Lambda function";
   private final Construct scope;
@@ -28,7 +28,7 @@ public final class FunctionStateFactory {
   public TaskStateBase newCreateFunctionState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(CREATE_FUNCTION)
-        .setCodeDirectoryName(CREATE_FUNCTION_PATH)
+        .setCodeDirectoryName(CREATE_FUNCTION_DIR)
         .setComment(CREATE_FUNCTION_COMMENT)
         .build();
   }
@@ -36,7 +36,7 @@ public final class FunctionStateFactory {
   public TaskStateBase newDeleteFunctionState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(DELETE_FUNCTION)
-        .setCodeDirectoryName(DELETE_FUNCTION_PATH)
+        .setCodeDirectoryName(DELETE_FUNCTION_DIR)
         .setComment(DELETE_FUNCTION_COMMENT)
         .build();
   }
@@ -44,7 +44,7 @@ public final class FunctionStateFactory {
   public TaskStateBase newAddQueueState() {
     return LambdaStateBuilder.create(scope)
         .setFunctionName(ADD_QUEUE)
-        .setCodeDirectoryName(ADD_QUEUE_PATH)
+        .setCodeDirectoryName(ADD_QUEUE_DIR)
         .setComment(ADD_QUEUE_COMMENT)
         .build();
   }
