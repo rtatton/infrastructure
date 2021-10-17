@@ -21,5 +21,5 @@ import org.immutables.value.Value.Style.ImplementationVisibility;
     visibility = ImplementationVisibility.PACKAGE,
     of = "new",
     allParameters = true,
-    defaults = @Value.Immutable(prehash = true))
+    defaults = @Value.Immutable(prehash = true, copy = false))
 public @interface ImmutableStyle {}
