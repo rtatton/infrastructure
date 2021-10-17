@@ -27,7 +27,7 @@ public final class NotifyStateFactory {
   public TaskStateBase newNotifyNetworkState() {
     return SnsPublish.Builder.create(scope, CONSTRUCT_ID)
         .topic(networkTopic)
-        .message(TaskInput.fromText("")) // TODO
+        .message(TaskInput.fromText("")) // TODO Delay until the TODOs are completed
         .timeout(TIMEOUT)
         .comment(NOTIFY_NETWORK_COMMENT)
         .build();

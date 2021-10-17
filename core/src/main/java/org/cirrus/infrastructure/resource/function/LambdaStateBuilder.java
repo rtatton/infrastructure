@@ -74,7 +74,6 @@ public final class LambdaStateBuilder {
         .timeout(TIMEOUT)
         .role(Role.fromRoleArn(scope, "", "")) // TODO
         .deadLetterQueueEnabled(true)
-        // TODO Refactor directories
         .handler(getHandler())
         .logRetention(RetentionDays.ONE_WEEK)
         .build();
