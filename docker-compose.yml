@@ -1,8 +1,0 @@
-environment:
-  - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}
-services:
-  localstack:
-    ports:
-      - "443:443"
-      - "4566:4566"
-      - "4571:4571"
