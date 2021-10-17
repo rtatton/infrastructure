@@ -37,3 +37,6 @@ build
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# Prevent accidental commit of environment variables
+.env
