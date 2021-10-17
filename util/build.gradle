@@ -1,5 +1,5 @@
 plugins {
-    id "cirrus-java-handler"
+    id "cirrus-handler"
 }
 
 // Versions of all dependencies, organized in descending alphabetical order.
