@@ -1,4 +1,4 @@
 plugins {
-    id "cirrus-java"
+    id "cirrus-handler"
     id "java-library"
 }

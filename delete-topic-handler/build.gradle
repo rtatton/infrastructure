@@ -1,13 +1,8 @@
 plugins {
-    id "cirrus-handler-distribution"
+    id "cirrus-handler-application"
 }
-
-// Versions of all dependencies, organized in descending alphabetical order.
-def versions = [
-        Aws: "2.17.+",
-]
 
 dependencies {
     implementation project(":delete-resource-handler")
-    implementation "software.amazon.awssdk:sns:$versions.Aws"
+    implementation "software.amazon.awssdk:sns:$project.awsVersion"
 }

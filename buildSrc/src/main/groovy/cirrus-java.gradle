@@ -16,11 +16,18 @@ java {
 
 // Versions of all dependencies, organized in descending alphabetical order.
 def versions = [
-        JUnit: "5.7.+",
+        cirrus : "0.1.0",
+        jUnit  : "5.+",
+        mockito: "3.+",
 ]
 
+group "org.cirrus"
+version versions.cirrus
+
 dependencies {
-    testImplementation "org.junit.jupiter:junit-jupiter:$versions.JUnit"
+    testImplementation "org.junit.jupiter:junit-jupiter:$versions.jUnit"
+    testImplementation "org.mockito:mockito-core:$versions.mockito"
+    testImplementation "org.mockito:mockito-junit-jupiter:$versions.mockito"
 }
 
 test {
