@@ -1,4 +1,4 @@
-import org.cirrus.infrastructure.handler.NodeRecord;
+import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.util.Logger;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

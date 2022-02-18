@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.handler;
+package org.cirrus.infrastructure.handler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cirrus.infrastructure.util.Keys;
@@ -14,11 +14,11 @@ public abstract class CreateNodeRequest {
   @JsonProperty(Keys.NODE_KEY)
   public abstract String getNodeId();
 
-  @JsonProperty(Keys.QUEUE_CONFIG_KEY)
-  public abstract QueueConfig getQueueConfig();
-
   @JsonProperty(Keys.FUNCTION_CONFIG_KEY)
   public abstract FunctionConfig getFunctionConfig();
+
+  @JsonProperty(Keys.QUEUE_CONFIG_KEY)
+  public abstract QueueConfig getQueueConfig();
 
   public interface Builder {
 
@@ -26,8 +26,8 @@ public abstract class CreateNodeRequest {
 
     Builder setNodeId(String nodeId);
 
-    Builder setQueueConfig(QueueConfig config);
-
     Builder setFunctionConfig(FunctionConfig config);
+
+    Builder setQueueConfig(QueueConfig config);
   }
 }

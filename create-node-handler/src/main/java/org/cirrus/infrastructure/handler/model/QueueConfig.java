@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.handler;
+package org.cirrus.infrastructure.handler.model;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;

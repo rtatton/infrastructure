@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.handler;
+package org.cirrus.infrastructure.handler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cirrus.infrastructure.util.DynamoDbImmutableStyle;

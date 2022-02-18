@@ -10,6 +10,11 @@ import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingExcep
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
+import org.cirrus.infrastructure.handler.model.CreateNodeRequest;
+import org.cirrus.infrastructure.handler.model.CreateNodeResponse;
+import org.cirrus.infrastructure.handler.model.FunctionConfig;
+import org.cirrus.infrastructure.handler.model.NodeRecord;
+import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.util.Logger;
 import org.cirrus.infrastructure.util.Mapper;
 import org.cirrus.infrastructure.util.ResourceUtil;
@@ -34,13 +39,13 @@ public class CreateNodeCommand {
 
   @Inject
   CreateNodeCommand(
-      LambdaAsyncClient lambda,
-      SqsAsyncClient sqs,
+      LambdaAsyncClient lambdaClient,
+      SqsAsyncClient sqsClient,
       DynamoDbAsyncTable<NodeRecord> nodeRegistry,
       Mapper mapper,
       Logger logger) {
-    this.lambdaClient = lambda;
-    this.sqsClient = sqs;
+    this.lambdaClient = lambdaClient;
+    this.sqsClient = sqsClient;
     this.nodeRegistry = nodeRegistry;
     this.mapper = mapper;
     this.logger = logger;
@@ -50,10 +55,32 @@ public class CreateNodeCommand {
     return COMPONENT.getCommand();
   }
 
+  /**
+   * @param request JSON-formatted {@link CreateNodeRequest}
+   * @return JSON-formatted {@link CreateNodeResponse}
+   * @see CreateNodeCommand#run(CreateNodeRequest)
+   */
   public String runFromString(String request) {
     return mapToOutput(run(mapToInput(request)));
   }
 
+  /**
+   * Creates a cloud-based node with computing and messaging capabilities.
+   *
+   * @param request Contains the identifier of the node and resource configuration.
+   * @throws FailedResourceCreationException Thrown when any of the node resources fail to be
+   *     created. When only some node resources are created successfully, this exception is thrown.
+   * @throws FailedResourceDeletionException Thrown when any of the created cloud resources fail to
+   *     be deleted. During creation of the node, this is thrown when attempting to rollback after
+   *     either (1) only some node resources could be successfully created or (2) any of the
+   *     proceeding steps, after creating the node resources, fails.
+   * @throws FailedEventSourceMappingException Thrown after successfully creating node resources,
+   *     but failing to add the node queue to the node function as an event source mapping.
+   * @throws FailedStorageWriteException Thrown after successfully creating node resources and
+   *     adding the node queue as an event source mapping to the node function, but failing to store
+   *     the node resource identifiers.
+   * @return A response containing the resource identifiers of the node.
+   */
   public CreateNodeResponse run(CreateNodeRequest request) {
     FunctionConfig fConfig = request.getFunctionConfig();
     QueueConfig qConfig = request.getQueueConfig();
@@ -62,16 +89,15 @@ public class CreateNodeCommand {
         createFunction(fConfig)
             .thenCombineAsync(createQueue(qConfig), (func, queue) -> new Props(nodeId, func, queue))
             .thenComposeAsync(this::throwIfFailed);
-    Props nodeProps =
-        getProps
-            .handleAsync(this::orPartialRollback)
-            .thenComposeAsync(x -> getProps)
-            .thenComposeAsync(props -> addQueueThenStoreIds(props, qConfig))
-            .handleAsync(this::orCompleteRollback)
-            .thenComposeAsync(x -> getProps)
-            .toCompletableFuture()
-            .join();
-    return mapToResponse(nodeProps);
+    return getProps
+        .handleAsync(this::orPartialRollback)
+        .thenComposeAsync(x -> getProps)
+        .thenComposeAsync(props -> addQueueThenStoreIds(props, qConfig))
+        .handleAsync(this::orCompleteRollback)
+        .thenComposeAsync(x -> getProps)
+        .thenApplyAsync(this::mapToResponse)
+        .toCompletableFuture()
+        .join();
   }
 
   private String mapToOutput(CreateNodeResponse response) {
@@ -113,13 +139,14 @@ public class CreateNodeCommand {
       String functionId = props.function.id;
       String queueId = props.queue.id;
       result = functionId == null ? deleteQueue(queueId) : deleteFunction(functionId);
-      result = result.whenCompleteAsync(this::throwRuntimeException);
+      result = result.handleAsync(this::throwRuntimeException);
     }
     return result;
   }
 
   private CreateNodeResponse mapToResponse(Props props) {
     return CreateNodeResponse.newBuilder()
+        .setNodeId(props.nodeId)
         .setFunctionId(props.function.id)
         .setQueueId(props.queue.id)
         .build();
@@ -218,7 +245,7 @@ public class CreateNodeCommand {
         FailedEventSourceMappingException::new);
   }
 
-  private CompletionStage<Void> putItem(String nodeId, String functionId, String queueId) {
+  private CompletionStage<?> putItem(String nodeId, String functionId, String queueId) {
     return wrapThrowable(
         nodeRegistry.putItem(
             NodeRecord.builder().nodeId(nodeId).functionId(functionId).queueId(queueId).build()),

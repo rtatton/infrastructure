@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.handler;
+package org.cirrus.infrastructure.handler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cirrus.infrastructure.util.Keys;
@@ -11,6 +11,9 @@ public abstract class CreateNodeResponse {
     return ImmutableCreateNodeResponse.newBuilder();
   }
 
+  @JsonProperty(Keys.NODE_KEY)
+  public abstract String getNodeId();
+
   @JsonProperty(Keys.FUNCTION_KEY)
   public abstract String getFunctionId();
 
@@ -20,6 +23,8 @@ public abstract class CreateNodeResponse {
   public interface Builder {
 
     CreateNodeResponse build();
+
+    Builder setNodeId(String nodeId);
 
     Builder setFunctionId(String functionId);
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
+import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
