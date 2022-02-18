@@ -82,9 +82,9 @@ public class CreateNodeCommand {
    * @return A response containing the resource identifiers of the node.
    */
   public CreateNodeResponse run(CreateNodeRequest request) {
-    FunctionConfig fConfig = request.getFunctionConfig();
-    QueueConfig qConfig = request.getQueueConfig();
-    String nodeId = request.getNodeId();
+    FunctionConfig fConfig = request.functionConfig();
+    QueueConfig qConfig = request.queueConfig();
+    String nodeId = request.nodeId();
     CompletionStage<Props> getProps =
         createFunction(fConfig)
             .thenCombineAsync(createQueue(qConfig), (func, queue) -> new Props(nodeId, func, queue))
@@ -116,10 +116,10 @@ public class CreateNodeCommand {
                     .functionName(ResourceUtil.createRandomId())
                     .packageType(PackageType.ZIP)
                     .code(getFunctionCode(config))
-                    .runtime(config.getRuntime())
-                    .handler(config.getFunctionName())
-                    .memorySize(config.getMemorySizeInMegabytes())
-                    .timeout(config.getTimeoutInSeconds())
+                    .runtime(config.runtime())
+                    .handler(config.handlerName())
+                    .memorySize(config.memorySizeMegabytes())
+                    .timeout(config.timeoutSeconds())
                     .role("") // TODO
                     .publish(true));
     return createResource(response, CreateFunctionResponse::functionArn);
@@ -145,18 +145,15 @@ public class CreateNodeCommand {
   }
 
   private CreateNodeResponse mapToResponse(Props props) {
-    return CreateNodeResponse.newBuilder()
-        .setNodeId(props.nodeId)
-        .setFunctionId(props.function.id)
-        .setQueueId(props.queue.id)
+    return CreateNodeResponse.builder()
+        .nodeId(props.nodeId)
+        .functionId(props.function.id)
+        .queueId(props.queue.id)
         .build();
   }
 
   private FunctionCode getFunctionCode(FunctionConfig config) {
-    return FunctionCode.builder()
-        .s3Bucket(config.getCodeBucket())
-        .s3Key(config.getCodeKey())
-        .build();
+    return FunctionCode.builder().s3Bucket(config.codeBucket()).s3Key(config.codeKey()).build();
   }
 
   private <T> CompletionStage<Resource> createResource(
@@ -177,17 +174,17 @@ public class CreateNodeCommand {
   private Map<QueueAttributeName, String> getQueueProps(QueueConfig config) {
     return Map.of(
         QueueAttributeName.DELAY_SECONDS,
-        String.valueOf(config.getDelayInSeconds()),
+        String.valueOf(config.delaySeconds()),
         QueueAttributeName.MAXIMUM_MESSAGE_SIZE,
-        String.valueOf(config.getMaximumMessageSizeInBytes()),
+        String.valueOf(config.maxMessageSizeBytes()),
         QueueAttributeName.MESSAGE_RETENTION_PERIOD,
-        String.valueOf(config.getMessageRetentionPeriodInSeconds()),
+        String.valueOf(config.messageRetentionPeriodSeconds()),
         QueueAttributeName.POLICY,
         "", // TODO
         QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
-        String.valueOf(config.getReceiveMessageWaitTimeInSeconds()),
+        String.valueOf(config.receiveMessageWaitTimeSeconds()),
         QueueAttributeName.VISIBILITY_TIMEOUT,
-        String.valueOf(config.getVisibilityTimeoutInSeconds()),
+        String.valueOf(config.visibilityTimeoutSeconds()),
         QueueAttributeName.FIFO_QUEUE,
         TRUE,
         QueueAttributeName.CONTENT_BASED_DEDUPLICATION,
@@ -241,7 +238,7 @@ public class CreateNodeCommand {
                 builder
                     .functionName(props.function.id)
                     .eventSourceArn(props.queue.id)
-                    .batchSize(config.getBatchSize())),
+                    .batchSize(config.batchSize())),
         FailedEventSourceMappingException::new);
   }
 

@@ -7,27 +7,27 @@ import org.immutables.value.Value;
 @Value.Immutable
 public abstract class CreateNodeResponse {
 
-  public static Builder newBuilder() {
-    return ImmutableCreateNodeResponse.newBuilder();
+  public static Builder builder() {
+    return ImmutableCreateNodeResponse.builder();
   }
 
   @JsonProperty(Keys.NODE_KEY)
-  public abstract String getNodeId();
+  public abstract String nodeId();
 
   @JsonProperty(Keys.FUNCTION_KEY)
-  public abstract String getFunctionId();
+  public abstract String functionId();
 
   @JsonProperty(Keys.QUEUE_KEY)
-  public abstract String getQueueId();
+  public abstract String queueId();
 
   public interface Builder {
 
     CreateNodeResponse build();
 
-    Builder setNodeId(String nodeId);
+    Builder nodeId(String nodeId);
 
-    Builder setFunctionId(String functionId);
+    Builder functionId(String functionId);
 
-    Builder setQueueId(String queueId);
+    Builder queueId(String queueId);
   }
 }

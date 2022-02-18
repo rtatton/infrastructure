@@ -13,58 +13,58 @@ public abstract class QueueConfig {
   private static final Range<Integer> VISIBILITY_TIMEOUT_RANGE = Range.closed(0, 43_200);
   private static final Range<Integer> BATCH_SIZE_RANGE = Range.closed(0, 10);
 
+  @Value.Default
+  public int messageRetentionPeriodSeconds() {
+    return 345_600;
+  }
+
   @Value.Check
   protected void check() {
-    Preconditions.checkState(DELAY_RANGE.contains(getDelayInSeconds()));
-    Preconditions.checkState(MAXIMUM_MESSAGE_SIZE_RANGE.contains(getMaximumMessageSizeInBytes()));
-    Preconditions.checkState(WAIT_TIME_RANGE.contains(getReceiveMessageWaitTimeInSeconds()));
-    Preconditions.checkState(VISIBILITY_TIMEOUT_RANGE.contains(getVisibilityTimeoutInSeconds()));
-    Preconditions.checkState(BATCH_SIZE_RANGE.contains(getBatchSize()));
+    Preconditions.checkState(DELAY_RANGE.contains(delaySeconds()));
+    Preconditions.checkState(MAXIMUM_MESSAGE_SIZE_RANGE.contains(maxMessageSizeBytes()));
+    Preconditions.checkState(WAIT_TIME_RANGE.contains(receiveMessageWaitTimeSeconds()));
+    Preconditions.checkState(VISIBILITY_TIMEOUT_RANGE.contains(visibilityTimeoutSeconds()));
+    Preconditions.checkState(BATCH_SIZE_RANGE.contains(batchSize()));
   }
 
   @Value.Default
-  public int getDelayInSeconds() {
+  public int delaySeconds() {
     return 0;
   }
 
   @Value.Default
-  public int getMaximumMessageSizeInBytes() {
+  public int maxMessageSizeBytes() {
     return 262_144;
   }
 
   @Value.Default
-  public int getReceiveMessageWaitTimeInSeconds() {
+  public int receiveMessageWaitTimeSeconds() {
     return 0;
   }
 
   @Value.Default
-  public int getVisibilityTimeoutInSeconds() {
+  public int visibilityTimeoutSeconds() {
     return 30;
   }
 
   @Value.Default
-  public int getBatchSize() {
+  public int batchSize() {
     return 10;
-  }
-
-  @Value.Default
-  public int getMessageRetentionPeriodInSeconds() {
-    return 345_600;
   }
 
   public interface Builder {
     QueueConfig build();
 
-    Builder setDelayInSeconds(int delay);
+    Builder delaySeconds(int delay);
 
-    Builder setMaximumMessageSizeInBytes(int maximumSize);
+    Builder maxMessageSizeBytes(int maximumSize);
 
-    Builder setMessageRetentionPeriodInSeconds(int retentionPeriod);
+    Builder messageRetentionPeriodSeconds(int retentionPeriod);
 
-    Builder setReceiveMessageWaitTimeInSeconds(int receiveWaitTime);
+    Builder receiveMessageWaitTimeSeconds(int receiveWaitTime);
 
-    Builder setVisibilityTimeoutInSeconds(int visibilityTimeout);
+    Builder visibilityTimeoutSeconds(int visibilityTimeout);
 
-    Builder setBatchSize(int batchSize);
+    Builder batchSize(int batchSize);
   }
 }

@@ -16,39 +16,43 @@ public abstract class FunctionConfig {
   private static final Set<String> RUNTIMES =
       Runtime.knownValues().stream().map(Runtime::toString).collect(ImmutableSet.toImmutableSet());
 
-  @Value.Check
-  protected void check() {
-    Preconditions.checkState(!Strings.isNullOrEmpty(getFunctionName()));
-    Preconditions.checkState(MEMORY_SIZE_RANGE.contains(getMemorySizeInMegabytes()));
-    Preconditions.checkState(RUNTIMES.contains(getRuntime()));
-    Preconditions.checkState(TIMEOUT_RANGE.contains(getTimeoutInSeconds()));
+  public static Builder builder() {
+    return ImmutableFunctionConfig.builder();
   }
 
-  public abstract String getFunctionName();
+  public abstract String codeBucket();
 
-  public abstract int getMemorySizeInMegabytes();
+  public abstract String codeKey();
 
-  public abstract String getRuntime();
+  @Value.Check
+  protected void check() {
+    Preconditions.checkState(!Strings.isNullOrEmpty(handlerName()));
+    Preconditions.checkState(MEMORY_SIZE_RANGE.contains(memorySizeMegabytes()));
+    Preconditions.checkState(RUNTIMES.contains(runtime()));
+    Preconditions.checkState(TIMEOUT_RANGE.contains(timeoutSeconds()));
+  }
 
-  public abstract int getTimeoutInSeconds();
+  public abstract String handlerName();
 
-  public abstract String getCodeBucket();
+  public abstract int memorySizeMegabytes();
 
-  public abstract String getCodeKey();
+  public abstract String runtime();
+
+  public abstract int timeoutSeconds();
 
   public interface Builder {
     FunctionConfig build();
 
-    Builder setFunctionName(String functionName);
+    Builder handlerName(String handlerName);
 
-    Builder setMemorySizeInMegabytes(int memorySize);
+    Builder memorySizeMegabytes(int memorySize);
 
-    Builder setTimeoutInSeconds(int timeout);
+    Builder timeoutSeconds(int timeout);
 
-    Builder setRuntime(String runtime);
+    Builder runtime(String runtime);
 
-    Builder setCodeBucket(String codeBucket);
+    Builder codeBucket(String codeBucket);
 
-    Builder setCodeKey(String codeKey);
+    Builder codeKey(String codeKey);
   }
 }

@@ -1,11 +1,13 @@
 package org.cirrus.infrastructure.handler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.cirrus.infrastructure.util.DynamoDbImmutableStyle;
 import org.cirrus.infrastructure.util.Keys;
 import org.immutables.value.Value;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
-@DynamoDbImmutableStyle
+@DynamoDbImmutable(builder = NodeRecord.Builder.class)
 @Value.Immutable
 public abstract class NodeRecord {
 
@@ -13,14 +15,18 @@ public abstract class NodeRecord {
     return ImmutableNodeRecord.builder();
   }
 
+  @DynamoDbPartitionKey
+  @DynamoDbAttribute(Keys.NODE_KEY)
   @JsonProperty(Keys.NODE_KEY)
-  public abstract String getNodeId();
+  public abstract String nodeId();
 
+  @DynamoDbAttribute(Keys.FUNCTION_KEY)
   @JsonProperty(Keys.FUNCTION_KEY)
-  public abstract String getFunctionId();
+  public abstract String functionId();
 
+  @DynamoDbAttribute(Keys.QUEUE_KEY)
   @JsonProperty(Keys.QUEUE_KEY)
-  public abstract String getQueueId();
+  public abstract String queueId();
 
   public interface Builder {
 

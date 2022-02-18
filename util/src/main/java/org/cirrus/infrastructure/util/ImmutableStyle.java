@@ -12,10 +12,8 @@ import org.immutables.value.Value.Style.ImplementationVisibility;
 @Retention(RetentionPolicy.CLASS)
 @JsonSerialize
 @Value.Style(
-    get = {"is*", "get*"},
-    init = "set*",
+    get = {"is*", "has*", "*"},
     strictBuilder = true,
-    builder = "newBuilder",
     typeAbstract = "*",
     depluralize = true,
     visibility = ImplementationVisibility.PACKAGE,
