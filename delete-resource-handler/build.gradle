@@ -1,8 +1,0 @@
-plugins {
-    id "cirrus-handler-library"
-}
-
-dependencies {
-    api project(":create-resource-handler")
-    api project(":util")
-}

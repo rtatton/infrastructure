@@ -1,8 +1,0 @@
-plugins {
-    id "cirrus-handler-application"
-}
-
-dependencies {
-    implementation project(":create-resource-handler")
-    implementation "software.amazon.awssdk:lambda:$project.awsVersion"
-}
