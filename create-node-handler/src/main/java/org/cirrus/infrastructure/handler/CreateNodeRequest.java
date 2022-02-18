@@ -11,17 +11,23 @@ public abstract class CreateNodeRequest {
     return ImmutableCreateNodeRequest.newBuilder();
   }
 
-  @JsonProperty(Keys.NODE_INPUT_KEY)
-  public abstract String getName();
+  @JsonProperty(Keys.NODE_KEY)
+  public abstract String getNodeId();
 
+  @JsonProperty(Keys.QUEUE_CONFIG_KEY)
   public abstract QueueConfig getQueueConfig();
 
+  @JsonProperty(Keys.FUNCTION_CONFIG_KEY)
   public abstract FunctionConfig getFunctionConfig();
 
   public interface Builder {
 
     CreateNodeRequest build();
 
-    Builder setName(String name);
+    Builder setNodeId(String nodeId);
+
+    Builder setQueueConfig(QueueConfig config);
+
+    Builder setFunctionConfig(FunctionConfig config);
   }
 }

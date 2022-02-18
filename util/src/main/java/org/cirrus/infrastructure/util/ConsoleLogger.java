@@ -1,12 +1,11 @@
 package org.cirrus.infrastructure.util;
 
+import javax.inject.Inject;
+
 public class ConsoleLogger implements Logger {
 
-  private final String name;
-
-  public ConsoleLogger(String name) {
-    this.name = name;
-  }
+  @Inject
+  public ConsoleLogger() {}
 
   @Override
   public void debug(String message) {
@@ -26,9 +25,5 @@ public class ConsoleLogger implements Logger {
   @Override
   public void error(String message) {
     System.err.println(message);
-  }
-
-  public String getName() {
-    return name;
   }
 }

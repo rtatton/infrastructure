@@ -10,7 +10,6 @@ import software.constructs.Construct;
 
 public class NodeRegistryFactory {
 
-  private static final String TABLE_ID = "NodeRegistry";
   private static final Attribute PARTITION_KEY = getPartitionKey();
   private static final Number WRITE_CAPACITY = 5;
   private static final Number READ_CAPACITY = 5;
@@ -26,8 +25,8 @@ public class NodeRegistryFactory {
   }
 
   public ITable create() {
-    return Table.Builder.create(scope, TABLE_ID)
-        .tableName(TABLE_ID)
+    return Table.Builder.create(scope, Keys.NODE_TABLE_NAME)
+        .tableName(Keys.NODE_TABLE_NAME)
         .partitionKey(PARTITION_KEY)
         .writeCapacity(WRITE_CAPACITY)
         .readCapacity(READ_CAPACITY)

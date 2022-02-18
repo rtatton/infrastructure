@@ -13,7 +13,9 @@ public final class Keys {
   public static final String TOPIC_KEY = "topicId";
   public static final String NODE_INPUT_KEY = "name";
   public static final String RESOURCE_KEY = "resourceId";
-  public static final String TYPE_KEY = "type";
+  public static final String NODE_TABLE_NAME = "NodeRegistry";
+  public static final String FUNCTION_CONFIG_KEY = "functionConfig";
+  public static final String QUEUE_CONFIG_KEY = "queueConfig";
   private static final int NODE_INDEX = 0;
   private static final int FUNCTION_INDEX = 0;
   private static final int QUEUE_INDEX = 1;
