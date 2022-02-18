@@ -225,20 +225,19 @@ public class CreateNodeCommand {
         FailedStorageWriteException::new);
   }
 
-  private <T> void throwRuntimeException(T result, Throwable throwable) {
-    throw (RuntimeException) throwable;
-  }
-
-  private CompletionStage<Props> orCompleteRollback(Props props, Throwable throwable) {
-    CompletionStage<Props> input = CompletableFuture.completedFuture(props);
-    CompletionStage<?> result = input;
+  private CompletionStage<?> orCompleteRollback(Props props, Throwable throwable) {
+    CompletionStage<?> result = CompletableFuture.completedFuture(props);
     if (throwable != null) {
       result =
           deleteQueue(props.queue.id)
-              .whenCompleteAsync((r, t) -> deleteFunction(props.function.id))
-              .whenCompleteAsync(this::throwRuntimeException);
+              .handleAsync((r, t) -> deleteFunction(props.function.id))
+              .handleAsync(this::throwRuntimeException);
     }
-    return result.thenComposeAsync(r -> input);
+    return result;
+  }
+
+  private <T> T throwRuntimeException(T result, Throwable throwable) {
+    throw (RuntimeException) throwable;
   }
 
   private static class Resource {
