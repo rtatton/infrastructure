@@ -6,7 +6,7 @@ public interface Mapper {
     return new JacksonMapper();
   }
 
-  <T> T read(String content, Class<T> aClass, Logger logger);
+  <T> T read(String content, Class<T> cls, Logger logger);
 
   String write(Object value, Logger logger);
 }

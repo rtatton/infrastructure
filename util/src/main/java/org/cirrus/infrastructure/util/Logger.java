@@ -2,8 +2,12 @@ package org.cirrus.infrastructure.util;
 
 public interface Logger {
 
+  static Logger create() {
+    return of(null);
+  }
+
   static Logger of(String name) {
-    return new Slf4jLogger(name);
+    return new ConsoleLogger(name);
   }
 
   default void debug(String format, Object... args) {

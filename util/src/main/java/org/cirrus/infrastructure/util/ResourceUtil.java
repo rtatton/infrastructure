@@ -1,5 +1,6 @@
 package org.cirrus.infrastructure.util;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -15,21 +16,21 @@ public final class ResourceUtil {
     return UUID.randomUUID().toString();
   }
 
-  public static <T> String getOrNull(Future<T> future, Function<T, String> mapper, Logger logger) {
-    String resourceId = null;
+  public static <T> T getOrThrow(Future<T> future, Logger logger, Throwable throwable) {
+    return get(future, x -> x, logger).orElseThrow(() -> new RuntimeException(throwable));
+  }
+
+  public static <T, U> Optional<U> get(Future<T> future, Function<T, U> mapper, Logger logger) {
+    U result = null;
     try {
-      resourceId = mapper.apply(future.get());
+      result = mapper.apply(future.get());
     } catch (InterruptedException | ExecutionException exception) {
       logger.error(exception.getLocalizedMessage());
     }
-    return resourceId;
+    return Optional.ofNullable(result);
   }
 
   public static <T> void logIfError(Future<T> future, Logger logger) {
-    try {
-      future.get();
-    } catch (InterruptedException | ExecutionException exception) {
-      logger.error(exception.getLocalizedMessage());
-    }
+    get(future, Function.identity(), logger);
   }
 }

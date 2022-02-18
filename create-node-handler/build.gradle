@@ -1,0 +1,17 @@
+plugins {
+    id "cirrus-handler-application"
+}
+
+def versions = [
+        "lambdaEvents": "3.11.+",
+        "jacksonJdk8" : "2.13.+"
+]
+
+dependencies {
+    implementation project(":util")
+    implementation "com.amazonaws:aws-lambda-java-events:$versions.lambdaEvents"
+    implementation "software.amazon.awssdk:dynamodb:$project.awsVersion"
+    implementation "software.amazon.awssdk:dynamodb-enhanced:$project.awsVersion"
+    implementation "software.amazon.awssdk:lambda:$project.awsVersion"
+    implementation "software.amazon.awssdk:sqs:$project.awsVersion"
+}

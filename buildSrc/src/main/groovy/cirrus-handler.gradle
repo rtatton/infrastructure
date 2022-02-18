@@ -20,6 +20,7 @@ dependencies {
     annotationProcessor "org.immutables:value:$versions.immutables"
     implementation "com.amazonaws:aws-lambda-java-core:$versions.lambdaCore"
     implementation "com.fasterxml.jackson.core:jackson-databind:$versions.jackson"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$versions.jackson"
     implementation "com.google.dagger:dagger-compiler:$versions.dagger"
     implementation "org.immutables:value:$versions.immutables"
     implementation "org.slf4j:slf4j-api:$versions.slf4j"

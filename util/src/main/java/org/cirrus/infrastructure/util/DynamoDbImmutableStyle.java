@@ -13,13 +13,9 @@ import org.immutables.value.Value.Style.ImplementationVisibility;
 @JsonSerialize
 @Value.Style(
     get = {"is*", "get*"},
-    init = "set*",
     strictBuilder = true,
-    builder = "newBuilder",
     typeAbstract = "*",
     depluralize = true,
     visibility = ImplementationVisibility.PACKAGE,
-    allParameters = true,
-    deepImmutablesDetection = true,
     defaults = @Value.Immutable(prehash = true))
-public @interface ImmutableStyle {}
+public @interface DynamoDbImmutableStyle {}
