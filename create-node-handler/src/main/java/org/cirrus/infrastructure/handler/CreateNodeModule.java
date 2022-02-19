@@ -21,6 +21,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 @Module(includes = CreateNodeBindings.class)
 final class CreateNodeModule {
+
   private static final Region REGION = Region.US_EAST_2;
   private static final String ACCESS_KEY = "";
   private static final String SECRETE_KEY = "";

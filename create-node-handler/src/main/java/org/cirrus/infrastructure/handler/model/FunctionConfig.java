@@ -41,6 +41,7 @@ public abstract class FunctionConfig {
   public abstract int timeoutSeconds();
 
   public interface Builder {
+
     FunctionConfig build();
 
     Builder handlerName(String handlerName);
