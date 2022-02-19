@@ -45,10 +45,6 @@ public class LambdaFunctionService implements FunctionService {
     return helper.createResource(response, CreateFunctionResponse::functionArn);
   }
 
-  private FunctionCode getFunctionCode(FunctionConfig config) {
-    return FunctionCode.builder().s3Bucket(config.codeBucket()).s3Key(config.codeKey()).build();
-  }
-
   @Override
   public CompletionStage<Void> deleteFunction(String functionId) {
     return helper
@@ -70,6 +66,10 @@ public class LambdaFunctionService implements FunctionService {
                         .eventSourceArn(queueId)
                         .batchSize(config.batchSize())),
             FailedEventSourceMappingException::new)
-        .thenApply(CreateEventSourceMappingResponse::eventSourceArn);
+        .thenApplyAsync(CreateEventSourceMappingResponse::eventSourceArn);
+  }
+
+  private FunctionCode getFunctionCode(FunctionConfig config) {
+    return FunctionCode.builder().s3Bucket(config.codeBucket()).s3Key(config.codeKey()).build();
   }
 }

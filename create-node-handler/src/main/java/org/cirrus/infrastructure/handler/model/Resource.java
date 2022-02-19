@@ -1,5 +1,6 @@
 package org.cirrus.infrastructure.handler.model;
 
+import com.google.common.base.Preconditions;
 import javax.annotation.Nullable;
 import org.immutables.value.Value;
 
@@ -8,6 +9,20 @@ public abstract class Resource {
 
   public static Builder builder() {
     return ImmutableResource.builder();
+  }
+
+  public boolean failed() {
+    return id() == null && exception() != null;
+  }
+
+  public boolean succeeded() {
+    return id() != null && exception() == null;
+  }
+
+  @Value.Check
+  protected void check() {
+    // Exclusive or: at least one, but not both, is null
+    Preconditions.checkState(id() != null ^ exception() != null);
   }
 
   @Nullable

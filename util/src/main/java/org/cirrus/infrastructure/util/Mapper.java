@@ -2,7 +2,7 @@ package org.cirrus.infrastructure.util;
 
 public interface Mapper {
 
-  <T> T read(String content, Class<T> cls, Logger logger);
+  <T> T read(String content, Class<T> cls);
 
-  String write(Object value, Logger logger);
+  String write(Object value);
 }

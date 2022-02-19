@@ -8,13 +8,15 @@ import javax.inject.Inject;
 public final class JacksonMapper implements Mapper {
 
   private final ObjectMapper mapper;
+  private final Logger logger;
 
   @Inject
-  public JacksonMapper(ObjectMapper mapper) {
+  public JacksonMapper(ObjectMapper mapper, Logger logger) {
     this.mapper = mapper;
+    this.logger = logger;
   }
 
-  public <T> T read(String content, Class<T> cls, Logger logger) {
+  public <T> T read(String content, Class<T> cls) {
     try {
       return mapper.readValue(content, cls);
     } catch (JsonProcessingException exception) {
@@ -23,7 +25,7 @@ public final class JacksonMapper implements Mapper {
     }
   }
 
-  public String write(Object value, Logger logger) {
+  public String write(Object value) {
     try {
       return mapper.writeValueAsString(value);
     } catch (JsonProcessingException exception) {
