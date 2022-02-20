@@ -146,7 +146,7 @@ public class CreateNodeCommand {
 
   private CompletionStage<Resources> attachQueue(Resources resources, QueueConfig config) {
     return attachQueue(resources.function.id(), resources.queue.id(), config)
-        .thenComposeAsync(mapping -> orCompleteRollback(resources, mapping))
+        .thenComposeAsync(error -> orCompleteRollback(resources, error))
         .thenApplyAsync(x -> resources);
   }
 
