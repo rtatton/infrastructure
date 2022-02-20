@@ -241,7 +241,7 @@ class CreateNodeHandlerTests {
   }
 
   private Executable runCommand() {
-    return () -> command.run(request);
+    return this::run;
   }
 
   private void mockFailedCreateQueue() {
