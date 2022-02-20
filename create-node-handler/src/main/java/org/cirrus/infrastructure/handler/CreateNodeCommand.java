@@ -76,25 +76,25 @@ public class CreateNodeCommand {
   public CreateNodeResponse run(CreateNodeRequest request) {
     try {
       CompletionStage<Resources> createResources = createResources(request);
-      CompletionStage<Void> attachQueueThenStoreIds =
-          attachQueueThenStoreIds(createResources, request.queueConfig());
-      return getResponse(createResources, attachQueueThenStoreIds);
+      CompletionStage<Void> attachQueueThenSaveRecord =
+          attachQueueThenSaveRecord(createResources, request.queueConfig());
+      return getResponse(createResources, attachQueueThenSaveRecord);
     } catch (CompletionException exception) {
       throw (RuntimeException) exception.getCause();
     }
   }
 
-  private CompletionStage<Void> attachQueueThenStoreIds(
+  private CompletionStage<Void> attachQueueThenSaveRecord(
       CompletionStage<Resources> createResources, QueueConfig config) {
     return createResources
         .thenComposeAsync(resources -> attachQueue(resources, config))
-        .thenComposeAsync(this::storeResourceIds);
+        .thenComposeAsync(this::saveRecord);
   }
 
   private CreateNodeResponse getResponse(
-      CompletionStage<Resources> createResources, CompletionStage<Void> attachQueueThenStoreIds) {
+      CompletionStage<Resources> createResources, CompletionStage<Void> attachQueueThenSaveRecord) {
     return createResources
-        .thenCombineAsync(attachQueueThenStoreIds, (resources, x) -> mapToResponse(resources))
+        .thenCombineAsync(attachQueueThenSaveRecord, (resources, x) -> mapToResponse(resources))
         .toCompletableFuture()
         .join();
   }
@@ -150,7 +150,7 @@ public class CreateNodeCommand {
         .thenApplyAsync(x -> resources);
   }
 
-  private CompletionStage<Void> storeResourceIds(Resources resources) {
+  private CompletionStage<Void> saveRecord(Resources resources) {
     return saveRecord(resources.nodeId, resources.function.id(), resources.queue.id())
         .thenComposeAsync(error -> orCompleteRollback(resources, error))
         .thenApplyAsync(x -> null);
