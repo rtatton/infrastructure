@@ -8,7 +8,9 @@ import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
+import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
+import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
 import org.cirrus.infrastructure.handler.model.CreateNodeRequest;
 import org.cirrus.infrastructure.handler.model.CreateNodeResponse;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
@@ -58,6 +60,9 @@ public class CreateNodeCommand {
    * Creates a cloud-based node with computing and messaging capabilities.
    *
    * @param request Contains the identifier of the node and resource configuration.
+   * @throws NodeAlreadyExistsException Thrown when the requested node identifier already exists.
+   * @throws FailedStorageReadException Thrown when an error occurs when attempting to access the
+   *     storage service to check if the requested node identifier already exists.
    * @throws FailedResourceCreationException Thrown when any of the resources fail to be created.
    * @throws FailedResourceDeletionException Thrown when any of the created cloud resources fail to
    *     be deleted. During creation of the node, this is thrown when attempting to rollback after
@@ -75,13 +80,25 @@ public class CreateNodeCommand {
    */
   public CreateNodeResponse run(CreateNodeRequest request) {
     try {
-      CompletionStage<Resources> createResources = createResources(request);
+      CompletionStage<Resources> createResources =
+          checkIfNodeExists(request.nodeId()).thenComposeAsync(x -> createResources(request));
       CompletionStage<Void> attachQueueThenSaveRecord =
           attachQueueThenSaveRecord(createResources, request.queueConfig());
       return getResponse(createResources, attachQueueThenSaveRecord);
     } catch (CompletionException exception) {
       throw (RuntimeException) exception.getCause();
     }
+  }
+
+  private CompletionStage<Void> checkIfNodeExists(String nodeId) {
+    return storageService.get(nodeId).thenApplyAsync(this::throwIfExists);
+  }
+
+  private <T> T throwIfExists(Object response) {
+    if (response != null) {
+      throw new NodeAlreadyExistsException();
+    }
+    return null;
   }
 
   private CompletionStage<Void> attachQueueThenSaveRecord(

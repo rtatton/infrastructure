@@ -4,5 +4,7 @@ import java.util.concurrent.CompletionStage;
 
 public interface StorageService<T> {
 
-  CompletionStage<Void> put(T item);
+  CompletionStage<Void> put(T value);
+
+  CompletionStage<T> get(Object key);
 }
