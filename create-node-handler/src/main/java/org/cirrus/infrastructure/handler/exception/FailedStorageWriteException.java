@@ -4,6 +4,14 @@ public class FailedStorageWriteException extends RuntimeException {
 
   public FailedStorageWriteException() {}
 
+  public FailedStorageWriteException(String message) {
+    super(message);
+  }
+
+  public FailedStorageWriteException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
   public FailedStorageWriteException(Throwable cause) {
     super(cause);
   }
