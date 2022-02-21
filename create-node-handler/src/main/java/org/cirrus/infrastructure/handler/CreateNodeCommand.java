@@ -30,7 +30,7 @@ public class CreateNodeCommand {
   private final Mapper mapper;
 
   @Inject
-  CreateNodeCommand(
+  public CreateNodeCommand(
       FunctionService functionService,
       QueueService queueService,
       StorageService<NodeRecord> storageService,
