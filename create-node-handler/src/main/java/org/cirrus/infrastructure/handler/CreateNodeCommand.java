@@ -23,7 +23,7 @@ import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.util.Mapper;
 
 @Singleton
-public class CreateNodeCommand {
+public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {
 
   private static final CreateNodeComponent COMPONENT = DaggerCreateNodeComponent.create();
   private final FunctionService functionService;
@@ -45,15 +45,6 @@ public class CreateNodeCommand {
 
   public static CreateNodeCommand getInstance() {
     return COMPONENT.getCommand();
-  }
-
-  /**
-   * @param request JSON-formatted {@link CreateNodeRequest}
-   * @return JSON-formatted {@link CreateNodeResponse}
-   * @see CreateNodeCommand#run(CreateNodeRequest)
-   */
-  public String runFromString(String request) {
-    return mapToOutput(run(mapToInput(request)));
   }
 
   /**
@@ -80,21 +71,30 @@ public class CreateNodeCommand {
    */
   public CreateNodeResponse run(CreateNodeRequest request) {
     try {
-      CompletionStage<Resources> createResources =
-          checkIfNodeExists(request.nodeId()).thenComposeAsync(x -> createResources(request));
+      CompletionStage<Node> createNode =
+          checkIfNodeExists(request.nodeId()).thenComposeAsync(x -> createNode(request));
       CompletionStage<Void> attachQueueThenSaveRecord =
-          attachQueueThenSaveRecord(createResources, request.queueConfig());
-      return getResponse(createResources, attachQueueThenSaveRecord);
+          attachQueueThenSaveRecord(createNode, request.queueConfig());
+      return getResponse(createNode, attachQueueThenSaveRecord);
     } catch (CompletionException exception) {
       throw (RuntimeException) exception.getCause();
     }
   }
 
-  private CompletionStage<Void> checkIfNodeExists(String nodeId) {
-    return storageService.get(nodeId).thenApplyAsync(this::throwIfExists);
+  /**
+   * @param request JSON-formatted {@link CreateNodeRequest}
+   * @return JSON-formatted {@link CreateNodeResponse}
+   * @see CreateNodeCommand#run(CreateNodeRequest)
+   */
+  public String runFromString(String request) {
+    return mapToOutput(run(mapToInput(request)));
   }
 
-  private <T> T throwIfExists(Object response) {
+  private CompletionStage<Void> checkIfNodeExists(String nodeId) {
+    return storageService.get(nodeId).thenApplyAsync(this::throwIfPresent);
+  }
+
+  private <T> T throwIfPresent(Object response) {
     if (response != null) {
       throw new NodeAlreadyExistsException();
     }
@@ -102,16 +102,16 @@ public class CreateNodeCommand {
   }
 
   private CompletionStage<Void> attachQueueThenSaveRecord(
-      CompletionStage<Resources> createResources, QueueConfig config) {
-    return createResources
-        .thenComposeAsync(resources -> attachQueue(resources, config))
+      CompletionStage<Node> createNode, QueueConfig config) {
+    return createNode
+        .thenComposeAsync(node -> attachQueue(node, config))
         .thenComposeAsync(this::saveRecord);
   }
 
   private CreateNodeResponse getResponse(
-      CompletionStage<Resources> createResources, CompletionStage<Void> attachQueueThenSaveRecord) {
-    return createResources
-        .thenCombineAsync(attachQueueThenSaveRecord, (resources, x) -> mapToResponse(resources))
+      CompletionStage<Node> createNode, CompletionStage<Void> attachQueueThenSaveRecord) {
+    return createNode
+        .thenCombineAsync(attachQueueThenSaveRecord, (node, x) -> mapToResponse(node))
         .toCompletableFuture()
         .join();
   }
@@ -125,26 +125,26 @@ public class CreateNodeCommand {
   }
 
   private CompletionStage<Resource> createFunction(FunctionConfig config) {
-    return functionService.createFunction(config);
+    return functionService.create(config);
   }
 
   private CompletionStage<Resource> createQueue(QueueConfig config) {
-    return queueService.createQueue(config);
+    return queueService.create(config);
   }
 
-  private CompletionStage<Resources> createResources(CreateNodeRequest request) {
+  private CompletionStage<Node> createNode(CreateNodeRequest request) {
     FunctionConfig fConfig = request.functionConfig();
     QueueConfig qConfig = request.queueConfig();
     String nodeId = request.nodeId();
     return createFunction(fConfig)
-        .thenCombineAsync(createQueue(qConfig), (func, queue) -> new Resources(nodeId, func, queue))
+        .thenCombineAsync(createQueue(qConfig), (func, queue) -> new Node(nodeId, func, queue))
         .thenComposeAsync(this::orPartialRollback);
   }
 
-  private CompletionStage<Resources> orPartialRollback(Resources resources) {
+  private CompletionStage<Node> orPartialRollback(Node node) {
     CompletionStage<?> result;
-    Resource function = resources.function;
-    Resource queue = resources.queue;
+    Resource function = node.function;
+    Resource queue = node.queue;
     if (function.failed() && queue.succeeded()) {
       result = deleteQueue(queue.id()).thenRunAsync(() -> throwException(function.exception()));
     } else if (function.succeeded() && queue.failed()) {
@@ -152,54 +152,54 @@ public class CreateNodeCommand {
     } else if (function.failed() && queue.failed()) {
       result = CompletableFuture.failedFuture(new FailedResourceCreationException());
     } else {
-      result = CompletableFuture.completedFuture(resources);
+      result = CompletableFuture.completedFuture(node);
     }
-    return result.thenApplyAsync(x -> resources);
+    return result.thenApplyAsync(x -> node);
   }
 
   private void throwException(Throwable throwable) {
     throw (RuntimeException) throwable;
   }
 
-  private CompletionStage<Resources> attachQueue(Resources resources, QueueConfig config) {
-    return attachQueue(resources.function.id(), resources.queue.id(), config)
-        .thenComposeAsync(error -> orCompleteRollback(resources, error))
-        .thenApplyAsync(x -> resources);
+  private CompletionStage<Node> attachQueue(Node node, QueueConfig config) {
+    return attachQueue(node.function.id(), node.queue.id(), config)
+        .thenComposeAsync(error -> orCompleteRollback(node, error))
+        .thenApplyAsync(x -> node);
   }
 
-  private CompletionStage<Void> saveRecord(Resources resources) {
-    return saveRecord(resources.nodeId, resources.function.id(), resources.queue.id())
-        .thenComposeAsync(error -> orCompleteRollback(resources, error))
+  private CompletionStage<Void> saveRecord(Node node) {
+    return saveRecord(node.nodeId, node.function.id(), node.queue.id())
+        .thenComposeAsync(error -> orCompleteRollback(node, error))
         .thenApplyAsync(x -> null);
   }
 
-  private CompletionStage<?> orCompleteRollback(Resources resources, Error error) {
+  private CompletionStage<?> orCompleteRollback(Node node, Error error) {
     CompletionStage<?> result;
     Throwable throwable = error.throwable;
     if (throwable == null) {
-      result = CompletableFuture.completedFuture(resources);
+      result = CompletableFuture.completedFuture(node);
     } else {
-      CompletionStage<?> deleteFunction = deleteFunction(resources.function.id());
-      CompletionStage<?> deleteQueue = deleteQueue(resources.queue.id());
+      CompletionStage<?> deleteFunction = deleteFunction(node.function.id());
+      CompletionStage<?> deleteQueue = deleteQueue(node.queue.id());
       result = deleteFunction.runAfterBothAsync(deleteQueue, () -> throwException(throwable));
     }
     return result;
   }
 
-  private CreateNodeResponse mapToResponse(Resources resources) {
+  private CreateNodeResponse mapToResponse(Node node) {
     return CreateNodeResponse.builder()
-        .nodeId(resources.nodeId)
-        .functionId(resources.function.id())
-        .queueId(resources.queue.id())
+        .nodeId(node.nodeId)
+        .functionId(node.function.id())
+        .queueId(node.queue.id())
         .build();
   }
 
   private CompletionStage<?> deleteQueue(String queueId) {
-    return queueService.deleteQueue(queueId);
+    return queueService.delete(queueId);
   }
 
   private CompletionStage<?> deleteFunction(String functionId) {
-    return functionService.deleteFunction(functionId);
+    return functionService.delete(functionId);
   }
 
   private CompletionStage<Error> attachQueue(
@@ -219,13 +219,13 @@ public class CreateNodeCommand {
     return NodeRecord.builder().nodeId(nodeId).functionId(functionId).queueId(queueId).build();
   }
 
-  private static class Resources {
+  private static class Node {
 
     private final String nodeId;
     private final Resource function;
     private final Resource queue;
 
-    private Resources(String nodeId, Resource function, Resource queue) {
+    private Node(String nodeId, Resource function, Resource queue) {
       this.nodeId = nodeId;
       this.function = function;
       this.queue = queue;

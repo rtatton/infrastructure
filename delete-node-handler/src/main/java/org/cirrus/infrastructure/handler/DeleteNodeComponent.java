@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 
 @Singleton
 @Component(modules = HandlerModule.class)
-interface CreateNodeComponent {
+interface DeleteNodeComponent {
 
-  CreateNodeCommand getCommand();
+  DeleteNodeCommand getCommand();
 }

@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.util;
+package org.cirrus.infrastructure.logging;
 
 public interface Logger {
 

@@ -6,8 +6,10 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 
 public class CreateNodeHandler implements RequestHandler<APIGatewayV2HTTPEvent, String> {
 
+  private static final Command<?, ?> COMMAND = CreateNodeCommand.getInstance();
+
   @Override
   public String handleRequest(APIGatewayV2HTTPEvent event, Context context) {
-    return CreateNodeCommand.getInstance().runFromString(event.getBody());
+    return COMMAND.runFromString(event.getBody());
   }
 }

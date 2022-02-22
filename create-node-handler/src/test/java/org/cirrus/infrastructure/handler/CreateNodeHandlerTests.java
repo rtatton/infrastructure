@@ -223,7 +223,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedDeleteFunction() {
-    when(functionService.deleteFunction(FUNCTION_ID)).thenReturn(failedResourceDeletion());
+    when(functionService.delete(FUNCTION_ID)).thenReturn(failedResourceDeletion());
   }
 
   private void mockGetRequestNodeId() {
@@ -243,7 +243,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedDeleteQueue() {
-    when(queueService.deleteQueue(QUEUE_ID)).thenReturn(failedResourceDeletion());
+    when(queueService.delete(QUEUE_ID)).thenReturn(failedResourceDeletion());
   }
 
   // Immutables requires non-null attributes, so the request must be mocked.
@@ -254,11 +254,11 @@ class CreateNodeHandlerTests {
   }
 
   private void mockSuccessfulCreateFunction() {
-    when(functionService.createFunction(functionConfig)).thenReturn(function());
+    when(functionService.create(functionConfig)).thenReturn(function());
   }
 
   private void mockSuccessfulCreateQueue() {
-    when(queueService.createQueue(queueConfig)).thenReturn(queue());
+    when(queueService.create(queueConfig)).thenReturn(queue());
   }
 
   private void mockSuccessfulAttachQueue() {
@@ -287,11 +287,11 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedCreateFunction() {
-    when(functionService.createFunction(functionConfig)).thenReturn(failedResource());
+    when(functionService.create(functionConfig)).thenReturn(failedResource());
   }
 
   private void mockSuccessfulDeleteQueue() {
-    when(queueService.deleteQueue(QUEUE_ID)).thenReturn(noReturn());
+    when(queueService.delete(QUEUE_ID)).thenReturn(noReturn());
   }
 
   private Executable runCommand() {
@@ -299,7 +299,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedCreateQueue() {
-    when(queueService.createQueue(queueConfig)).thenReturn(failedResource());
+    when(queueService.create(queueConfig)).thenReturn(failedResource());
   }
 
   private void mockFailedAttachQueue() {
@@ -316,7 +316,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockSuccessfulDeleteFunction() {
-    when(functionService.deleteFunction(FUNCTION_ID)).thenReturn(noReturn());
+    when(functionService.delete(FUNCTION_ID)).thenReturn(noReturn());
   }
 
   private <T> CompletionStage<T> failedStorageWrite() {

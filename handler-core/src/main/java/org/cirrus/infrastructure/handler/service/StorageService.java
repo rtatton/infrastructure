@@ -7,4 +7,6 @@ public interface StorageService<T> {
   CompletionStage<Void> put(T value);
 
   CompletionStage<T> get(Object key);
+
+  CompletionStage<T> delete(Object key);
 }

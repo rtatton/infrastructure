@@ -4,8 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.UncheckedIOException;
 import javax.inject.Inject;
+import org.cirrus.infrastructure.logging.Logger;
 
-public final class JacksonMapper implements Mapper {
+public class JacksonMapper implements Mapper {
 
   private final ObjectMapper mapper;
   private final Logger logger;

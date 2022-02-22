@@ -19,8 +19,8 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
-@Module(includes = CreateNodeBindings.class)
-final class CreateNodeModule {
+@Module(includes = HandlerBindings.class)
+final class HandlerModule {
 
   private static final Region REGION = Region.US_EAST_2;
   private static final String ACCESS_KEY = "";
@@ -30,7 +30,7 @@ final class CreateNodeModule {
   private static final AwsCredentialsProvider CREDENTIALS_PROVIDER =
       StaticCredentialsProvider.create(CREDENTIALS);
 
-  private CreateNodeModule() {
+  private HandlerModule() {
     // No-op
   }
 

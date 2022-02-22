@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.handler.model.Resource;
-import org.cirrus.infrastructure.util.ResourceUtil;
+import org.cirrus.infrastructure.util.Resources;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
@@ -26,8 +26,8 @@ public class SqsQueueService implements QueueService {
   }
 
   @Override
-  public CompletionStage<Resource> createQueue(QueueConfig config) {
-    String queueId = ResourceUtil.createRandomId();
+  public CompletionStage<Resource> create(QueueConfig config) {
+    String queueId = Resources.createRandomId();
     Map<QueueAttributeName, String> props = getQueueProps(config);
     CompletionStage<CreateQueueResponse> response =
         sqsClient.createQueue(builder -> builder.queueName(queueId).attributes(props));
@@ -35,7 +35,7 @@ public class SqsQueueService implements QueueService {
   }
 
   @Override
-  public CompletionStage<Void> deleteQueue(String queueId) {
+  public CompletionStage<Void> delete(String queueId) {
     return helper
         .wrapThrowable(
             sqsClient.deleteQueue(builder -> builder.queueUrl(queueId)),

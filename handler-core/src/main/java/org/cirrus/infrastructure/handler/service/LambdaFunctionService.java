@@ -8,7 +8,7 @@ import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionExcepti
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.handler.model.Resource;
-import org.cirrus.infrastructure.util.ResourceUtil;
+import org.cirrus.infrastructure.util.Resources;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
@@ -28,12 +28,12 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   @Override
-  public CompletionStage<Resource> createFunction(FunctionConfig config) {
+  public CompletionStage<Resource> create(FunctionConfig config) {
     CompletionStage<CreateFunctionResponse> response =
         lambdaClient.createFunction(
             builder ->
                 builder
-                    .functionName(ResourceUtil.createRandomId())
+                    .functionName(Resources.createRandomId())
                     .packageType(PackageType.ZIP)
                     .code(getFunctionCode(config))
                     .runtime(config.runtime())
@@ -46,7 +46,7 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   @Override
-  public CompletionStage<Void> deleteFunction(String functionId) {
+  public CompletionStage<Void> delete(String functionId) {
     return helper
         .wrapThrowable(
             lambdaClient.deleteFunction(builder -> builder.functionName(functionId)),

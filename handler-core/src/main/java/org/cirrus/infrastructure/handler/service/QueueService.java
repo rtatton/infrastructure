@@ -6,7 +6,7 @@ import org.cirrus.infrastructure.handler.model.Resource;
 
 public interface QueueService {
 
-  CompletionStage<Resource> createQueue(QueueConfig config);
+  CompletionStage<Resource> create(QueueConfig config);
 
-  CompletionStage<Void> deleteQueue(String queueId);
+  CompletionStage<Void> delete(String queueId);
 }

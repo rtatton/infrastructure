@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.model.Resource;
-import org.cirrus.infrastructure.util.Logger;
+import org.cirrus.infrastructure.logging.Logger;
 
 @Singleton
 final class ServiceHelper {

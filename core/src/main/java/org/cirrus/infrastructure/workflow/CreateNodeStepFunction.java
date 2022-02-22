@@ -8,7 +8,7 @@ import org.cirrus.infrastructure.factory.QueueStateFactory;
 import org.cirrus.infrastructure.factory.StorageStateFactory;
 import org.cirrus.infrastructure.factory.TopicStateFactory;
 import org.cirrus.infrastructure.util.Keys;
-import org.cirrus.infrastructure.util.Resource;
+import org.cirrus.infrastructure.util.Resources;
 import software.amazon.awscdk.services.stepfunctions.Choice;
 import software.amazon.awscdk.services.stepfunctions.Condition;
 import software.amazon.awscdk.services.stepfunctions.Fail;
@@ -83,8 +83,8 @@ public class CreateNodeStepFunction extends Construct {
   }
 
   private IChainable[] sort(IChainable function, IChainable queue, IChainable topic) {
-    Map<Resource, IChainable> tasks =
-        Map.of(Resource.FUNCTION, function, Resource.QUEUE, queue, Resource.TOPIC, topic);
+    Map<Resources, IChainable> tasks =
+        Map.of(Resources.FUNCTION, function, Resources.QUEUE, queue, Resources.TOPIC, topic);
     return Keys.sort(tasks).toArray(new IChainable[3]);
   }
 
@@ -114,7 +114,7 @@ public class CreateNodeStepFunction extends Construct {
   }
 
   private IChainable[] sort(IChainable function, IChainable topic) {
-    Map<Resource, IChainable> tasks = Map.of(Resource.FUNCTION, function, Resource.TOPIC, topic);
+    Map<Resources, IChainable> tasks = Map.of(Resources.FUNCTION, function, Resources.TOPIC, topic);
     return Keys.sort(tasks).toArray(new IChainable[2]);
   }
 
@@ -128,8 +128,8 @@ public class CreateNodeStepFunction extends Construct {
   }
 
   private Condition[] sort(Condition function, Condition queue, Condition topic) {
-    Map<Resource, Condition> conditions =
-        Map.of(Resource.FUNCTION, function, Resource.QUEUE, queue, Resource.TOPIC, topic);
+    Map<Resources, Condition> conditions =
+        Map.of(Resources.FUNCTION, function, Resources.QUEUE, queue, Resources.TOPIC, topic);
     return Keys.sort(conditions).toArray(new Condition[3]);
   }
 

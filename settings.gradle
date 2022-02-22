@@ -10,4 +10,6 @@
 rootProject.name = "infrastructure"
 include "core"
 include "create-node-handler"
+include "delete-node-handler"
+include "handler-core"
 include "util"

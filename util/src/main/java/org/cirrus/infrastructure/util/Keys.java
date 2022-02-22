@@ -30,16 +30,16 @@ public final class Keys {
     // No-op
   }
 
-  public static <T> List<T> sort(Map<Resource, T> map) {
+  public static <T> List<T> sort(Map<Resources, T> map) {
     List<T> ordered = new ArrayList<>(3);
-    addIfPresent(ordered, map, Resource.FUNCTION, FUNCTION_INDEX);
-    addIfPresent(ordered, map, Resource.QUEUE, QUEUE_INDEX);
-    addIfPresent(ordered, map, Resource.TOPIC, TOPIC_INDEX);
+    addIfPresent(ordered, map, Resources.FUNCTION, FUNCTION_INDEX);
+    addIfPresent(ordered, map, Resources.QUEUE, QUEUE_INDEX);
+    addIfPresent(ordered, map, Resources.TOPIC, TOPIC_INDEX);
     return ordered;
   }
 
   private static <T> void addIfPresent(
-      List<T> ordered, Map<Resource, T> map, Resource resource, int index) {
+      List<T> ordered, Map<Resources, T> map, Resources resource, int index) {
     if (map.containsKey(resource)) {
       ordered.add(index, map.get(resource));
     }

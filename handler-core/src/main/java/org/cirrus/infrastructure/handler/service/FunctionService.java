@@ -7,9 +7,9 @@ import org.cirrus.infrastructure.handler.model.Resource;
 
 public interface FunctionService {
 
-  CompletionStage<Resource> createFunction(FunctionConfig config);
+  CompletionStage<Resource> create(FunctionConfig config);
 
-  CompletionStage<Void> deleteFunction(String functionId);
+  CompletionStage<Void> delete(String functionId);
 
   CompletionStage<String> attachQueue(String functionId, String queueId, QueueConfig config);
 }
