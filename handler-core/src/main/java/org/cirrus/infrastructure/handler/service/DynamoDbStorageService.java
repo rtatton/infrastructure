@@ -36,7 +36,6 @@ public class DynamoDbStorageService implements StorageService<NodeRecord> {
   }
 
   public CompletionStage<NodeRecord> delete(Object key) {
-
     return helper
         .wrapThrowable(table.deleteItem(mapToKey(key)), FailedStorageDeleteException::new)
         .thenApplyAsync(this::throwIfAbsent);
