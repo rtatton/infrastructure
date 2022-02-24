@@ -3,20 +3,18 @@ package org.cirrus.infrastructure.handler;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
 import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
+import org.cirrus.infrastructure.handler.fixtures.HandlerTests;
 import org.cirrus.infrastructure.handler.model.CreateNodeRequest;
 import org.cirrus.infrastructure.handler.model.CreateNodeResponse;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
-import org.cirrus.infrastructure.handler.model.Resource;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
@@ -34,10 +32,9 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class CreateNodeHandlerTests {
 
-  private static final String NODE_ID = "nodeId";
-  private static final String FUNCTION_ID = "functionId";
-  private static final String QUEUE_ID = "queueId";
-  private static final String EVENT_SOURCE_MAPPING_ID = "eventSourceMappingId";
+  private static final String NODE_ID = HandlerTests.NODE_ID;
+  private static final String FUNCTION_ID = HandlerTests.FUNCTION_ID;
+  private static final String QUEUE_ID = HandlerTests.QUEUE_ID;
   @Mock private FunctionService functionService;
   @Mock private QueueService queueService;
   @Mock private StorageService<NodeRecord> storageService;
@@ -56,7 +53,7 @@ class CreateNodeHandlerTests {
     mockSuccessfulCreateQueue();
     mockSuccessfulAttachQueue();
     mockSuccessfulPutRecord();
-    assertEquals(response(), run());
+    assertEquals(HandlerTests.response(), run());
   }
 
   @Test
@@ -223,7 +220,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedDeleteFunction() {
-    when(functionService.delete(FUNCTION_ID)).thenReturn(failedResourceDeletion());
+    when(functionService.delete(FUNCTION_ID)).thenReturn(HandlerTests.failedResourceDeletion());
   }
 
   private void mockGetRequestNodeId() {
@@ -231,19 +228,19 @@ class CreateNodeHandlerTests {
   }
 
   private void mockSuccessfulGetRecord() {
-    when(storageService.get(NODE_ID)).thenReturn(noReturn());
+    when(storageService.get(NODE_ID)).thenReturn(HandlerTests.noReturn());
   }
 
   private void mockExistingNodeRecord() {
-    when(storageService.get(NODE_ID)).thenReturn(existingNodeRecord());
+    when(storageService.get(NODE_ID)).thenReturn(HandlerTests.existingNodeRecord());
   }
 
   private void mockFailedGetRecord() {
-    when(storageService.get(NODE_ID)).thenReturn(failedStorageRead());
+    when(storageService.get(NODE_ID)).thenReturn(HandlerTests.failedStorageRead());
   }
 
   private void mockFailedDeleteQueue() {
-    when(queueService.delete(QUEUE_ID)).thenReturn(failedResourceDeletion());
+    when(queueService.delete(QUEUE_ID)).thenReturn(HandlerTests.failedResourceDeletion());
   }
 
   // Immutables requires non-null attributes, so the request must be mocked.
@@ -254,44 +251,32 @@ class CreateNodeHandlerTests {
   }
 
   private void mockSuccessfulCreateFunction() {
-    when(functionService.create(functionConfig)).thenReturn(function());
+    when(functionService.create(functionConfig)).thenReturn(HandlerTests.function());
   }
 
   private void mockSuccessfulCreateQueue() {
-    when(queueService.create(queueConfig)).thenReturn(queue());
+    when(queueService.create(queueConfig)).thenReturn(HandlerTests.queue());
   }
 
   private void mockSuccessfulAttachQueue() {
     when(functionService.attachQueue(FUNCTION_ID, QUEUE_ID, queueConfig))
-        .thenReturn(eventSourceMappingId());
+        .thenReturn(HandlerTests.eventSourceMappingId());
   }
 
   private void mockSuccessfulPutRecord() {
-    when(storageService.put(nodeRecord())).thenReturn(noReturn());
-  }
-
-  private CreateNodeResponse response() {
-    return CreateNodeResponse.builder()
-        .nodeId(NODE_ID)
-        .functionId(FUNCTION_ID)
-        .queueId(QUEUE_ID)
-        .build();
+    when(storageService.put(HandlerTests.nodeRecord())).thenReturn(HandlerTests.noReturn());
   }
 
   private CreateNodeResponse run() {
     return command.run(request);
   }
 
-  private NodeRecord nodeRecord() {
-    return NodeRecord.builder().nodeId(NODE_ID).functionId(FUNCTION_ID).queueId(QUEUE_ID).build();
-  }
-
   private void mockFailedCreateFunction() {
-    when(functionService.create(functionConfig)).thenReturn(failedResource());
+    when(functionService.create(functionConfig)).thenReturn(HandlerTests.failedResource());
   }
 
   private void mockSuccessfulDeleteQueue() {
-    when(queueService.delete(QUEUE_ID)).thenReturn(noReturn());
+    when(queueService.delete(QUEUE_ID)).thenReturn(HandlerTests.noReturn());
   }
 
   private Executable runCommand() {
@@ -299,60 +284,20 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedCreateQueue() {
-    when(queueService.create(queueConfig)).thenReturn(failedResource());
+    when(queueService.create(queueConfig)).thenReturn(HandlerTests.failedResource());
   }
 
   private void mockFailedAttachQueue() {
     when(functionService.attachQueue(FUNCTION_ID, QUEUE_ID, queueConfig))
-        .thenReturn(failedEventSourceMapping());
-  }
-
-  private <T> CompletionStage<T> failedEventSourceMapping() {
-    return CompletableFuture.failedFuture(new FailedEventSourceMappingException());
+        .thenReturn(HandlerTests.failedEventSourceMapping());
   }
 
   private void mockFailedPutRecord() {
-    when(storageService.put(nodeRecord())).thenReturn(failedStorageWrite());
+    when(storageService.put(HandlerTests.nodeRecord()))
+        .thenReturn(HandlerTests.failedStorageWrite());
   }
 
   private void mockSuccessfulDeleteFunction() {
-    when(functionService.delete(FUNCTION_ID)).thenReturn(noReturn());
-  }
-
-  private <T> CompletionStage<T> failedStorageWrite() {
-    return CompletableFuture.failedFuture(new FailedStorageWriteException());
-  }
-
-  private <T> CompletionStage<T> existingNodeRecord() {
-    return CompletableFuture.failedFuture(new NodeAlreadyExistsException());
-  }
-
-  private <T> CompletionStage<T> failedStorageRead() {
-    return CompletableFuture.failedFuture(new FailedStorageReadException());
-  }
-
-  private <T> CompletionStage<T> failedResourceDeletion() {
-    return CompletableFuture.failedFuture(new FailedResourceDeletionException());
-  }
-
-  private CompletionStage<Resource> failedResource() {
-    Resource failed = Resource.builder().exception(new FailedResourceCreationException()).build();
-    return CompletableFuture.completedFuture(failed);
-  }
-
-  private <T> CompletionStage<T> noReturn() {
-    return CompletableFuture.completedFuture(null);
-  }
-
-  private CompletionStage<Resource> function() {
-    return CompletableFuture.completedFuture(Resource.builder().id(FUNCTION_ID).build());
-  }
-
-  private CompletionStage<Resource> queue() {
-    return CompletableFuture.completedFuture(Resource.builder().id(QUEUE_ID).build());
-  }
-
-  private CompletionStage<String> eventSourceMappingId() {
-    return CompletableFuture.completedFuture(EVENT_SOURCE_MAPPING_ID);
+    when(functionService.delete(FUNCTION_ID)).thenReturn(HandlerTests.noReturn());
   }
 }
