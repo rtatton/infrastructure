@@ -40,6 +40,27 @@ public final class HandlerTests {
     return NodeRecord.builder().nodeId(NODE_ID).functionId(FUNCTION_ID).queueId(QUEUE_ID).build();
   }
 
+  public static <T> CompletionStage<T> noReturn() {
+    return CompletableFuture.completedFuture(null);
+  }
+
+  public static CompletionStage<Resource> function() {
+    return CompletableFuture.completedFuture(Resource.builder().id(FUNCTION_ID).build());
+  }
+
+  public static CompletionStage<Resource> queue() {
+    return CompletableFuture.completedFuture(Resource.builder().id(QUEUE_ID).build());
+  }
+
+  public static CompletionStage<Resource> failedResource() {
+    Resource failed = Resource.builder().exception(new FailedResourceCreationException()).build();
+    return CompletableFuture.completedFuture(failed);
+  }
+
+  public static CompletionStage<String> eventSourceMappingId() {
+    return CompletableFuture.completedFuture(EVENT_SOURCE_MAPPING_ID);
+  }
+
   public static <T> CompletionStage<T> failedStorageWrite() {
     return CompletableFuture.failedFuture(new FailedStorageWriteException());
   }
@@ -58,27 +79,6 @@ public final class HandlerTests {
 
   public static <T> CompletionStage<T> failedResourceDeletion() {
     return CompletableFuture.failedFuture(new FailedResourceDeletionException());
-  }
-
-  public static CompletionStage<Resource> failedResource() {
-    Resource failed = Resource.builder().exception(new FailedResourceCreationException()).build();
-    return CompletableFuture.completedFuture(failed);
-  }
-
-  public static <T> CompletionStage<T> noReturn() {
-    return CompletableFuture.completedFuture(null);
-  }
-
-  public static CompletionStage<Resource> function() {
-    return CompletableFuture.completedFuture(Resource.builder().id(FUNCTION_ID).build());
-  }
-
-  public static CompletionStage<Resource> queue() {
-    return CompletableFuture.completedFuture(Resource.builder().id(QUEUE_ID).build());
-  }
-
-  public static CompletionStage<String> eventSourceMappingId() {
-    return CompletableFuture.completedFuture(EVENT_SOURCE_MAPPING_ID);
   }
 
   public static <T> CompletionStage<T> failedEventSourceMapping() {
