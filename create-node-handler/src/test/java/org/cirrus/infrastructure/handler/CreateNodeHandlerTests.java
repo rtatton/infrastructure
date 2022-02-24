@@ -31,9 +31,6 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class CreateNodeHandlerTests {
 
-  private static final String NODE_ID = HandlerTests.NODE_ID;
-  private static final String FUNCTION_ID = HandlerTests.FUNCTION_ID;
-  private static final String QUEUE_ID = HandlerTests.QUEUE_ID;
   @Mock private FunctionService functionService;
   @Mock private QueueService queueService;
   @Mock private StorageService<NodeRecord> storageService;
@@ -219,28 +216,30 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedDeleteFunction() {
-    when(functionService.delete(FUNCTION_ID)).thenReturn(HandlerTests.failedResourceDeletion());
+    when(functionService.delete(HandlerTests.FUNCTION_ID))
+        .thenReturn(HandlerTests.failedResourceDeletion());
   }
 
   private void mockGetRequestNodeId() {
-    when(request.nodeId()).thenReturn(NODE_ID);
+    when(request.nodeId()).thenReturn(HandlerTests.NODE_ID);
   }
 
   // Record should not exist yet before creating the node
   private void mockSuccessfulGetRecord() {
-    when(storageService.get(NODE_ID)).thenReturn(HandlerTests.noReturn());
+    when(storageService.get(HandlerTests.NODE_ID)).thenReturn(HandlerTests.noReturn());
   }
 
   private void mockExistingNodeRecord() {
-    when(storageService.get(NODE_ID)).thenReturn(HandlerTests.nodeAlreadyExists());
+    when(storageService.get(HandlerTests.NODE_ID)).thenReturn(HandlerTests.nodeAlreadyExists());
   }
 
   private void mockFailedGetRecord() {
-    when(storageService.get(NODE_ID)).thenReturn(HandlerTests.failedStorageRead());
+    when(storageService.get(HandlerTests.NODE_ID)).thenReturn(HandlerTests.failedStorageRead());
   }
 
   private void mockFailedDeleteQueue() {
-    when(queueService.delete(QUEUE_ID)).thenReturn(HandlerTests.failedResourceDeletion());
+    when(queueService.delete(HandlerTests.QUEUE_ID))
+        .thenReturn(HandlerTests.failedResourceDeletion());
   }
 
   // Immutables requires non-null attributes, so the request must be mocked.
@@ -259,7 +258,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockSuccessfulAttachQueue() {
-    when(functionService.attachQueue(FUNCTION_ID, QUEUE_ID, queueConfig))
+    when(functionService.attachQueue(HandlerTests.FUNCTION_ID, HandlerTests.QUEUE_ID, queueConfig))
         .thenReturn(HandlerTests.eventSourceMappingId());
   }
 
@@ -276,7 +275,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockSuccessfulDeleteQueue() {
-    when(queueService.delete(QUEUE_ID)).thenReturn(HandlerTests.noReturn());
+    when(queueService.delete(HandlerTests.QUEUE_ID)).thenReturn(HandlerTests.noReturn());
   }
 
   private void mockFailedCreateQueue() {
@@ -284,7 +283,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedAttachQueue() {
-    when(functionService.attachQueue(FUNCTION_ID, QUEUE_ID, queueConfig))
+    when(functionService.attachQueue(HandlerTests.FUNCTION_ID, HandlerTests.QUEUE_ID, queueConfig))
         .thenReturn(HandlerTests.failedEventSourceMapping());
   }
 
@@ -294,6 +293,6 @@ class CreateNodeHandlerTests {
   }
 
   private void mockSuccessfulDeleteFunction() {
-    when(functionService.delete(FUNCTION_ID)).thenReturn(HandlerTests.noReturn());
+    when(functionService.delete(HandlerTests.FUNCTION_ID)).thenReturn(HandlerTests.noReturn());
   }
 }
