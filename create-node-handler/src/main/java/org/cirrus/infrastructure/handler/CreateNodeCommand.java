@@ -163,19 +163,18 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
 
   private CompletionStage<Node> attachQueue(Node node, QueueConfig config) {
     return attachQueue(node.function.id(), node.queue.id(), config)
-        .thenComposeAsync(error -> orCompleteRollback(node, error))
+        .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
         .thenApplyAsync(x -> node);
   }
 
   private CompletionStage<Void> saveRecord(Node node) {
     return saveRecord(node.nodeId, node.function.id(), node.queue.id())
-        .thenComposeAsync(error -> orCompleteRollback(node, error))
+        .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
         .thenApplyAsync(x -> null);
   }
 
-  private CompletionStage<?> orCompleteRollback(Node node, Error error) {
+  private CompletionStage<?> orCompleteRollback(Node node, Throwable throwable) {
     CompletionStage<?> result;
-    Throwable throwable = error.throwable;
     if (throwable == null) {
       result = CompletableFuture.completedFuture(node);
     } else {
@@ -202,17 +201,17 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
     return functionService.delete(functionId);
   }
 
-  private CompletionStage<Error> attachQueue(
+  private CompletionStage<Throwable> attachQueue(
       String functionId, String queueId, QueueConfig config) {
     return functionService
         .attachQueue(functionId, queueId, config)
-        .handleAsync((x, throwable) -> new Error(throwable));
+        .handleAsync((x, throwable) -> throwable);
   }
 
-  private CompletionStage<Error> saveRecord(String nodeId, String functionId, String queueId) {
+  private CompletionStage<Throwable> saveRecord(String nodeId, String functionId, String queueId) {
     return storageService
         .put(createNodeRecord(nodeId, functionId, queueId))
-        .handleAsync((x, throwable) -> new Error(throwable));
+        .handleAsync((x, throwable) -> throwable);
   }
 
   private NodeRecord createNodeRecord(String nodeId, String functionId, String queueId) {
@@ -229,14 +228,6 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
       this.nodeId = nodeId;
       this.function = function;
       this.queue = queue;
-    }
-  }
-
-  private static class Error {
-    private final Throwable throwable;
-
-    private Error(Throwable throwable) {
-      this.throwable = throwable;
     }
   }
 }
