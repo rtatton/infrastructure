@@ -7,6 +7,7 @@ import org.cirrus.infrastructure.handler.exception.FailedResourceCreationExcepti
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
+import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
 import org.cirrus.infrastructure.handler.model.CreateNodeResponse;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
@@ -23,12 +24,16 @@ public final class HandlerTests {
     // no-op
   }
 
-  public static CreateNodeResponse response() {
+  public static CreateNodeResponse createNodeResponse() {
     return CreateNodeResponse.builder()
         .nodeId(NODE_ID)
         .functionId(FUNCTION_ID)
         .queueId(QUEUE_ID)
         .build();
+  }
+
+  public static CompletionStage<NodeRecord> nodeRecordStage() {
+    return CompletableFuture.completedFuture(nodeRecord());
   }
 
   public static NodeRecord nodeRecord() {
@@ -39,8 +44,12 @@ public final class HandlerTests {
     return CompletableFuture.failedFuture(new FailedStorageWriteException());
   }
 
-  public static <T> CompletionStage<T> existingNodeRecord() {
+  public static <T> CompletionStage<T> nodeAlreadyExists() {
     return CompletableFuture.failedFuture(new NodeAlreadyExistsException());
+  }
+
+  public static <T> CompletionStage<T> noSuchNode() {
+    return CompletableFuture.failedFuture(new NoSuchNodeException());
   }
 
   public static <T> CompletionStage<T> failedStorageRead() {

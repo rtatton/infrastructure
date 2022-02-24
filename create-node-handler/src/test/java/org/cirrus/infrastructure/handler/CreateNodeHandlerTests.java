@@ -21,7 +21,6 @@ import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.util.Mapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -53,21 +52,21 @@ class CreateNodeHandlerTests {
     mockSuccessfulCreateQueue();
     mockSuccessfulAttachQueue();
     mockSuccessfulPutRecord();
-    assertEquals(HandlerTests.response(), run());
+    assertEquals(HandlerTests.createNodeResponse(), run());
   }
 
   @Test
   public void throwsExceptionWhenGetRecordFails() {
     mockGetRequestNodeId();
     mockFailedGetRecord();
-    assertThrows(FailedStorageReadException.class, runCommand());
+    assertThrows(FailedStorageReadException.class, this::run);
   }
 
   @Test
   public void throwsExceptionWhenNodeAlreadyExists() {
     mockGetRequestNodeId();
     mockExistingNodeRecord();
-    assertThrows(NodeAlreadyExistsException.class, runCommand());
+    assertThrows(NodeAlreadyExistsException.class, this::run);
   }
 
   @Test
@@ -77,7 +76,7 @@ class CreateNodeHandlerTests {
     mockFailedCreateFunction();
     mockSuccessfulCreateQueue();
     mockSuccessfulDeleteQueue();
-    assertThrows(FailedResourceCreationException.class, runCommand());
+    assertThrows(FailedResourceCreationException.class, this::run);
   }
 
   @Test
@@ -87,7 +86,7 @@ class CreateNodeHandlerTests {
     mockFailedCreateFunction();
     mockSuccessfulCreateQueue();
     mockFailedDeleteQueue();
-    assertThrows(FailedResourceDeletionException.class, runCommand());
+    assertThrows(FailedResourceDeletionException.class, this::run);
   }
 
   @Test
@@ -97,7 +96,7 @@ class CreateNodeHandlerTests {
     mockSuccessfulCreateFunction();
     mockFailedCreateQueue();
     mockSuccessfulDeleteFunction();
-    assertThrows(FailedResourceCreationException.class, runCommand());
+    assertThrows(FailedResourceCreationException.class, this::run);
   }
 
   @Test
@@ -107,7 +106,7 @@ class CreateNodeHandlerTests {
     mockSuccessfulCreateFunction();
     mockFailedCreateQueue();
     mockFailedDeleteFunction();
-    assertThrows(FailedResourceDeletionException.class, runCommand());
+    assertThrows(FailedResourceDeletionException.class, this::run);
   }
 
   @Test
@@ -116,7 +115,7 @@ class CreateNodeHandlerTests {
     mockSuccessfulGetRecord();
     mockFailedCreateFunction();
     mockFailedCreateQueue();
-    assertThrows(FailedResourceCreationException.class, runCommand());
+    assertThrows(FailedResourceCreationException.class, this::run);
   }
 
   @Test
@@ -128,7 +127,7 @@ class CreateNodeHandlerTests {
     mockFailedAttachQueue();
     mockSuccessfulDeleteFunction();
     mockSuccessfulDeleteQueue();
-    assertThrows(FailedEventSourceMappingException.class, runCommand());
+    assertThrows(FailedEventSourceMappingException.class, this::run);
   }
 
   @Test
@@ -140,7 +139,7 @@ class CreateNodeHandlerTests {
     mockFailedAttachQueue();
     mockFailedDeleteFunction();
     mockSuccessfulDeleteQueue();
-    assertThrows(FailedResourceDeletionException.class, runCommand());
+    assertThrows(FailedResourceDeletionException.class, this::run);
   }
 
   @Test
@@ -152,7 +151,7 @@ class CreateNodeHandlerTests {
     mockFailedAttachQueue();
     mockSuccessfulDeleteFunction();
     mockFailedDeleteQueue();
-    assertThrows(FailedResourceDeletionException.class, runCommand());
+    assertThrows(FailedResourceDeletionException.class, this::run);
   }
 
   @Test
@@ -164,7 +163,7 @@ class CreateNodeHandlerTests {
     mockFailedAttachQueue();
     mockFailedDeleteFunction();
     mockFailedDeleteQueue();
-    assertThrows(FailedResourceDeletionException.class, runCommand());
+    assertThrows(FailedResourceDeletionException.class, this::run);
   }
 
   @Test
@@ -177,7 +176,7 @@ class CreateNodeHandlerTests {
     mockFailedPutRecord();
     mockSuccessfulDeleteFunction();
     mockSuccessfulDeleteQueue();
-    assertThrows(FailedStorageWriteException.class, runCommand());
+    assertThrows(FailedStorageWriteException.class, this::run);
   }
 
   @Test
@@ -190,7 +189,7 @@ class CreateNodeHandlerTests {
     mockFailedPutRecord();
     mockFailedDeleteFunction();
     mockSuccessfulDeleteQueue();
-    assertThrows(FailedResourceDeletionException.class, runCommand());
+    assertThrows(FailedResourceDeletionException.class, this::run);
   }
 
   @Test
@@ -203,7 +202,7 @@ class CreateNodeHandlerTests {
     mockFailedPutRecord();
     mockSuccessfulDeleteFunction();
     mockFailedDeleteQueue();
-    assertThrows(FailedResourceDeletionException.class, runCommand());
+    assertThrows(FailedResourceDeletionException.class, this::run);
   }
 
   @Test
@@ -216,7 +215,7 @@ class CreateNodeHandlerTests {
     mockFailedPutRecord();
     mockFailedDeleteFunction();
     mockFailedDeleteQueue();
-    assertThrows(FailedResourceDeletionException.class, runCommand());
+    assertThrows(FailedResourceDeletionException.class, this::run);
   }
 
   private void mockFailedDeleteFunction() {
@@ -227,12 +226,13 @@ class CreateNodeHandlerTests {
     when(request.nodeId()).thenReturn(NODE_ID);
   }
 
+  // Record should not exist yet before creating the node
   private void mockSuccessfulGetRecord() {
     when(storageService.get(NODE_ID)).thenReturn(HandlerTests.noReturn());
   }
 
   private void mockExistingNodeRecord() {
-    when(storageService.get(NODE_ID)).thenReturn(HandlerTests.existingNodeRecord());
+    when(storageService.get(NODE_ID)).thenReturn(HandlerTests.nodeAlreadyExists());
   }
 
   private void mockFailedGetRecord() {
@@ -277,10 +277,6 @@ class CreateNodeHandlerTests {
 
   private void mockSuccessfulDeleteQueue() {
     when(queueService.delete(QUEUE_ID)).thenReturn(HandlerTests.noReturn());
-  }
-
-  private Executable runCommand() {
-    return this::run;
   }
 
   private void mockFailedCreateQueue() {
