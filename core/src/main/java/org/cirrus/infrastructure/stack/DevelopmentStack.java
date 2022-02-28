@@ -1,8 +1,8 @@
 package org.cirrus.infrastructure.stack;
 
-import org.cirrus.infrastructure.factory.NodeRegistryFactory;
-import software.amazon.awscdk.core.Stack;
-import software.amazon.awscdk.services.dynamodb.ITable;
+import org.cirrus.infrastructure.factory.ApiFactory;
+import org.cirrus.infrastructure.factory.NodeTableFactory;
+import software.amazon.awscdk.Stack;
 import software.constructs.Construct;
 
 public class DevelopmentStack extends Stack {
@@ -16,9 +16,16 @@ public class DevelopmentStack extends Stack {
     createStackResources();
   }
 
-  private void createStackResources() {}
+  private void createStackResources() {
+    nodeRegistry();
+    api();
+  }
 
-  private ITable nodeRegistry() {
-    return NodeRegistryFactory.create(scope);
+  private void nodeRegistry() {
+    NodeTableFactory.create(scope);
+  }
+
+  private void api() {
+    ApiFactory.create(scope);
   }
 }
