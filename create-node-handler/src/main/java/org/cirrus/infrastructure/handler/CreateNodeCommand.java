@@ -43,7 +43,7 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
     this.mapper = mapper;
   }
 
-  public static CreateNodeCommand getInstance() {
+  public static CreateNodeCommand create() {
     return COMPONENT.getCommand();
   }
 

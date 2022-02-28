@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageDeleteException;
-import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 import org.cirrus.infrastructure.handler.model.DeleteNodeRequest;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
@@ -37,7 +36,7 @@ public class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
     this.mapper = mapper;
   }
 
-  public static DeleteNodeCommand getInstance() {
+  public static DeleteNodeCommand create() {
     return COMPONENT.getCommand();
   }
 
@@ -46,8 +45,6 @@ public class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
    *
    * @param request Contains the identifier of the node to delete.
    * @throws NoSuchNodeException Thrown when the requested node identifier does not exist.
-   * @throws FailedStorageReadException Thrown when an error occurs when attempting to access the
-   *     storage service to retrieve requested node resource identifiers.
    * @throws FailedStorageDeleteException Thrown when an error occurs when attempting to access the
    *     storage service to delete the requested node resource identifiers.
    * @throws FailedResourceDeletionException Thrown when any of cloud resources fail to be deleted.
