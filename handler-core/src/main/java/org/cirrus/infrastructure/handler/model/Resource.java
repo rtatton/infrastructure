@@ -1,7 +1,7 @@
 package org.cirrus.infrastructure.handler.model;
 
-import com.google.common.base.Preconditions;
 import javax.annotation.Nullable;
+import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable

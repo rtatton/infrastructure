@@ -1,20 +1,16 @@
 package org.cirrus.infrastructure.handler.model;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Range;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 import software.amazon.awssdk.services.lambda.model.Runtime;
 
 @Value.Immutable
 public abstract class FunctionConfig {
 
-  private static final Range<Integer> MEMORY_SIZE_RANGE = Range.closed(128, 10_240);
-  private static final Range<Integer> TIMEOUT_RANGE = Range.closed(0, 900);
   private static final Set<String> RUNTIMES =
-      Runtime.knownValues().stream().map(Runtime::toString).collect(ImmutableSet.toImmutableSet());
+      Runtime.knownValues().stream().map(Runtime::toString).collect(Collectors.toUnmodifiableSet());
 
   public static Builder builder() {
     return ImmutableFunctionConfig.builder();
@@ -24,14 +20,6 @@ public abstract class FunctionConfig {
 
   public abstract String codeKey();
 
-  @Value.Check
-  protected void check() {
-    Preconditions.checkState(!Strings.isNullOrEmpty(handlerName()));
-    Preconditions.checkState(MEMORY_SIZE_RANGE.contains(memorySizeMegabytes()));
-    Preconditions.checkState(RUNTIMES.contains(runtime()));
-    Preconditions.checkState(TIMEOUT_RANGE.contains(timeoutSeconds()));
-  }
-
   public abstract String handlerName();
 
   public abstract int memorySizeMegabytes();
@@ -39,6 +27,14 @@ public abstract class FunctionConfig {
   public abstract String runtime();
 
   public abstract int timeoutSeconds();
+
+  @Value.Check
+  protected void check() {
+    Preconditions.notNullOrEmpty(handlerName());
+    Preconditions.inRangeClosed(memorySizeMegabytes(), 128, 10240);
+    Preconditions.checkState(RUNTIMES.contains(runtime()));
+    Preconditions.inRangeClosed(timeoutSeconds(), 0, 900);
+  }
 
   public interface Builder {
 
