@@ -23,7 +23,7 @@ import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.util.Mapper;
 
 @Singleton
-public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {
+class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {
 
   private static final CreateNodeComponent COMPONENT = DaggerCreateNodeComponent.create();
   private final FunctionService functionService;

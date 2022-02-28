@@ -16,7 +16,7 @@ import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.util.Mapper;
 
 @Singleton
-public class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
+class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
 
   private static final DeleteNodeComponent COMPONENT = DaggerDeleteNodeComponent.create();
   private final FunctionService functionService;
