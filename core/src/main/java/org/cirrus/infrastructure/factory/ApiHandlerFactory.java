@@ -27,19 +27,19 @@ public final class ApiHandlerFactory {
   }
 
   /**
-   * @param functionName Name of the Lambda function handler class.
+   * @param handlerName Name of the Lambda function handler class.
    * @param codePath Relative path (from root, contains cdk.json) to the directory that contains the
    *     build files and source code for the Lambda function.
    * @param scope CDK construct scope.
    * @return CDK Lambda function construct.
    */
-  public static IFunction create(String functionName, String codePath, Construct scope) {
-    return Function.Builder.create(scope, functionName)
+  public static IFunction create(String handlerName, String codePath, Construct scope) {
+    return Function.Builder.create(scope, handlerName)
         .code(Code.fromAsset(codePath, assetOptions(codePath)))
         .runtime(Runtime.JAVA_11)
         .role(null) // TODO
         .deadLetterQueueEnabled(true)
-        .handler(handler(functionName))
+        .handler(handler(handlerName))
         .timeout(Duration.seconds(60))
         .memorySize(128)
         .logRetention(RetentionDays.ONE_WEEK)
@@ -50,8 +50,8 @@ public final class ApiHandlerFactory {
     return String.format(CD_THEN_BUILD_THEN_COPY_FORMAT, codePath, outputPath);
   }
 
-  private static String handler(String functionName) {
-    return String.format(HANDLER_PACKAGE_FORMAT, functionName);
+  private static String handler(String handlerName) {
+    return String.format(HANDLER_PACKAGE_FORMAT, handlerName);
   }
 
   private static AssetOptions assetOptions(String codePath) {

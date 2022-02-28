@@ -38,12 +38,12 @@ public final class NodeApiFactory {
   }
 
   private static AddRoutesOptions routeOptions(
-      String functionName, String codePath, List<HttpMethod> methods, Construct scope) {
-    IFunction handler = ApiHandlerFactory.create(functionName, codePath, scope);
+      String handlerName, String codePath, List<HttpMethod> methods, Construct scope) {
+    IFunction handler = ApiHandlerFactory.create(handlerName, codePath, scope);
     return AddRoutesOptions.builder()
         .path(NODE_ENDPOINT)
         .methods(methods)
-        .integration(new HttpLambdaIntegration(functionName, handler))
+        .integration(new HttpLambdaIntegration(handlerName, handler))
         .build();
   }
 }
