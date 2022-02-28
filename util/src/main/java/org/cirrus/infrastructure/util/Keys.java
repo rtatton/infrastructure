@@ -9,6 +9,7 @@ public final class Keys {
   public static final String NODE_TABLE_NAME = "NodeRegistry";
   public static final String FUNCTION_CONFIG_KEY = "functionConfig";
   public static final String QUEUE_CONFIG_KEY = "queueConfig";
+  public static final String NODE_FUNCTION_ROLE = "NODE_FUNCTION_ROLE";
 
   private Keys() {
     // No-op

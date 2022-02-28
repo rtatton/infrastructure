@@ -8,6 +8,7 @@ import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionExcepti
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.handler.model.Resource;
+import org.cirrus.infrastructure.util.Keys;
 import org.cirrus.infrastructure.util.Resources;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
@@ -40,7 +41,7 @@ public class LambdaFunctionService implements FunctionService {
                     .handler(config.handlerName())
                     .memorySize(config.memorySizeMegabytes())
                     .timeout(config.timeoutSeconds())
-                    .role("") // TODO
+                    .role(role())
                     .publish(true));
     return helper.createResource(response, CreateFunctionResponse::functionArn);
   }
@@ -67,6 +68,10 @@ public class LambdaFunctionService implements FunctionService {
                         .batchSize(config.batchSize())),
             FailedEventSourceMappingException::new)
         .thenApplyAsync(CreateEventSourceMappingResponse::eventSourceArn);
+  }
+
+  private String role() {
+    return System.getenv(Keys.NODE_FUNCTION_ROLE);
   }
 
   private FunctionCode getFunctionCode(FunctionConfig config) {
