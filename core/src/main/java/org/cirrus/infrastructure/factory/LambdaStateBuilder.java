@@ -34,7 +34,7 @@ public final class LambdaStateBuilder {
   private static final Duration TIMEOUT = Duration.seconds(3);
   private final Construct scope;
   private String functionName;
-  private String codeDirectoryName;
+  private String codeDirectory;
   private String comment;
 
   private LambdaStateBuilder(Construct scope) {
@@ -52,9 +52,27 @@ public final class LambdaStateBuilder {
     return createState();
   }
 
+  /** Sets the name of the function that will be used as part of the logical ID of the construct. */
+  public LambdaStateBuilder functionName(String functionName) {
+    this.functionName = functionName;
+    return this;
+  }
+
+  /** Sets the name of the top-level directory that contains the build files and source code. */
+  public LambdaStateBuilder codeDirectory(String codeDirectory) {
+    this.codeDirectory = codeDirectory;
+    return this;
+  }
+
+  /** Sets the comment that will be provided as part of the state in the Step Function. */
+  public LambdaStateBuilder comment(String comment) {
+    this.comment = comment;
+    return this;
+  }
+
   private void checkFields() {
     Preconditions.checkNotNull(functionName);
-    Preconditions.checkNotNull(codeDirectoryName);
+    Preconditions.checkNotNull(codeDirectory);
     Preconditions.checkNotNull(comment);
   }
 
@@ -68,7 +86,7 @@ public final class LambdaStateBuilder {
 
   private IFunction createFunction() {
     return Function.Builder.create(scope, functionName)
-        .code(Code.fromAsset(codeDirectoryName, getAssetOptions()))
+        .code(Code.fromAsset(codeDirectory, getAssetOptions()))
         .architectures(List.of(Architecture.ARM_64))
         .runtime(RUNTIME)
         .timeout(TIMEOUT)
@@ -77,6 +95,31 @@ public final class LambdaStateBuilder {
         .handler(getHandler())
         .logRetention(RetentionDays.ONE_WEEK)
         .build();
+  }
+
+  /**
+   * Reference:
+   * https://github.com/aws-samples/i-love-my-local-farmer/blob/main/DeliveryApi/cdk/src/main/java/com/ilmlf/delivery/api/ApiStack.java
+   */
+  private boolean tryLocalBundling(String outputPath) {
+    try {
+      // Paths relative to cdk.json in root directory
+      ProcessBuilder builder = getBuilder(outputPath);
+      Process process = builder.start();
+      process.waitFor();
+      return process.exitValue() == 0;
+    } catch (IOException | InterruptedException exception) {
+      exception.printStackTrace();
+      return false;
+    }
+  }
+
+  private ProcessBuilder getBuilder(String outputPath) {
+    return new ProcessBuilder(BASH, OPTION_C, getCdThenBuildThenCopyCommand(outputPath));
+  }
+
+  private String getCdThenBuildThenCopyCommand(String outputPath) {
+    return String.format(CD_THEN_BUILD_THEN_COPY_FORMAT, codeDirectory, outputPath);
   }
 
   private AssetOptions getAssetOptions() {
@@ -100,54 +143,11 @@ public final class LambdaStateBuilder {
         .build();
   }
 
-  /**
-   * Reference:
-   * https://github.com/aws-samples/i-love-my-local-farmer/blob/main/DeliveryApi/cdk/src/main/java/com/ilmlf/delivery/api/ApiStack.java
-   */
-  private boolean tryLocalBundling(String outputPath) {
-    try {
-      // Paths relative to cdk.json in root directory
-      ProcessBuilder builder = getBuilder(outputPath);
-      Process process = builder.start();
-      process.waitFor();
-      return process.exitValue() == 0;
-    } catch (IOException | InterruptedException exception) {
-      exception.printStackTrace();
-      return false;
-    }
-  }
-
   private List<String> getContainerCommand() {
     return List.of(SH, OPTION_C, getBuildThenLsThenCopyCommand());
   }
 
   private String getBuildThenLsThenCopyCommand() {
-    return String.format(BUILD_THEN_LS_THEN_COPY_FORMAT, codeDirectoryName);
-  }
-
-  private ProcessBuilder getBuilder(String outputPath) {
-    return new ProcessBuilder(BASH, OPTION_C, getCdThenBuildThenCopyCommand(outputPath));
-  }
-
-  private String getCdThenBuildThenCopyCommand(String outputPath) {
-    return String.format(CD_THEN_BUILD_THEN_COPY_FORMAT, codeDirectoryName, outputPath);
-  }
-
-  /** Sets the name of the function that will be used as part of the logical ID of the construct. */
-  public LambdaStateBuilder setFunctionName(String functionName) {
-    this.functionName = functionName;
-    return this;
-  }
-
-  /** Sets the name of the top-level directory that contains the build files and source code. */
-  public LambdaStateBuilder setCodeDirectoryName(String codeDirectoryName) {
-    this.codeDirectoryName = codeDirectoryName;
-    return this;
-  }
-
-  /** Sets the comment that will be provided as part of the state in the Step Function. */
-  public LambdaStateBuilder setComment(String comment) {
-    this.comment = comment;
-    return this;
+    return String.format(BUILD_THEN_LS_THEN_COPY_FORMAT, codeDirectory);
   }
 }

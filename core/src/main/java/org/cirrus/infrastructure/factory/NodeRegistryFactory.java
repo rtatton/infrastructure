@@ -8,23 +8,14 @@ import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.dynamodb.Table;
 import software.constructs.Construct;
 
-public class NodeRegistryFactory {
+public final class NodeRegistryFactory {
 
   private static final Attribute PARTITION_KEY = getPartitionKey();
   private static final Number WRITE_CAPACITY = 5;
   private static final Number READ_CAPACITY = 5;
   private static final BillingMode BILLING_MODE = BillingMode.PAY_PER_REQUEST;
-  private final Construct scope;
 
-  private NodeRegistryFactory(Construct scope) {
-    this.scope = scope;
-  }
-
-  public static NodeRegistryFactory of(Construct scope) {
-    return new NodeRegistryFactory(scope);
-  }
-
-  public ITable create() {
+  public static ITable create(Construct scope) {
     return Table.Builder.create(scope, Keys.NODE_TABLE_NAME)
         .tableName(Keys.NODE_TABLE_NAME)
         .partitionKey(PARTITION_KEY)

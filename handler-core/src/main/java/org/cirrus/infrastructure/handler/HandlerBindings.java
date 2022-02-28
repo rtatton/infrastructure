@@ -20,21 +20,21 @@ interface HandlerBindings {
 
   @Binds
   @Singleton
-  Mapper bindMapper(JacksonMapper mapper);
+  Mapper mapper(JacksonMapper mapper);
 
   @Binds
   @Singleton
-  Logger bindLogger(ConsoleLogger logger);
+  Logger logger(ConsoleLogger logger);
 
   @Binds
   @Singleton
-  FunctionService bindFunctionService(LambdaFunctionService service);
+  FunctionService functionService(LambdaFunctionService service);
 
   @Binds
   @Singleton
-  QueueService bindQueueService(SqsQueueService service);
+  QueueService queueService(SqsQueueService service);
 
   @Binds
   @Singleton
-  StorageService<NodeRecord> bindStorageService(DynamoDbStorageService service);
+  StorageService<NodeRecord> storageService(DynamoDbStorageService service);
 }
