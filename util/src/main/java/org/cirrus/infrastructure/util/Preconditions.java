@@ -2,8 +2,6 @@ package org.cirrus.infrastructure.util;
 
 public final class Preconditions {
 
-  private static final String EMPTY = "";
-
   private Preconditions() {
     // no-op
   }
@@ -19,6 +17,6 @@ public final class Preconditions {
   }
 
   public static void notNullOrEmpty(String string) {
-    checkState(string != null && !string.equals(EMPTY));
+    checkState(string != null && !string.isEmpty());
   }
 }
