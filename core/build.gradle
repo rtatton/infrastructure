@@ -4,15 +4,13 @@ plugins {
 
 // Versions of all dependencies, organized in descending alphabetical order.
 def versions = [
-        Cdk         : "1.125.+",
-        Guava       : "30.1-jre",
+        cdk1: "1.146.0",
+        cdk2: "2.14.0",
 ]
 
 dependencies {
     implementation project(":util")
-    implementation "com.google.guava:guava:$versions.Guava"
-    implementation "software.amazon.awscdk:core:$versions.Cdk"
-    implementation "software.amazon.awscdk:lambda:$versions.Cdk"
-    implementation "software.amazon.awscdk:stepfunctions:$versions.Cdk"
-    implementation "software.amazon.awscdk:stepfunctions-tasks:$versions.Cdk"
+    implementation "software.amazon.awscdk:aws-cdk-lib:$versions.cdk2"
+    implementation "software.amazon.awscdk:apigatewayv2-alpha:$versions.cdk-alpha.0"
+    implementation "software.amazon.awscdk:apigatewayv2-integrations:$versions.cdk1"
 }
