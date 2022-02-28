@@ -11,6 +11,6 @@ def versions = [
 dependencies {
     implementation project(":util")
     implementation "software.amazon.awscdk:aws-cdk-lib:$versions.cdk2"
-    implementation "software.amazon.awscdk:apigatewayv2-alpha:$versions.cdk-alpha.0"
+    implementation "software.amazon.awscdk:apigatewayv2-alpha:$versions.cdk2-alpha.0"
     implementation "software.amazon.awscdk:apigatewayv2-integrations:$versions.cdk1"
 }
