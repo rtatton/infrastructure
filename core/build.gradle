@@ -13,4 +13,5 @@ dependencies {
     implementation "software.amazon.awscdk:aws-cdk-lib:$versions.cdk2"
     implementation "software.amazon.awscdk:apigatewayv2-alpha:$versions.cdk2-alpha.0"
     implementation "software.amazon.awscdk:apigatewayv2-integrations:$versions.cdk1"
+    implementation "software.amazon.awscdk:apigatewayv2-authorizers:$versions.cdk1"
 }
