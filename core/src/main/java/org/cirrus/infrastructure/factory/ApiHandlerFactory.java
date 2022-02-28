@@ -22,6 +22,10 @@ public final class ApiHandlerFactory {
       "cd ./%1$s && ./gradlew build && cp build/distributions/%1$s.zip %2$s";
   private static final String HANDLER_PACKAGE_FORMAT = "org.cirrus.infrastructure.handler.%s";
 
+  private ApiHandlerFactory() {
+    // no-op
+  }
+
   /**
    * @param functionName Name of the Lambda function handler class.
    * @param codePath Relative path (from root, contains cdk.json) to the directory that contains the

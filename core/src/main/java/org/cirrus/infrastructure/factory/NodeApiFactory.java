@@ -18,6 +18,10 @@ public final class NodeApiFactory {
   private static final String DELETE_NODE_PATH = "../delete-node-handler";
   private static final String NODE_ENDPOINT = "/node";
 
+  private NodeApiFactory() {
+    // no-op
+  }
+
   public static IHttpApi create(Construct scope) {
     HttpApi api = HttpApi.Builder.create(scope, API_NAME).apiName(API_NAME).build();
     api.addRoutes(createNode(scope));

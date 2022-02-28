@@ -10,6 +10,10 @@ import software.constructs.Construct;
 
 public final class NodeTableFactory {
 
+  private NodeTableFactory() {
+    // no-op
+  }
+
   public static ITable create(Construct scope) {
     return Table.Builder.create(scope, Keys.NODE_TABLE_NAME)
         .tableName(Keys.NODE_TABLE_NAME)
