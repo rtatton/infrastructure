@@ -5,22 +5,22 @@ import org.cirrus.infrastructure.util.Keys;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class CreateNodeRequest {
+public interface CreateNodeRequest {
 
-  public static Builder builder() {
+  static Builder builder() {
     return ImmutableCreateNodeRequest.builder();
   }
 
   @JsonProperty(Keys.NODE_KEY)
-  public abstract String nodeId();
+  String nodeId();
 
   @JsonProperty(Keys.FUNCTION_CONFIG_KEY)
-  public abstract FunctionConfig functionConfig();
+  FunctionConfig functionConfig();
 
   @JsonProperty(Keys.QUEUE_CONFIG_KEY)
-  public abstract QueueConfig queueConfig();
+  QueueConfig queueConfig();
 
-  public interface Builder {
+  interface Builder {
 
     CreateNodeRequest build();
 

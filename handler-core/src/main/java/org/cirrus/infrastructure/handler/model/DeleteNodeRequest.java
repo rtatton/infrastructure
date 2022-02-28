@@ -5,9 +5,9 @@ import org.cirrus.infrastructure.util.Keys;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class DeleteNodeRequest {
+public interface DeleteNodeRequest {
 
-  public static Builder builder() {
+  static Builder builder() {
     return ImmutableDeleteNodeRequest.builder();
   }
 

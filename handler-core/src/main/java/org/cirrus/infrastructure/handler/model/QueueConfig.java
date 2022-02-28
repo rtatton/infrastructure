@@ -53,6 +53,7 @@ public abstract class QueueConfig {
   }
 
   public interface Builder {
+
     QueueConfig build();
 
     Builder delaySeconds(int delay);

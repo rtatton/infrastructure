@@ -11,18 +11,14 @@ public abstract class Resource {
     return ImmutableResource.builder();
   }
 
+  @Value.Derived
   public boolean failed() {
     return id() == null && exception() != null;
   }
 
+  @Value.Derived
   public boolean succeeded() {
     return id() != null && exception() == null;
-  }
-
-  @Value.Check
-  protected void check() {
-    // Exclusive or: at least one, but not both, is null
-    Preconditions.checkState(id() != null ^ exception() != null);
   }
 
   @Nullable
@@ -30,6 +26,12 @@ public abstract class Resource {
 
   @Nullable
   public abstract RuntimeException exception();
+
+  @Value.Check
+  protected void check() {
+    // Exclusive or: at least one, but not both, is null
+    Preconditions.checkState(id() != null ^ exception() != null);
+  }
 
   public interface Builder {
 
