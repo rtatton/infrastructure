@@ -40,6 +40,7 @@ public final class NodeApiFactory {
     HttpApi api = HttpApi.Builder.create(scope, API_NAME).build();
     addRoutes(api, scope);
     addStages(api);
+    addMetrics(api);
     return api;
   }
 
@@ -104,5 +105,13 @@ public final class NodeApiFactory {
         .email(StandardAttribute.builder().required(true).mutable(true).build())
         .phoneNumber(StandardAttribute.builder().required(true).mutable(true).build())
         .build();
+  }
+
+  private static void addMetrics(HttpApi api) {
+    api.metricCount();
+    api.metricClientError();
+    api.metricLatency();
+    api.metricServerError();
+    api.metricDataProcessed();
   }
 }
