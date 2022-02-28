@@ -1,5 +1,6 @@
 package org.cirrus.infrastructure.handler;
 
+import java.io.UncheckedIOException;
 import org.cirrus.infrastructure.handler.api.ApiCommand;
 import org.cirrus.infrastructure.handler.api.ApiRequest;
 import org.cirrus.infrastructure.handler.api.ApiResponse;
@@ -30,7 +31,8 @@ public final class CreateNodeApi implements ApiCommand {
     try {
       body = command.runFromString(request.body());
       status = HttpStatus.CREATED;
-    } catch (NoSuchNodeException
+    } catch (UncheckedIOException
+        | NoSuchNodeException
         | FailedStorageReadException
         | FailedResourceCreationException
         | FailedResourceDeletionException

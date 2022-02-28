@@ -1,5 +1,6 @@
 package org.cirrus.infrastructure.handler;
 
+import java.io.UncheckedIOException;
 import org.cirrus.infrastructure.handler.api.ApiCommand;
 import org.cirrus.infrastructure.handler.api.ApiRequest;
 import org.cirrus.infrastructure.handler.api.ApiResponse;
@@ -27,7 +28,8 @@ public final class DeleteNodeApi implements ApiCommand {
     try {
       body = command.runFromString(request.body());
       status = HttpStatus.OK;
-    } catch (NoSuchNodeException
+    } catch (UncheckedIOException
+        | NoSuchNodeException
         | FailedStorageDeleteException
         | FailedResourceDeletionException exception) {
       body = exception.getMessage();
