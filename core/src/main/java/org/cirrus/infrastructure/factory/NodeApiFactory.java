@@ -9,7 +9,7 @@ import software.amazon.awscdk.services.apigatewayv2.integrations.HttpLambdaInteg
 import software.amazon.awscdk.services.lambda.IFunction;
 import software.constructs.Construct;
 
-public final class ApiFactory {
+public final class NodeApiFactory {
 
   private static final String API_NAME = "NodeApi";
   private static final String CREATE_NODE = "CreateNode";

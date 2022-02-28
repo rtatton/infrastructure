@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.stack;
 
-import org.cirrus.infrastructure.factory.ApiFactory;
+import org.cirrus.infrastructure.factory.NodeApiFactory;
 import org.cirrus.infrastructure.factory.NodeTableFactory;
 import software.amazon.awscdk.Stack;
 import software.constructs.Construct;
@@ -13,19 +13,19 @@ public class DevelopmentStack extends Stack {
   public DevelopmentStack(Construct scope) {
     super(scope, STACK_ID);
     this.scope = scope;
-    createStackResources();
+    createResources();
   }
 
-  private void createStackResources() {
-    nodeRegistry();
-    api();
+  private void createResources() {
+    nodeTable();
+    nodeApi();
   }
 
-  private void nodeRegistry() {
+  private void nodeTable() {
     NodeTableFactory.create(scope);
   }
 
-  private void api() {
-    ApiFactory.create(scope);
+  private void nodeApi() {
+    NodeApiFactory.create(scope);
   }
 }
