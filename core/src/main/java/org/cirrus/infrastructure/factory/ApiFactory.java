@@ -16,8 +16,7 @@ public final class ApiFactory {
   private static final String DELETE_NODE = "DeleteNode";
   private static final String CREATE_NODE_PATH = "../create-node-handler";
   private static final String DELETE_NODE_PATH = "../delete-node-handler";
-  private static final String CREATE_ENDPOINT = "/create";
-  private static final String DELETE_ENDPOINT = "/delete";
+  private static final String NODE_ENDPOINT = "/node";
 
   public static IHttpApi create(Construct scope) {
     HttpApi api = HttpApi.Builder.create(scope, API_NAME).apiName(API_NAME).build();
@@ -27,24 +26,18 @@ public final class ApiFactory {
   }
 
   private static AddRoutesOptions deleteNode(Construct scope) {
-    return routeOptions(
-        DELETE_NODE, DELETE_NODE_PATH, DELETE_ENDPOINT, List.of(HttpMethod.DELETE), scope);
+    return routeOptions(DELETE_NODE, DELETE_NODE_PATH, List.of(HttpMethod.DELETE), scope);
   }
 
   private static AddRoutesOptions createNode(Construct scope) {
-    return routeOptions(
-        CREATE_NODE, CREATE_NODE_PATH, CREATE_ENDPOINT, List.of(HttpMethod.POST), scope);
+    return routeOptions(CREATE_NODE, CREATE_NODE_PATH, List.of(HttpMethod.POST), scope);
   }
 
   private static AddRoutesOptions routeOptions(
-      String functionName,
-      String codePath,
-      String endpoint,
-      List<HttpMethod> methods,
-      Construct scope) {
+      String functionName, String codePath, List<HttpMethod> methods, Construct scope) {
     IFunction handler = ApiHandlerFactory.create(functionName, codePath, scope);
     return AddRoutesOptions.builder()
-        .path(endpoint)
+        .path(NODE_ENDPOINT)
         .methods(methods)
         .integration(new HttpLambdaIntegration(functionName, handler))
         .build();
