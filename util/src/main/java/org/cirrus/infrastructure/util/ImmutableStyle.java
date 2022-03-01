@@ -19,5 +19,6 @@ import org.immutables.value.Value.Style.ImplementationVisibility;
     visibility = ImplementationVisibility.PACKAGE,
     allParameters = true,
     deepImmutablesDetection = true,
+    jdkOnly = true,
     defaults = @Value.Immutable(prehash = true))
 public @interface ImmutableStyle {}
