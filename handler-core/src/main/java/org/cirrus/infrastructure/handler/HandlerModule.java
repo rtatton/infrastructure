@@ -7,13 +7,12 @@ import dagger.Provides;
 import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.util.Keys;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.http.crt.AwsCrtAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
@@ -22,13 +21,11 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 @Module(includes = HandlerBindings.class)
 final class HandlerModule {
 
+  // Recommended to specify explicitly to improve Lambda performance.
   private static final Region REGION = Region.US_EAST_2;
-  private static final String ACCESS_KEY = "";
-  private static final String SECRETE_KEY = "";
-  private static final AwsCredentials CREDENTIALS =
-      AwsBasicCredentials.create(ACCESS_KEY, SECRETE_KEY);
+  // Recommended to improve Lambda performance.
   private static final AwsCredentialsProvider CREDENTIALS_PROVIDER =
-      StaticCredentialsProvider.create(CREDENTIALS);
+      EnvironmentVariableCredentialsProvider.create();
 
   private HandlerModule() {
     // No-op
@@ -40,6 +37,7 @@ final class HandlerModule {
     return LambdaAsyncClient.builder()
         .region(REGION)
         .credentialsProvider(CREDENTIALS_PROVIDER)
+        .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
         .build();
   }
 
@@ -49,6 +47,7 @@ final class HandlerModule {
     return SqsAsyncClient.builder()
         .region(REGION)
         .credentialsProvider(CREDENTIALS_PROVIDER)
+        .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
         .build();
   }
 
@@ -58,6 +57,7 @@ final class HandlerModule {
     return DynamoDbAsyncClient.builder()
         .region(REGION)
         .credentialsProvider(CREDENTIALS_PROVIDER)
+        .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
         .build();
   }
 

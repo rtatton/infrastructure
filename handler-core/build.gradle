@@ -9,6 +9,11 @@ def versions = [
 dependencies {
     api project(":util")
     api "com.amazonaws:aws-lambda-java-events:$versions.lambdaEvents"
+    // Recommended to improve Lambda performance.
+    api("software.amazon.awssdk:aws-crt-client:$project.awsVersion-PREVIEW") {
+        exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+        exclude group: "software.amazon.awssdk", module: "apache-client"
+    }
     api "software.amazon.awssdk:dynamodb:$project.awsVersion"
     api "software.amazon.awssdk:dynamodb-enhanced:$project.awsVersion"
     api "software.amazon.awssdk:lambda:$project.awsVersion"

@@ -38,6 +38,7 @@ public final class ApiHandlerFactory {
         .code(Code.fromAsset(codePath, assetOptions(codePath)))
         .runtime(Runtime.JAVA_11)
         .role(null) // TODO
+        .environment(null) // TODO - AWS credentials, Keys.FUNCTION_ROLE_ARN
         .deadLetterQueueEnabled(true)
         .handler(handler(handlerName))
         .timeout(Duration.seconds(60))
