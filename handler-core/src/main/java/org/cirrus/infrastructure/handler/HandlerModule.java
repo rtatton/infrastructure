@@ -10,6 +10,7 @@ import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.core.SdkSystemSetting;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
@@ -23,7 +24,8 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 final class HandlerModule {
 
   // Recommended to specify explicitly to improve Lambda performance.
-  private static final Region REGION = Region.US_EAST_2;
+  private static final Region REGION =
+      Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable()));
   // Recommended to improve Lambda performance.
   private static final AwsCredentialsProvider CREDENTIALS_PROVIDER =
       EnvironmentVariableCredentialsProvider.create();
