@@ -14,6 +14,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.crt.AwsCrtAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
@@ -23,44 +24,65 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 @Module(includes = HandlerBindings.class)
 final class HandlerModule {
 
-  // Recommended to specify explicitly to improve Lambda performance.
-  private static final Region REGION =
-      Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable()));
-  // Recommended to improve Lambda performance.
-  private static final AwsCredentialsProvider CREDENTIALS_PROVIDER =
-      EnvironmentVariableCredentialsProvider.create();
-
   private HandlerModule() {
     // No-op
   }
 
   @Provides
   @Singleton
-  public static LambdaAsyncClient lambdaClient() {
+  public static Region region() {
+    // Recommended to specify explicitly to improve Lambda performance.
+    return Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable()));
+  }
+
+  @Provides
+  @Singleton
+  public static AwsCredentialsProvider credentialsProvider() {
+    // Recommended to improve Lambda performance.
+    return EnvironmentVariableCredentialsProvider.create();
+  }
+
+  @Provides
+  public static SdkAsyncHttpClient.Builder<?> httpClientBuilder() {
+    return AwsCrtAsyncHttpClient.builder();
+  }
+
+  @Provides
+  @Singleton
+  public static LambdaAsyncClient lambdaClient(
+      Region region,
+      AwsCredentialsProvider credentialsProvider,
+      SdkAsyncHttpClient.Builder<?> clientBuilder) {
     return LambdaAsyncClient.builder()
-        .region(REGION)
-        .credentialsProvider(CREDENTIALS_PROVIDER)
-        .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
+        .region(region)
+        .credentialsProvider(credentialsProvider)
+        .httpClientBuilder(clientBuilder)
         .build();
   }
 
   @Provides
   @Singleton
-  public static SqsAsyncClient sqsClient() {
+  public static SqsAsyncClient sqsClient(
+      Region region,
+      AwsCredentialsProvider credentialsProvider,
+      SdkAsyncHttpClient.Builder<?> clientBuilder) {
     return SqsAsyncClient.builder()
-        .region(REGION)
-        .credentialsProvider(CREDENTIALS_PROVIDER)
-        .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
+        .region(region)
+        .credentialsProvider(credentialsProvider)
+        .httpClientBuilder(clientBuilder)
         .build();
   }
 
   @Provides
   @Singleton
-  public static DynamoDbAsyncClient dynamoDbClient() {
+  public static DynamoDbAsyncClient dynamoDbClient(
+      Region region,
+      AwsCredentialsProvider credentialsProvider,
+      SdkAsyncHttpClient.Builder<?> clientBuilder) {
     return DynamoDbAsyncClient.builder()
-        .region(REGION)
-        .credentialsProvider(CREDENTIALS_PROVIDER)
-        .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
+        .region(region)
+        .credentialsProvider(credentialsProvider)
+        .httpClientBuilder(clientBuilder)
         .build();
   }
 
