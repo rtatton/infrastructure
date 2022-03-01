@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.logging;
+package org.cirrus.infrastructure.handler.util;
 
 import javax.inject.Inject;
 

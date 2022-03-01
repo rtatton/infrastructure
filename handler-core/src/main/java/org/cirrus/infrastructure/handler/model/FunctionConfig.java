@@ -2,7 +2,7 @@ package org.cirrus.infrastructure.handler.model;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.cirrus.infrastructure.util.Preconditions;
+import org.cirrus.infrastructure.handler.util.Preconditions;
 import org.immutables.value.Value;
 import software.amazon.awssdk.services.lambda.model.Runtime;
 

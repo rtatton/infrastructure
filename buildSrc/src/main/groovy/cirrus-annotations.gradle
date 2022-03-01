@@ -1,0 +1,16 @@
+// Versions of all dependencies, organized in descending alphabetical order.
+def versions = [
+        dagger    : "2.41",
+        immutables: "2.9.0",
+        jackson   : "2.13.1"
+]
+
+dependencies {
+    annotationProcessor "com.google.dagger:dagger-compiler:$versions.dagger"
+    annotationProcessor "org.immutables:value:$versions.immutables"
+    compileOnly "com.fasterxml.jackson.core:jackson-databind:$versions.jackson"
+    compileOnly "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$versions.jackson"
+    compileOnly "com.fasterxml.jackson.module:jackson-module-blackbird:$versions.jackson"
+    compileOnly "org.immutables:value:$versions.immutables"
+    implementation "com.google.dagger:dagger-compiler:$versions.dagger"
+}

@@ -1,0 +1,4 @@
+plugins {
+    id "cirrus-library"
+    id "cirrus-annotations"
+}

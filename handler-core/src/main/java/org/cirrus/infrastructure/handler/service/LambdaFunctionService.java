@@ -8,8 +8,8 @@ import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionExcepti
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.handler.model.Resource;
+import org.cirrus.infrastructure.handler.util.Resources;
 import org.cirrus.infrastructure.util.Keys;
-import org.cirrus.infrastructure.util.Resources;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;

@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.handler.model.Resource;
-import org.cirrus.infrastructure.util.Resources;
+import org.cirrus.infrastructure.handler.util.Resources;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;

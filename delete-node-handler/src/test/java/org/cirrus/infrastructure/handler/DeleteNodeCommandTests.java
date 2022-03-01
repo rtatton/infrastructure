@@ -11,7 +11,7 @@ import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
-import org.cirrus.infrastructure.util.Mapper;
+import org.cirrus.infrastructure.handler.util.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,5 +1,6 @@
 plugins {
-    id "cirrus-handler-library"
+    id "cirrus-application"
+    id "cirrus-annotations"
 }
 
 dependencies {

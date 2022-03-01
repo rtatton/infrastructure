@@ -20,7 +20,7 @@ import org.cirrus.infrastructure.handler.model.Resource;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
-import org.cirrus.infrastructure.util.Mapper;
+import org.cirrus.infrastructure.handler.util.Mapper;
 
 @Singleton
 class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {

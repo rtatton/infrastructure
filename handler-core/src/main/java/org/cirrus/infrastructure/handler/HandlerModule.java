@@ -2,6 +2,7 @@ package org.cirrus.infrastructure.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
@@ -76,6 +77,8 @@ final class HandlerModule {
   @Provides
   @Singleton
   public static ObjectMapper objectMapper() {
-    return new ObjectMapper().registerModule(new Jdk8Module());
+    return new ObjectMapper()
+        .registerModule(new Jdk8Module())
+        .registerModule(new BlackbirdModule());
   }
 }

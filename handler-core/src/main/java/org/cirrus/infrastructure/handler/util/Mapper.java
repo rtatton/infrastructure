@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.util;
+package org.cirrus.infrastructure.handler.util;
 
 public interface Mapper {
 

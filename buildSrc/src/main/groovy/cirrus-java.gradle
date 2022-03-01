@@ -18,8 +18,8 @@ java {
 // Versions of all dependencies, organized in descending alphabetical order.
 def versions = [
         cirrus : "0.1.0",
-        jUnit  : "5.+",
-        mockito: "3.+",
+        jUnit  : "5.8.2",
+        mockito: "4.3.1",
 ]
 
 group "org.cirrus"

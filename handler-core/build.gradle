@@ -1,21 +1,26 @@
 plugins {
-    id "cirrus-handler-library"
+    id "cirrus-library"
+    id "cirrus-annotations"
 }
 
 def versions = [
+        "aws"         : "2.17.138",
+        "lambdaCore"  : "1.2.1",
         "lambdaEvents": "3.11.0"
 ]
 
 dependencies {
-    api project(":util")
+    api project(":common")
+    api "com.amazonaws:aws-lambda-java-core:$versions.lambdaCore"
     api "com.amazonaws:aws-lambda-java-events:$versions.lambdaEvents"
     // Recommended to improve Lambda performance.
-    api("software.amazon.awssdk:aws-crt-client:$project.awsVersion-PREVIEW") {
+    api("software.amazon.awssdk:aws-crt-client:$versions.aws-PREVIEW") {
         exclude group: "software.amazon.awssdk", module: "netty-nio-client"
         exclude group: "software.amazon.awssdk", module: "apache-client"
     }
-    api "software.amazon.awssdk:dynamodb:$project.awsVersion"
-    api "software.amazon.awssdk:dynamodb-enhanced:$project.awsVersion"
-    api "software.amazon.awssdk:lambda:$project.awsVersion"
-    api "software.amazon.awssdk:sqs:$project.awsVersion"
+    api "software.amazon.awssdk:dynamodb:$versions.aws"
+    api "software.amazon.awssdk:dynamodb-enhanced:$versions.aws"
+    api "software.amazon.awssdk:lambda:$versions.aws"
+    api "software.amazon.awssdk:sqs:$versions.aws"
+
 }

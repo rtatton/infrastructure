@@ -10,10 +10,10 @@ import org.cirrus.infrastructure.handler.service.LambdaFunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.SqsQueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
-import org.cirrus.infrastructure.logging.ConsoleLogger;
-import org.cirrus.infrastructure.logging.Logger;
-import org.cirrus.infrastructure.util.JacksonMapper;
-import org.cirrus.infrastructure.util.Mapper;
+import org.cirrus.infrastructure.handler.util.ConsoleLogger;
+import org.cirrus.infrastructure.handler.util.JacksonMapper;
+import org.cirrus.infrastructure.handler.util.Logger;
+import org.cirrus.infrastructure.handler.util.Mapper;
 
 @Module
 interface HandlerBindings {

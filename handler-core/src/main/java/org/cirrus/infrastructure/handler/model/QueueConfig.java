@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.model;
 
-import org.cirrus.infrastructure.util.Preconditions;
+import org.cirrus.infrastructure.handler.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable

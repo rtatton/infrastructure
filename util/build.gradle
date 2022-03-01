@@ -1,9 +1,0 @@
-plugins {
-    id "cirrus-handler-library"
-}
-
-dependencies {
-    implementation "software.amazon.awssdk:lambda:$project.awsVersion"
-    implementation "software.amazon.awssdk:sns:$project.awsVersion"
-    implementation "software.amazon.awssdk:sqs:$project.awsVersion"
-}
