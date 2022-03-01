@@ -11,8 +11,7 @@ def versions = [
         dagger    : "2.37",
         immutables: "2.8.+",
         jackson   : "2.12.+",
-        lambdaCore: "1.2.+",
-        slf4j     : "1.7.+"
+        lambdaCore: "1.2.+"
 ]
 
 dependencies {
@@ -23,5 +22,4 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$versions.jackson"
     implementation "com.google.dagger:dagger-compiler:$versions.dagger"
     implementation "org.immutables:value:$versions.immutables"
-    implementation "org.slf4j:slf4j-api:$versions.slf4j"
 }
