@@ -23,5 +23,12 @@ dependencies {
     api "software.amazon.awssdk:dynamodb-enhanced:$versions.aws"
     api "software.amazon.awssdk:lambda:$versions.aws"
     api "software.amazon.awssdk:sqs:$versions.aws"
+}
 
+task("proguard", type: CirrusProGuardTask) {
+    def className = "org.cirrus.infrastructure.handler.AbstractHandler"
+    def contextType = "com.amazonaws.services.lambda.runtime.Context"
+    def eventType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent"
+    def returnType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse"
+    entryPoint = "class $className {$returnType handleRequest($eventType, $contextType);}"
 }

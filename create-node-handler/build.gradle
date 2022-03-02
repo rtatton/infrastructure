@@ -3,6 +3,22 @@ plugins {
     id "cirrus-annotations"
 }
 
+application {
+    mainClass = "org.cirrus.infrastructure.handler.CreateNodeHandler"
+}
+
 dependencies {
     implementation project(":handler-core")
+}
+
+task("proguard", type: CirrusProGuardTask) {
+    dependsOn tasks.build
+    def className = application.mainClassName
+    def contextType = "com.amazonaws.services.lambda.runtime.Context"
+    def eventType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent"
+    def returnType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse"
+    entryPoint = "class $className {$returnType handleRequest($eventType, $contextType);}"
+    debugEnabled = true
+    // Ref: https://stackoverflow.com/a/7464421
+    keep "class org.cirrus.infrastructure.handler.** {*;}"
 }

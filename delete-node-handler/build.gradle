@@ -3,6 +3,18 @@ plugins {
     id "cirrus-annotations"
 }
 
+application {
+    mainClass = "org.cirrus.infrastructure.handler.DeleteNodeHandler"
+}
+
 dependencies {
     implementation project(":handler-core")
+}
+
+task("proguard", type: CirrusProGuardTask) {
+    def className = application.mainClassName
+    def contextType = "com.amazonaws.services.lambda.runtime.Context"
+    def eventType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent"
+    def returnType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse"
+    entryPoint = "class $className {$returnType handleRequest($eventType, $contextType);}"
 }

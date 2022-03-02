@@ -1,3 +1,15 @@
 plugins {
     id "groovy-gradle-plugin"
 }
+
+repositories {
+    mavenCentral()
+}
+
+def versions = [
+        proguard: "7.2.1"
+]
+
+dependencies {
+    implementation "com.guardsquare:proguard-gradle:$versions.proguard"
+}

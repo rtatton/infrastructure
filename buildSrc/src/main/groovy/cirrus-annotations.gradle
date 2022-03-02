@@ -5,12 +5,17 @@ def versions = [
         jackson   : "2.13.1"
 ]
 
+// MUST USE implementation INSTEAD OF compileOnly FOR PROGUARD!!!
 dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:$versions.dagger"
     annotationProcessor "org.immutables:value:$versions.immutables"
-    compileOnly "com.fasterxml.jackson.core:jackson-databind:$versions.jackson"
-    compileOnly "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$versions.jackson"
-    compileOnly "com.fasterxml.jackson.module:jackson-module-blackbird:$versions.jackson"
-    compileOnly "org.immutables:value:$versions.immutables"
-    implementation "com.google.dagger:dagger-compiler:$versions.dagger"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$versions.jackson"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$versions.jackson"
+    implementation "com.fasterxml.jackson.module:jackson-module-blackbird:$versions.jackson"
+    implementation "org.immutables:value:$versions.immutables"
+    implementation("com.google.dagger:dagger-compiler:$versions.dagger") {
+        exclude group: "com.google.dagger", module: "dagger-producers"
+        exclude group: "com.google.dagger", module: "dagger-spi"
+        exclude group: "com.google.guava", module: "guava"
+    }
 }
