@@ -1,6 +1,7 @@
 package org.cirrus.infrastructure.handler;
 
 import java.io.UncheckedIOException;
+import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.api.ApiCommand;
 import org.cirrus.infrastructure.handler.api.ApiRequest;
 import org.cirrus.infrastructure.handler.api.ApiResponse;
@@ -12,16 +13,18 @@ import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 
-public final class CreateNodeApi implements ApiCommand {
+final class CreateNodeApi implements ApiCommand {
 
+  private static final CreateNodeComponent COMPONENT = DaggerCreateNodeComponent.create();
   private final Command<?, ?> command;
 
-  private CreateNodeApi() {
-    this.command = CreateNodeCommand.create();
+  @Inject
+  public CreateNodeApi(CreateNodeCommand command) {
+    this.command = command;
   }
 
   public static CreateNodeApi create() {
-    return new CreateNodeApi();
+    return COMPONENT.api();
   }
 
   @Override

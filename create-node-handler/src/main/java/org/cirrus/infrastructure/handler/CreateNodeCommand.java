@@ -4,7 +4,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
@@ -22,10 +21,8 @@ import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-@Singleton
-class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {
+final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {
 
-  private static final CreateNodeComponent COMPONENT = DaggerCreateNodeComponent.create();
   private final FunctionService functionService;
   private final QueueService queueService;
   private final StorageService<NodeRecord> storageService;
@@ -41,10 +38,6 @@ class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse
     this.queueService = queueService;
     this.storageService = storageService;
     this.mapper = mapper;
-  }
-
-  public static CreateNodeCommand create() {
-    return COMPONENT.getCommand();
   }
 
   /**

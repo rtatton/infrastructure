@@ -6,10 +6,14 @@ import org.cirrus.infrastructure.handler.api.ApiResponse;
 
 public class CreateNodeHandler extends AbstractHandler {
 
-  private static final ApiCommand COMMAND = CreateNodeApi.create();
+  private final ApiCommand command;
+
+  public CreateNodeHandler() {
+    command = CreateNodeApi.create();
+  }
 
   @Override
   protected ApiResponse handle(ApiRequest request) {
-    return COMMAND.run(request);
+    return command.run(request);
   }
 }

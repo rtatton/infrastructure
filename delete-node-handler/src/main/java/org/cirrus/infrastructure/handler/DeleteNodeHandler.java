@@ -6,10 +6,14 @@ import org.cirrus.infrastructure.handler.api.ApiResponse;
 
 public class DeleteNodeHandler extends AbstractHandler {
 
-  private static final ApiCommand COMMAND = DeleteNodeApi.create();
+  private final ApiCommand command;
+
+  public DeleteNodeHandler() {
+    command = DeleteNodeApi.create();
+  }
 
   @Override
   protected ApiResponse handle(ApiRequest request) {
-    return COMMAND.run(request);
+    return command.run(request);
   }
 }

@@ -7,5 +7,5 @@ import javax.inject.Singleton;
 @Component(modules = HandlerModule.class)
 interface DeleteNodeComponent {
 
-  DeleteNodeCommand getCommand();
+  DeleteNodeApi api();
 }

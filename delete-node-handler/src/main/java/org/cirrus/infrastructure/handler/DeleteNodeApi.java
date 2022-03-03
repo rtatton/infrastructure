@@ -1,6 +1,7 @@
 package org.cirrus.infrastructure.handler;
 
 import java.io.UncheckedIOException;
+import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.api.ApiCommand;
 import org.cirrus.infrastructure.handler.api.ApiRequest;
 import org.cirrus.infrastructure.handler.api.ApiResponse;
@@ -9,16 +10,18 @@ import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionExcepti
 import org.cirrus.infrastructure.handler.exception.FailedStorageDeleteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 
-public final class DeleteNodeApi implements ApiCommand {
+final class DeleteNodeApi implements ApiCommand {
 
+  private static final DeleteNodeComponent COMPONENT = DaggerDeleteNodeComponent.create();
   private final Command<?, ?> command;
 
-  private DeleteNodeApi() {
-    this.command = DeleteNodeCommand.create();
+  @Inject
+  public DeleteNodeApi(DeleteNodeCommand command) {
+    this.command = command;
   }
 
   public static DeleteNodeApi create() {
-    return new DeleteNodeApi();
+    return COMPONENT.api();
   }
 
   @Override

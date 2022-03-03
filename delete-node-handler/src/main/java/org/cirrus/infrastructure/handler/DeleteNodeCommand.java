@@ -4,7 +4,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageDeleteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
@@ -15,10 +14,8 @@ import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-@Singleton
-class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
+final class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
 
-  private static final DeleteNodeComponent COMPONENT = DaggerDeleteNodeComponent.create();
   private final FunctionService functionService;
   private final QueueService queueService;
   private final StorageService<NodeRecord> storageService;
@@ -34,10 +31,6 @@ class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
     this.queueService = queueService;
     this.storageService = storageService;
     this.mapper = mapper;
-  }
-
-  public static DeleteNodeCommand create() {
-    return COMPONENT.getCommand();
   }
 
   /**
