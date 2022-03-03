@@ -13,9 +13,5 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$versions.jackson"
     implementation "com.fasterxml.jackson.module:jackson-module-blackbird:$versions.jackson"
     implementation "org.immutables:value:$versions.immutables"
-    implementation("com.google.dagger:dagger-compiler:$versions.dagger") {
-        exclude group: "com.google.dagger", module: "dagger-producers"
-        exclude group: "com.google.dagger", module: "dagger-spi"
-        exclude group: "com.google.guava", module: "guava"
-    }
+    implementation "com.google.dagger:dagger-compiler:$versions.dagger"
 }
