@@ -2,7 +2,7 @@ package org.cirrus.infrastructure.handler.model;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.cirrus.infrastructure.handler.util.Preconditions;
+import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 import software.amazon.awssdk.services.lambda.model.Runtime;
 
@@ -22,11 +22,17 @@ public abstract class FunctionConfig {
 
   public abstract String handlerName();
 
-  public abstract int memorySizeMegabytes();
-
   public abstract String runtime();
 
-  public abstract int timeoutSeconds();
+  @Value.Default
+  public int memorySizeMegabytes() {
+    return 128;
+  }
+
+  @Value.Default
+  public int timeoutSeconds() {
+    return 3;
+  }
 
   @Value.Check
   protected void check() {

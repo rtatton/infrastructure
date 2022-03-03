@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.model;
 
-import org.cirrus.infrastructure.handler.util.Preconditions;
+import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -18,7 +18,7 @@ public abstract class QueueConfig {
 
   @Value.Default
   public int maxMessageSizeBytes() {
-    return 262_144;
+    return 262144;
   }
 
   @Value.Default

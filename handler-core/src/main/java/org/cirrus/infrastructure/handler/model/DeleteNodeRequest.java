@@ -12,9 +12,10 @@ public interface DeleteNodeRequest {
   }
 
   @JsonProperty(Keys.NODE_KEY)
-  public abstract String nodeId();
+  String nodeId();
 
-  public interface Builder {
+  interface Builder {
+
     Builder nodeId(String nodeId);
 
     DeleteNodeRequest build();

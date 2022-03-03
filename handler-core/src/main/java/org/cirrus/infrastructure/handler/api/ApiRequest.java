@@ -16,6 +16,7 @@ public interface ApiRequest {
   String body();
 
   interface Builder {
+
     Builder body(String body);
 
     ApiRequest build();
