@@ -5,7 +5,9 @@ import javax.inject.Inject;
 public class ConsoleLogger implements Logger {
 
   @Inject
-  public ConsoleLogger() {}
+  public ConsoleLogger() {
+    // no-op
+  }
 
   @Override
   public void debug(String message) {
