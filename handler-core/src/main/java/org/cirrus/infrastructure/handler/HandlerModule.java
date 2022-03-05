@@ -5,6 +5,8 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import dagger.Module;
 import dagger.Provides;
+import java.time.Duration;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.util.Keys;
@@ -19,6 +21,7 @@ import software.amazon.awssdk.http.crt.AwsCrtAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 @Module(includes = HandlerBindings.class)
@@ -96,6 +99,33 @@ final class HandlerModule {
   @Singleton
   public static DynamoDbAsyncTable<NodeRecord> nodeTable(DynamoDbEnhancedAsyncClient dynamoDb) {
     return dynamoDb.table(Keys.NODE_TABLE_NAME, TableSchema.fromImmutableClass(NodeRecord.class));
+  }
+
+  @Provides
+  @Singleton
+  public static S3Presigner signer(Region region, AwsCredentialsProvider credentialsProvider) {
+    return S3Presigner.builder().region(region).credentialsProvider(credentialsProvider).build();
+  }
+
+  @Provides
+  @Singleton
+  @Named("codeUploadLocation")
+  public static String codeUploadLocation() {
+    return "uploads";
+  }
+
+  @Provides
+  @Singleton
+  @Named("codeUploadContentType")
+  public static String codeUploadContentType() {
+    return "application/zip";
+  }
+
+  @Provides
+  @Singleton
+  @Named("codeUploadSignatureTtl")
+  public static Duration codeUploadSignatureTtl() {
+    return Duration.ofHours(1);
   }
 
   @Provides

@@ -15,6 +15,8 @@ dependencies {
     api "com.amazonaws:aws-lambda-java-events:$versions.lambdaEvents"
     // Recommended to improve Lambda performance.
     api "software.amazon.awssdk:aws-crt-client:$versions.aws-PREVIEW"
+
+    api "software.amazon.awssdk:s3:$versions.aws"
     api "software.amazon.awssdk:dynamodb:$versions.aws"
     api "software.amazon.awssdk:dynamodb-enhanced:$versions.aws"
     api "software.amazon.awssdk:lambda:$versions.aws"
