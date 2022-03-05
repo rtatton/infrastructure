@@ -1,6 +1,5 @@
 package org.cirrus.infrastructure.util;
 
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,7 +18,6 @@ import org.immutables.value.Value.Style.ImplementationVisibility;
     depluralize = true,
     visibility = ImplementationVisibility.PACKAGE,
     allParameters = true,
-    deepImmutablesDetection = true,
     jdkOnly = true,
-    defaults = @Value.Immutable(prehash = true))
+    defaults = @Value.Immutable(copy = false, lazyhash = true))
 public @interface ImmutableStyle {}
