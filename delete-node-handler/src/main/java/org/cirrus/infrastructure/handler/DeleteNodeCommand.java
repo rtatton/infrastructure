@@ -2,19 +2,17 @@ package org.cirrus.infrastructure.handler;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageDeleteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
-import org.cirrus.infrastructure.handler.model.DeleteNodeRequest;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-final class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
+final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeResponse> {
 
   private final FunctionService functionService;
   private final QueueService queueService;
@@ -41,13 +39,13 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
    * @throws FailedStorageDeleteException Thrown when an error occurs when attempting to access the
    *     storage service to delete the requested node resource identifiers.
    * @throws FailedResourceDeletionException Thrown when any of cloud resources fail to be deleted.
-   * @return Null
+   * @return An empty response.
    */
-  public Void run(DeleteNodeRequest request) {
+  public DeleteNodeResponse run(DeleteNodeRequest request) {
     try {
       CompletableFuture<NodeRecord> getRecord = deleteRecord(request.nodeId());
       CompletableFuture.allOf(deleteFunction(getRecord), deleteQueue(getRecord)).join();
-      return null;
+      return DeleteNodeResponse.create();
     } catch (CompletionException exception) {
       throw (RuntimeException) exception.getCause();
     }
@@ -55,12 +53,11 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
 
   /**
    * @param request JSON-formatted {@link DeleteNodeRequest}
-   * @return Null string
+   * @return JSON-formatted {@link DeleteNodeResponse}
    * @see DeleteNodeCommand#run(DeleteNodeRequest)
    */
-  @Nullable
   public String runFromString(String request) {
-    run(mapToInput(request));
+    mapToOutPut(run(mapToInput(request)));
     return null;
   }
 
@@ -78,6 +75,10 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, Void> {
 
   private DeleteNodeRequest mapToInput(String data) {
     return mapper.read(data, DeleteNodeRequest.class);
+  }
+
+  private String mapToOutPut(DeleteNodeResponse response) {
+    return mapper.write(response);
   }
 
   private CompletableFuture<?> deleteQueue(String queueId) {

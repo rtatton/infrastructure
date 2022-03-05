@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.handler.model;
+package org.cirrus.infrastructure.handler;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cirrus.infrastructure.util.Keys;

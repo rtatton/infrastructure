@@ -1,12 +1,11 @@
 package org.cirrus.infrastructure.handler;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 import org.cirrus.infrastructure.handler.fixtures.HandlerTests;
-import org.cirrus.infrastructure.handler.model.DeleteNodeRequest;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
@@ -42,11 +41,11 @@ class DeleteNodeCommandTests {
   }
 
   @Test
-  public void doesNotThrowWhenSuccessful() {
+  public void returnResponseWhenSuccessful() {
     mockSuccessfulDeleteRecord();
     mockSuccessfulDeleteFunction();
     mockSuccessfulDeleteQueue();
-    assertDoesNotThrow(this::run);
+    assertEquals(deleteNodeResponse(), run());
   }
 
   @Test
@@ -79,6 +78,10 @@ class DeleteNodeCommandTests {
     assertThrows(FailedResourceDeletionException.class, this::run);
   }
 
+  private DeleteNodeResponse deleteNodeResponse() {
+    return DeleteNodeResponse.create();
+  }
+
   // Immutables requires non-null attributes, so the request must be mocked.
   private void mockRequest() {
     when(request.nodeId()).thenReturn(NODE_ID);
@@ -108,7 +111,7 @@ class DeleteNodeCommandTests {
     when(storageService.delete(NODE_ID)).thenReturn(HandlerTests.noSuchNode());
   }
 
-  private void run() {
-    command.run(request);
+  private DeleteNodeResponse run() {
+    return command.run(request);
   }
 }
