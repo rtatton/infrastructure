@@ -2,7 +2,6 @@ package org.cirrus.infrastructure.handler.service;
 
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
@@ -16,7 +15,6 @@ import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.FunctionCode;
 import software.amazon.awssdk.services.lambda.model.PackageType;
 
-@Singleton
 public class LambdaFunctionService implements FunctionService {
 
   private final LambdaAsyncClient lambdaClient;

@@ -2,7 +2,6 @@ package org.cirrus.infrastructure.handler.service;
 
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedStorageDeleteException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
@@ -11,7 +10,6 @@ import org.cirrus.infrastructure.handler.model.NodeRecord;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 
-@Singleton
 public class DynamoDbStorageService implements StorageService<NodeRecord> {
 
   private final DynamoDbAsyncTable<NodeRecord> table;

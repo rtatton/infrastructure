@@ -3,7 +3,6 @@ package org.cirrus.infrastructure.handler.service;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.handler.model.Resource;
@@ -12,7 +11,6 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 
-@Singleton
 public class SqsQueueService implements QueueService {
 
   private static final String TRUE = "true";
