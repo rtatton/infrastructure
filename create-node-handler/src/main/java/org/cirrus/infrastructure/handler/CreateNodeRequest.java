@@ -13,13 +13,13 @@ public interface CreateNodeRequest {
     return ImmutableCreateNodeRequest.builder();
   }
 
-  @JsonProperty(Keys.NODE_KEY)
+  @JsonProperty(Keys.NODE_ID)
   String nodeId();
 
-  @JsonProperty(Keys.FUNCTION_CONFIG_KEY)
+  @JsonProperty(Keys.FUNCTION_CONFIG)
   FunctionConfig functionConfig();
 
-  @JsonProperty(Keys.QUEUE_CONFIG_KEY)
+  @JsonProperty(Keys.QUEUE_CONFIG)
   QueueConfig queueConfig();
 
   interface Builder {

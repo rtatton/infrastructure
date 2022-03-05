@@ -16,16 +16,16 @@ public interface NodeRecord {
   }
 
   @DynamoDbPartitionKey
-  @DynamoDbAttribute(Keys.NODE_KEY)
-  @JsonProperty(Keys.NODE_KEY)
+  @DynamoDbAttribute(Keys.NODE_ID)
+  @JsonProperty(Keys.NODE_ID)
   String nodeId();
 
-  @DynamoDbAttribute(Keys.FUNCTION_KEY)
-  @JsonProperty(Keys.FUNCTION_KEY)
+  @DynamoDbAttribute(Keys.FUNCTION_ID)
+  @JsonProperty(Keys.FUNCTION_ID)
   String functionId();
 
-  @DynamoDbAttribute(Keys.QUEUE_KEY)
-  @JsonProperty(Keys.QUEUE_KEY)
+  @DynamoDbAttribute(Keys.QUEUE_ID)
+  @JsonProperty(Keys.QUEUE_ID)
   String queueId();
 
   interface Builder {

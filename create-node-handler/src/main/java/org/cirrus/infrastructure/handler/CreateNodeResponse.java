@@ -11,13 +11,13 @@ public interface CreateNodeResponse {
     return ImmutableCreateNodeResponse.builder();
   }
 
-  @JsonProperty(Keys.NODE_KEY)
+  @JsonProperty(Keys.NODE_ID)
   String nodeId();
 
-  @JsonProperty(Keys.FUNCTION_KEY)
+  @JsonProperty(Keys.FUNCTION_ID)
   String functionId();
 
-  @JsonProperty(Keys.QUEUE_KEY)
+  @JsonProperty(Keys.QUEUE_ID)
   String queueId();
 
   interface Builder {

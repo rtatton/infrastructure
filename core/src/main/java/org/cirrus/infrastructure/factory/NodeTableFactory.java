@@ -25,6 +25,6 @@ public final class NodeTableFactory {
   }
 
   private static Attribute getPartitionKey() {
-    return Attribute.builder().name(Keys.NODE_KEY).type(AttributeType.STRING).build();
+    return Attribute.builder().name(Keys.NODE_ID).type(AttributeType.STRING).build();
   }
 }

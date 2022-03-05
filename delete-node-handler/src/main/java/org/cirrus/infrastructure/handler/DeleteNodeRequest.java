@@ -11,7 +11,7 @@ public interface DeleteNodeRequest {
     return ImmutableDeleteNodeRequest.builder();
   }
 
-  @JsonProperty(Keys.NODE_KEY)
+  @JsonProperty(Keys.NODE_ID)
   String nodeId();
 
   interface Builder {

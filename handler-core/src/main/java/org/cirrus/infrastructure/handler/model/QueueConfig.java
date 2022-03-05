@@ -1,5 +1,7 @@
 package org.cirrus.infrastructure.handler.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.cirrus.infrastructure.util.Keys;
 import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
@@ -7,31 +9,37 @@ import org.immutables.value.Value;
 public abstract class QueueConfig {
 
   @Value.Default
+  @JsonProperty(Keys.QUEUE_MESSAGE_RETENTION_PERIOD)
   public int messageRetentionPeriodSeconds() {
-    return 345_600;
+    return 345600;
   }
 
   @Value.Default
+  @JsonProperty(Keys.QUEUE_DELAY_SECONDS)
   public int delaySeconds() {
     return 0;
   }
 
   @Value.Default
+  @JsonProperty(Keys.QUEUE_MAX_MESSAGE_SIZE)
   public int maxMessageSizeBytes() {
     return 262144;
   }
 
   @Value.Default
+  @JsonProperty(Keys.QUEUE_RECEIVE_MESSAGE_WAIT_TIME)
   public int receiveMessageWaitTimeSeconds() {
     return 0;
   }
 
   @Value.Default
+  @JsonProperty(Keys.QUEUE_VISIBILITY_TIMEOUT)
   public int visibilityTimeoutSeconds() {
     return 30;
   }
 
   @Value.Default
+  @JsonProperty(Keys.QUEUE_BATCH_SIZE)
   public int batchSize() {
     return 10;
   }

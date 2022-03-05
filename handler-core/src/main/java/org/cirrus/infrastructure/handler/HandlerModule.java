@@ -109,21 +109,21 @@ final class HandlerModule {
 
   @Provides
   @Singleton
-  @Named("codeUploadLocation")
-  public static String codeUploadLocation() {
-    return "uploads";
+  @Named("uploadBucket")
+  public static String codeBucketName() {
+    return "3a5588b6-afd2-4df0-95e7-c1317027ac4c";
   }
 
   @Provides
   @Singleton
-  @Named("codeUploadContentType")
+  @Named("uploadContentType")
   public static String codeUploadContentType() {
     return "application/zip";
   }
 
   @Provides
   @Singleton
-  @Named("codeUploadSignatureTtl")
+  @Named("uploadSignatureTtl")
   public static Duration codeUploadSignatureTtl() {
     return Duration.ofHours(1);
   }
