@@ -1,6 +1,8 @@
-package org.cirrus.infrastructure.handler.model;
+package org.cirrus.infrastructure.handler;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.cirrus.infrastructure.handler.model.FunctionConfig;
+import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.util.Keys;
 import org.immutables.value.Value;
 

@@ -10,8 +10,6 @@ import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
 import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
 import org.cirrus.infrastructure.handler.fixtures.HandlerTests;
-import org.cirrus.infrastructure.handler.model.CreateNodeRequest;
-import org.cirrus.infrastructure.handler.model.CreateNodeResponse;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
@@ -41,6 +39,14 @@ class CreateNodeHandlerTests {
 
   @InjectMocks private CreateNodeCommand command;
 
+  private static CreateNodeResponse createNodeResponse() {
+    return CreateNodeResponse.builder()
+        .nodeId(HandlerTests.NODE_ID)
+        .functionId(HandlerTests.FUNCTION_ID)
+        .queueId(HandlerTests.QUEUE_ID)
+        .build();
+  }
+
   @Test
   public void returnsResponseWhenSuccessful() {
     mockRequest();
@@ -49,7 +55,7 @@ class CreateNodeHandlerTests {
     mockSuccessfulCreateQueue();
     mockSuccessfulAttachQueue();
     mockSuccessfulPutRecord();
-    assertEquals(HandlerTests.createNodeResponse(), run());
+    assertEquals(createNodeResponse(), run());
   }
 
   @Test

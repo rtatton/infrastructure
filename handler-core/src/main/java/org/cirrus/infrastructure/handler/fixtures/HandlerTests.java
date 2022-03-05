@@ -9,7 +9,6 @@ import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
-import org.cirrus.infrastructure.handler.model.CreateNodeResponse;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.model.Resource;
 
@@ -22,14 +21,6 @@ public final class HandlerTests {
 
   private HandlerTests() {
     // no-op
-  }
-
-  public static CreateNodeResponse createNodeResponse() {
-    return CreateNodeResponse.builder()
-        .nodeId(NODE_ID)
-        .functionId(FUNCTION_ID)
-        .queueId(QUEUE_ID)
-        .build();
   }
 
   public static CompletionStage<NodeRecord> nodeRecordStage() {
