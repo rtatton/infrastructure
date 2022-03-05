@@ -14,8 +14,6 @@ public abstract class AbstractHandler
     return ApiRequest.of(event.getBody());
   }
 
-  protected abstract ApiResponse handle(ApiRequest request);
-
   private static APIGatewayV2HTTPResponse mapOutput(ApiResponse response) {
     return APIGatewayV2HTTPResponse.builder()
         .withBody(response.body())
@@ -30,4 +28,6 @@ public abstract class AbstractHandler
     ApiResponse response = handle(request);
     return mapOutput(response);
   }
+
+  protected abstract ApiResponse handle(ApiRequest request);
 }
