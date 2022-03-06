@@ -13,6 +13,7 @@ public final class Keys {
 
   public static final String UPLOAD_URL = "uploadUrl";
   public static final String CODE_BUCKET = "codeBucket";
+  public static final String CODE_BUCKET_NAME = "3a5588b6-afd2-4df0-95e7-c1317027ac4c";
   public static final String CODE_KEY = "codeKey";
 
   public static final String FUNCTION_HANDLER_NAME = "handlerName";
@@ -28,6 +29,11 @@ public final class Keys {
   public static final String QUEUE_BATCH_SIZE = "batchSize";
 
   public static final String NODE_FUNCTION_ROLE = "NODE_FUNCTION_ROLE";
+  public static final String AWS_REGION = "AWS_REGION";
+  // DO NOT CHANGE VALUE; MUST BE 'AWS_ACCESS_KEY_ID'
+  public static final String AWS_ACCESS_KEY_ID = "AWS_ACCESS_KEY_ID";
+  // DO NOT CHANGE VALUE; MUST BE 'AWS_SECRET_ACCESS_KEY'
+  public static final String AWS_SECRET_ACCESS_KEY = "AWS_SECRET_ACCESS_KEY";
 
   private Keys() {
     // No-op

@@ -1,6 +1,7 @@
 package org.cirrus.infrastructure.factory;
 
 import org.cirrus.infrastructure.util.Keys;
+import org.immutables.builder.Builder;
 import software.amazon.awscdk.services.dynamodb.Attribute;
 import software.amazon.awscdk.services.dynamodb.AttributeType;
 import software.amazon.awscdk.services.dynamodb.BillingMode;
@@ -8,15 +9,15 @@ import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.dynamodb.Table;
 import software.constructs.Construct;
 
-public final class NodeTableFactory {
+final class NodeTableFactory {
 
   private NodeTableFactory() {
     // no-op
   }
 
-  public static ITable create(Construct scope) {
+  @Builder.Factory
+  public static ITable nodeTable(@Builder.Parameter Construct scope) {
     return Table.Builder.create(scope, Keys.NODE_TABLE_NAME)
-        .tableName(Keys.NODE_TABLE_NAME)
         .partitionKey(getPartitionKey())
         .writeCapacity(5)
         .readCapacity(5)

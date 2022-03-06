@@ -12,7 +12,6 @@ import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
-import software.amazon.awssdk.core.SdkSystemSetting;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
@@ -35,7 +34,7 @@ final class HandlerModule {
   @Singleton
   public static Region region() {
     // Recommended to specify explicitly to improve Lambda performance.
-    return Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable()));
+    return Region.of(System.getenv(Keys.AWS_REGION));
   }
 
   @Provides
@@ -111,7 +110,7 @@ final class HandlerModule {
   @Singleton
   @Named("uploadBucket")
   public static String codeBucketName() {
-    return "3a5588b6-afd2-4df0-95e7-c1317027ac4c";
+    return Keys.CODE_BUCKET_NAME;
   }
 
   @Provides

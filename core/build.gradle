@@ -1,5 +1,6 @@
 plugins {
     id "cirrus-java"
+    id "cirrus-annotations"
 }
 
 // Versions of all dependencies, organized in descending alphabetical order.

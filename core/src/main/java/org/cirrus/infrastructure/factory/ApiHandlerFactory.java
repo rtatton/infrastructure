@@ -1,6 +1,10 @@
 package org.cirrus.infrastructure.factory;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import org.cirrus.infrastructure.util.Keys;
+import org.immutables.builder.Builder;
 import software.amazon.awscdk.AssetHashType;
 import software.amazon.awscdk.BundlingOptions;
 import software.amazon.awscdk.BundlingOutput;
@@ -13,7 +17,7 @@ import software.amazon.awscdk.services.logs.RetentionDays;
 import software.amazon.awscdk.services.s3.assets.AssetOptions;
 import software.constructs.Construct;
 
-public final class ApiHandlerFactory {
+final class ApiHandlerFactory {
 
   private static final int SUCCESS_EXIT_VALUE = 0;
   private static final String BASH = "bash";
@@ -26,32 +30,75 @@ public final class ApiHandlerFactory {
     // no-op
   }
 
-  /**
-   * @param handlerName Name of the Lambda function handler class.
-   * @param codePath Relative path (from root, contains cdk.json) to the directory that contains the
-   *     build files and source code for the Lambda function.
-   * @param scope CDK construct scope.
-   * @return CDK Lambda function construct.
-   */
-  public static IFunction create(String handlerName, String codePath, Construct scope) {
-    return Function.Builder.create(scope, handlerName)
-        .code(Code.fromAsset(codePath, assetOptions(codePath)))
-        .runtime(Runtime.JAVA_11)
-        .role(null) // TODO
-        .environment(null) // TODO - AWS_REGION, AWS credentials, Keys.FUNCTION_ROLE_ARN
-        .deadLetterQueueEnabled(true)
-        .handler(handler(handlerName))
-        .timeout(Duration.seconds(60))
-        .memorySize(128)
-        .logRetention(RetentionDays.ONE_WEEK)
+  @Builder.Factory
+  public static IFunction createNodeHandler(
+      @Builder.Parameter Construct scope,
+      String handlerName,
+      String codePath,
+      String region,
+      String accessKeyId,
+      String secretAccessKey,
+      String nodeFunctionRole) {
+    Map<String, String> environment = environment(region, accessKeyId, secretAccessKey);
+    environment.put(Keys.NODE_FUNCTION_ROLE, nodeFunctionRole);
+    return apiHandlerBuilder(scope, handlerName, codePath).environment(environment).build();
+  }
+
+  @Builder.Factory
+  public static IFunction deleteNodeHandler(
+      @Builder.Parameter Construct scope,
+      String handlerName,
+      String codePath,
+      String region,
+      String accessKeyId,
+      String secretAccessKey) {
+    return apiHandlerBuilder(scope, handlerName, codePath)
+        .environment(environment(region, accessKeyId, secretAccessKey))
         .build();
   }
 
-  private static String cdThenBuildThenCp(String codePath, String outputPath) {
-    return String.format(CD_THEN_BUILD_THEN_COPY_FORMAT, codePath, outputPath);
+  @Builder.Factory
+  public static IFunction uploadCodeHandler(
+      @Builder.Parameter Construct scope,
+      String handlerName,
+      String codePath,
+      String region,
+      String accessKeyId,
+      String secretAccessKey) {
+    return apiHandlerBuilder(scope, handlerName, codePath)
+        .environment(environment(region, accessKeyId, secretAccessKey))
+        .build();
   }
 
-  private static String handler(String handlerName) {
+  private static Map<String, String> environment(
+      String region, String accessKeyId, String secretAccessKey) {
+    Map<String, String> environment = new HashMap<>();
+    environment.put(Keys.AWS_REGION, region);
+    environment.put(Keys.AWS_ACCESS_KEY_ID, accessKeyId);
+    environment.put(Keys.AWS_SECRET_ACCESS_KEY, secretAccessKey);
+    return environment;
+  }
+
+  /**
+   * @param scope CDK construct scope.
+   * @param handlerName Name of the Lambda function handler class.
+   * @param codePath Relative path (from root, contains cdk.json) to the directory that contains the
+   *     build files and source code for the Lambda function.
+   * @return CDK Lambda function construct builder.
+   */
+  private static Function.Builder apiHandlerBuilder(
+      Construct scope, String handlerName, String codePath) {
+    return Function.Builder.create(scope, handlerName)
+        .code(Code.fromAsset(codePath, assetOptions(codePath)))
+        .runtime(Runtime.JAVA_11)
+        .deadLetterQueueEnabled(true)
+        .handler(formatName(handlerName))
+        .timeout(Duration.seconds(60))
+        .memorySize(128)
+        .logRetention(RetentionDays.ONE_WEEK);
+  }
+
+  private static String formatName(String handlerName) {
     return String.format(HANDLER_PACKAGE_FORMAT, handlerName);
   }
 
@@ -84,5 +131,9 @@ public final class ApiHandlerFactory {
 
   private static ProcessBuilder processBuilder(String codePath, String outputPath) {
     return new ProcessBuilder(BASH, OPTION_C, cdThenBuildThenCp(codePath, outputPath));
+  }
+
+  private static String cdThenBuildThenCp(String codePath, String outputPath) {
+    return String.format(CD_THEN_BUILD_THEN_COPY_FORMAT, codePath, outputPath);
   }
 }

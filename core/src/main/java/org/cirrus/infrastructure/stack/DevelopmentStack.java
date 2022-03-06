@@ -1,8 +1,13 @@
 package org.cirrus.infrastructure.stack;
 
-import org.cirrus.infrastructure.factory.NodeApiFactory;
-import org.cirrus.infrastructure.factory.NodeTableFactory;
+import org.cirrus.infrastructure.factory.ApiBuilder;
+import org.cirrus.infrastructure.factory.CodeBucketBuilder;
+import org.cirrus.infrastructure.factory.NodeRoleBuilder;
+import org.cirrus.infrastructure.factory.NodeTableBuilder;
 import software.amazon.awscdk.Stack;
+import software.amazon.awscdk.services.dynamodb.ITable;
+import software.amazon.awscdk.services.iam.IRole;
+import software.amazon.awscdk.services.s3.IBucket;
 import software.constructs.Construct;
 
 public class DevelopmentStack extends Stack {
@@ -17,15 +22,22 @@ public class DevelopmentStack extends Stack {
   }
 
   private void createResources() {
-    nodeTable();
-    nodeApi();
+    ApiBuilder.create(scope)
+        .nodeTable(nodeTable())
+        .codeBucket(codeBucket())
+        .nodeRole(nodeRole())
+        .build();
   }
 
-  private void nodeTable() {
-    NodeTableFactory.create(scope);
+  private ITable nodeTable() {
+    return NodeTableBuilder.create(scope).build();
   }
 
-  private void nodeApi() {
-    NodeApiFactory.create(scope);
+  private IBucket codeBucket() {
+    return CodeBucketBuilder.create(scope).build();
+  }
+
+  private IRole nodeRole() {
+    return NodeRoleBuilder.create(scope).build();
   }
 }

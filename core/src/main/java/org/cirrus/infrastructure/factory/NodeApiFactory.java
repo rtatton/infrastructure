@@ -1,6 +1,8 @@
 package org.cirrus.infrastructure.factory;
 
 import java.util.List;
+import org.cirrus.infrastructure.util.Keys;
+import org.immutables.builder.Builder;
 import software.amazon.awscdk.services.apigatewayv2.AddRoutesOptions;
 import software.amazon.awscdk.services.apigatewayv2.HttpApi;
 import software.amazon.awscdk.services.apigatewayv2.HttpMethod;
@@ -16,16 +18,21 @@ import software.amazon.awscdk.services.cognito.PasswordPolicy;
 import software.amazon.awscdk.services.cognito.StandardAttribute;
 import software.amazon.awscdk.services.cognito.StandardAttributes;
 import software.amazon.awscdk.services.cognito.UserPool;
+import software.amazon.awscdk.services.dynamodb.ITable;
+import software.amazon.awscdk.services.iam.IRole;
 import software.amazon.awscdk.services.lambda.IFunction;
+import software.amazon.awscdk.services.s3.IBucket;
 import software.constructs.Construct;
 
-public final class NodeApiFactory {
+final class NodeApiFactory {
 
   private static final String API_NAME = "NodeApi";
-  private static final String CREATE_NODE = "CreateNode";
-  private static final String DELETE_NODE = "DeleteNode";
+  private static final String CREATE_NODE_HANDLER = "CreateNodeHandler";
+  private static final String DELETE_NODE_HANDLER = "DeleteNodeHandler";
+  private static final String UPLOAD_CODE_HANDLER = "UploadCodeHandler";
   private static final String CREATE_NODE_PATH = "../create-node-handler";
   private static final String DELETE_NODE_PATH = "../delete-node-handler";
+  private static final String UPLOAD_CODE_PATH = "../upload-code-handler";
   private static final String NODE_ENDPOINT = "/node";
   private static final String DEV_STAGE_ID = "DevStage";
   private static final String DEV_STAGE = "dev";
@@ -36,30 +43,90 @@ public final class NodeApiFactory {
     // no-op
   }
 
-  public static IHttpApi create(Construct scope) {
+  @Builder.Factory
+  public static IHttpApi api(
+      @Builder.Parameter Construct scope, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
     HttpApi api = HttpApi.Builder.create(scope, API_NAME).build();
-    addRoutes(api, scope);
+    addRoutes(api, scope, nodeTable, codeBucket, nodeRole);
     addStages(api);
     addMetrics(api);
     return api;
   }
 
-  private static void addRoutes(HttpApi api, Construct scope) {
-    api.addRoutes(createNode(scope));
-    api.addRoutes(deleteNode(scope));
+  private static void addRoutes(
+      HttpApi api, Construct scope, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
+    api.addRoutes(createNode(scope, nodeTable, codeBucket, nodeRole));
+    api.addRoutes(deleteNode(scope, nodeTable));
+    api.addRoutes(uploadCode(scope, codeBucket));
   }
 
-  private static AddRoutesOptions deleteNode(Construct scope) {
-    return routeOptions(DELETE_NODE, DELETE_NODE_PATH, List.of(HttpMethod.DELETE), scope);
+  private static AddRoutesOptions createNode(
+      Construct scope, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
+    IFunction handler = createNodeHandler(scope, nodeRole);
+    nodeTable.grantWriteData(handler);
+    codeBucket.grantRead(handler);
+    CreateNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
+    return addRouteOptions(scope, handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST));
   }
 
-  private static AddRoutesOptions createNode(Construct scope) {
-    return routeOptions(CREATE_NODE, CREATE_NODE_PATH, List.of(HttpMethod.POST), scope);
+  private static IFunction createNodeHandler(Construct scope, IRole nodeRole) {
+    return CreateNodeHandlerBuilder.create(scope)
+        .region(region())
+        .accessKeyId(accessKeyId())
+        .secretAccessKey(secretAccessKey())
+        .nodeFunctionRole(nodeRole.getRoleArn())
+        .handlerName(CREATE_NODE_HANDLER)
+        .codePath(CREATE_NODE_PATH)
+        .build();
   }
 
-  private static AddRoutesOptions routeOptions(
-      String handlerName, String codePath, List<HttpMethod> methods, Construct scope) {
-    IFunction handler = ApiHandlerFactory.create(handlerName, codePath, scope);
+  private static AddRoutesOptions deleteNode(Construct scope, ITable nodeTable) {
+    IFunction handler = deleteNodeHandler(scope);
+    nodeTable.grantWriteData(handler);
+    DeleteNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
+    return addRouteOptions(scope, handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE));
+  }
+
+  private static IFunction deleteNodeHandler(Construct scope) {
+    return DeleteNodeHandlerBuilder.create(scope)
+        .region(region())
+        .accessKeyId(accessKeyId())
+        .secretAccessKey(secretAccessKey())
+        .handlerName(DELETE_NODE_HANDLER)
+        .codePath(DELETE_NODE_PATH)
+        .build();
+  }
+
+  private static AddRoutesOptions uploadCode(Construct scope, IBucket codeBucket) {
+    IFunction handler = uploadCodeHandler(scope);
+    codeBucket.grantPut(handler);
+    return addRouteOptions(scope, handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET));
+  }
+
+  private static IFunction uploadCodeHandler(Construct scope) {
+    return UploadCodeHandlerBuilder.create(scope)
+        .region(region()) // TODO
+        .accessKeyId(accessKeyId())
+        .secretAccessKey(secretAccessKey())
+        .handlerName(UPLOAD_CODE_HANDLER)
+        .codePath(UPLOAD_CODE_PATH)
+        .build();
+  }
+
+  private static String accessKeyId() {
+    return System.getenv(Keys.AWS_ACCESS_KEY_ID);
+  }
+
+  private static String secretAccessKey() {
+    return System.getenv(Keys.AWS_SECRET_ACCESS_KEY);
+  }
+
+  private static String region() {
+    return System.getenv(Keys.AWS_REGION);
+  }
+
+  private static AddRoutesOptions addRouteOptions(
+      Construct scope, IFunction handler, String handlerName, List<HttpMethod> methods) {
     return AddRoutesOptions.builder()
         .path(NODE_ENDPOINT)
         .methods(methods)
