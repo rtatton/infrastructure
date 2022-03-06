@@ -1,7 +1,7 @@
 package org.cirrus.infrastructure.stack;
 
-import org.cirrus.infrastructure.factory.ApiBuilder;
 import org.cirrus.infrastructure.factory.CodeBucketBuilder;
+import org.cirrus.infrastructure.factory.NodeApiBuilder;
 import org.cirrus.infrastructure.factory.NodeRoleBuilder;
 import org.cirrus.infrastructure.factory.NodeTableBuilder;
 import software.amazon.awscdk.Stack;
@@ -22,7 +22,7 @@ public class DevelopmentStack extends Stack {
   }
 
   private void createResources() {
-    ApiBuilder.create(scope)
+    NodeApiBuilder.create(scope)
         .nodeTable(nodeTable())
         .codeBucket(codeBucket())
         .nodeRole(nodeRole())

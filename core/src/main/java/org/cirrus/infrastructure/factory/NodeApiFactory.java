@@ -44,7 +44,7 @@ final class NodeApiFactory {
   }
 
   @Builder.Factory
-  public static IHttpApi api(
+  public static IHttpApi nodeApi(
       @Builder.Parameter Construct scope, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
     HttpApi api = HttpApi.Builder.create(scope, API_NAME).build();
     addRoutes(api, scope, nodeTable, codeBucket, nodeRole);
@@ -105,7 +105,7 @@ final class NodeApiFactory {
 
   private static IFunction uploadCodeHandler(Construct scope) {
     return UploadCodeHandlerBuilder.create(scope)
-        .region(region()) // TODO
+        .region(region())
         .accessKeyId(accessKeyId())
         .secretAccessKey(secretAccessKey())
         .handlerName(UPLOAD_CODE_HANDLER)

@@ -2,6 +2,7 @@ package org.cirrus.infrastructure.factory;
 
 import java.util.List;
 import org.immutables.builder.Builder;
+import software.amazon.awscdk.services.iam.IPrincipal;
 import software.amazon.awscdk.services.iam.IRole;
 import software.amazon.awscdk.services.iam.ManagedPolicy;
 import software.amazon.awscdk.services.iam.PolicyStatement;
@@ -21,7 +22,6 @@ final class IamFactory {
   private static final String DELETE_QUEUE = "sqs:DeleteQueue";
   private static final String SEND_MESSAGE = "sqs:SendMessage";
   private static final String GET_QUEUE_URL = "sqs:GetQueueUrl";
-  private static final String GET_OBJECT = "s3:GetObject";
   private static final String LAMBDA_SQS_EXECUTION_ROLE = "AWSLambdaSQSQueueExecutionRole";
   private static final String EFS_READ_WRITE_ROLE = "AmazonElasticFileSystemClientReadWriteAccess";
   private static final String NODE_ROLE = "NodeRole";
@@ -41,10 +41,9 @@ final class IamFactory {
                     CREATE_EVENT_SOURCE_MAPPING,
                     DELETE_EVENT_SOURCE_MAPPING,
                     CREATE_QUEUE,
-                    DELETE_QUEUE,
-                    GET_OBJECT))
-            .resources(List.of(ANY))
-            .principals(List.of(new ServicePrincipal(LAMBDA_SERVICE)))
+                    DELETE_QUEUE))
+            .resources(anyResource())
+            .principals(lambdaPrincipal())
             .build());
   }
 
@@ -53,8 +52,8 @@ final class IamFactory {
     return List.of(
         PolicyStatement.Builder.create()
             .actions(List.of(DELETE_FUNCTION, DELETE_EVENT_SOURCE_MAPPING, DELETE_QUEUE))
-            .resources(List.of(ANY))
-            .principals(List.of(new ServicePrincipal(LAMBDA_SERVICE)))
+            .resources(anyResource())
+            .principals(lambdaPrincipal())
             .build());
   }
 
@@ -64,10 +63,19 @@ final class IamFactory {
     role.addToPolicy(
         PolicyStatement.Builder.create()
             .actions(List.of(SEND_MESSAGE, GET_QUEUE_URL))
-            .resources(List.of(ANY))
+            .resources(anyResource())
+            .principals(lambdaPrincipal())
             .build());
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(LAMBDA_SQS_EXECUTION_ROLE));
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(EFS_READ_WRITE_ROLE));
     return role;
+  }
+
+  private static List<IPrincipal> lambdaPrincipal() {
+    return List.of(new ServicePrincipal(LAMBDA_SERVICE));
+  }
+
+  private static List<String> anyResource() {
+    return List.of(ANY);
   }
 }
