@@ -13,31 +13,29 @@ import software.constructs.Construct;
 public class DevelopmentStack extends Stack {
 
   private static final String STACK_ID = "DevStack";
-  private final Construct scope;
 
   public DevelopmentStack(Construct scope) {
     super(scope, STACK_ID);
-    this.scope = scope;
-    createResources();
+    createResources(scope);
   }
 
-  private void createResources() {
+  private static void createResources(Construct scope) {
     NodeApiBuilder.create(scope)
-        .nodeTable(nodeTable())
-        .codeBucket(codeBucket())
-        .nodeRole(nodeRole())
+        .nodeTable(nodeTable(scope))
+        .codeBucket(codeBucket(scope))
+        .nodeRole(nodeRole(scope))
         .build();
   }
 
-  private ITable nodeTable() {
+  private static ITable nodeTable(Construct scope) {
     return NodeTableBuilder.create(scope).build();
   }
 
-  private IBucket codeBucket() {
+  private static IBucket codeBucket(Construct scope) {
     return CodeBucketBuilder.create(scope).build();
   }
 
-  private IRole nodeRole() {
+  private static IRole nodeRole(Construct scope) {
     return NodeRoleBuilder.create(scope).build();
   }
 }
