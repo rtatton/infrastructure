@@ -6,11 +6,7 @@ import org.cirrus.infrastructure.handler.api.ApiResponse;
 
 public class UploadCodeHandler extends AbstractHandler {
 
-  private final ApiCommand command;
-
-  public UploadCodeHandler() {
-    command = UploadCodeApi.create();
-  }
+  private static final ApiCommand command = UploadCodeApi.create();
 
   @Override
   protected ApiResponse handle(ApiRequest request) {
