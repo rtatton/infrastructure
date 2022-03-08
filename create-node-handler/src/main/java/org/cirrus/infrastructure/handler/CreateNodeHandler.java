@@ -4,7 +4,7 @@ import org.cirrus.infrastructure.handler.api.ApiCommand;
 import org.cirrus.infrastructure.handler.api.ApiRequest;
 import org.cirrus.infrastructure.handler.api.ApiResponse;
 
-public class CreateNodeHandler extends AbstractHandler {
+public class CreateNodeHandler extends ApiHandler {
 
   private static final ApiCommand command = CreateNodeApi.create();
 

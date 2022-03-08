@@ -7,7 +7,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import org.cirrus.infrastructure.handler.api.ApiRequest;
 import org.cirrus.infrastructure.handler.api.ApiResponse;
 
-public abstract class AbstractHandler
+public abstract class ApiHandler
     implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
 
   private static ApiRequest mapInput(APIGatewayV2HTTPEvent event) {

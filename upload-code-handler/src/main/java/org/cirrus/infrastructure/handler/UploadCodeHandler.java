@@ -4,7 +4,7 @@ import org.cirrus.infrastructure.handler.api.ApiCommand;
 import org.cirrus.infrastructure.handler.api.ApiRequest;
 import org.cirrus.infrastructure.handler.api.ApiResponse;
 
-public class UploadCodeHandler extends AbstractHandler {
+public class UploadCodeHandler extends ApiHandler {
 
   private static final ApiCommand command = UploadCodeApi.create();
 
