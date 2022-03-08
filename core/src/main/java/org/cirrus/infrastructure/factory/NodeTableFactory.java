@@ -18,14 +18,14 @@ final class NodeTableFactory {
   @Builder.Factory
   public static ITable nodeTable(@Builder.Parameter Construct scope) {
     return Table.Builder.create(scope, Keys.NODE_TABLE_NAME)
-        .partitionKey(getPartitionKey())
+        .partitionKey(partitionKey())
         .writeCapacity(5)
         .readCapacity(5)
         .billingMode(BillingMode.PAY_PER_REQUEST)
         .build();
   }
 
-  private static Attribute getPartitionKey() {
+  private static Attribute partitionKey() {
     return Attribute.builder().name(Keys.NODE_ID).type(AttributeType.STRING).build();
   }
 }

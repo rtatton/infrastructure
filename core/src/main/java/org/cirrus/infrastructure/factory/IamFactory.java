@@ -42,7 +42,7 @@ final class IamFactory {
                     DELETE_EVENT_SOURCE_MAPPING,
                     CREATE_QUEUE,
                     DELETE_QUEUE))
-            .resources(anyResource())
+            .resources(any())
             .principals(lambdaPrincipal())
             .build());
   }
@@ -52,7 +52,7 @@ final class IamFactory {
     return List.of(
         PolicyStatement.Builder.create()
             .actions(List.of(DELETE_FUNCTION, DELETE_EVENT_SOURCE_MAPPING, DELETE_QUEUE))
-            .resources(anyResource())
+            .resources(any())
             .principals(lambdaPrincipal())
             .build());
   }
@@ -63,7 +63,7 @@ final class IamFactory {
     role.addToPolicy(
         PolicyStatement.Builder.create()
             .actions(List.of(SEND_MESSAGE, GET_QUEUE_URL))
-            .resources(anyResource())
+            .resources(any())
             .principals(lambdaPrincipal())
             .build());
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(LAMBDA_SQS_EXECUTION_ROLE));
@@ -75,7 +75,7 @@ final class IamFactory {
     return List.of(new ServicePrincipal(LAMBDA_SERVICE));
   }
 
-  private static List<String> anyResource() {
+  private static List<String> any() {
     return List.of(ANY);
   }
 }
