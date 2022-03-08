@@ -26,7 +26,7 @@ import software.constructs.Construct;
 
 final class NodeApiFactory {
 
-  private static final String API_NAME = "NodeApi";
+  private static final String API_ID = "NodeApi";
   private static final String CREATE_NODE_HANDLER = "CreateNodeHandler";
   private static final String DELETE_NODE_HANDLER = "DeleteNodeHandler";
   private static final String UPLOAD_CODE_HANDLER = "UploadCodeHandler";
@@ -36,8 +36,8 @@ final class NodeApiFactory {
   private static final String NODE_ENDPOINT = "/node";
   private static final String DEV_STAGE_ID = "DevStage";
   private static final String DEV_STAGE = "dev";
-  private static final String AUTHORIZER_ID = API_NAME + "Authorizer";
-  private static final String USER_POOL_ID = API_NAME + "UserPool";
+  private static final String AUTHORIZER_ID = API_ID + "Authorizer";
+  private static final String USER_POOL_ID = API_ID + "UserPool";
 
   private NodeApiFactory() {
     // no-op
@@ -46,27 +46,32 @@ final class NodeApiFactory {
   @Builder.Factory
   public static IHttpApi nodeApi(
       @Builder.Parameter Construct scope, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
-    HttpApi api = HttpApi.Builder.create(scope, API_NAME).build();
-    addRoutes(api, scope, nodeTable, codeBucket, nodeRole);
+    HttpApi api = HttpApi.Builder.create(scope, API_ID).build();
+    addRoutes(scope, api, nodeTable, codeBucket, nodeRole);
     addStages(api);
     addMetrics(api);
     return api;
   }
 
   private static void addRoutes(
-      HttpApi api, Construct scope, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
-    api.addRoutes(createNode(scope, nodeTable, codeBucket, nodeRole));
-    api.addRoutes(deleteNode(scope, nodeTable));
-    api.addRoutes(uploadCode(scope, codeBucket));
+      Construct scope, HttpApi api, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
+    IHttpRouteAuthorizer authorizer = authorizer(scope);
+    api.addRoutes(createNode(scope, nodeTable, codeBucket, nodeRole, authorizer));
+    api.addRoutes(deleteNode(scope, nodeTable, authorizer));
+    api.addRoutes(uploadCode(scope, codeBucket, authorizer));
   }
 
   private static AddRoutesOptions createNode(
-      Construct scope, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
+      Construct scope,
+      ITable nodeTable,
+      IBucket codeBucket,
+      IRole nodeRole,
+      IHttpRouteAuthorizer authorizer) {
     IFunction handler = createNodeHandler(scope, nodeRole);
     nodeTable.grantWriteData(handler);
     codeBucket.grantRead(handler);
     CreateNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
-    return addRouteOptions(scope, handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST));
+    return addRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST), authorizer);
   }
 
   private static IFunction createNodeHandler(Construct scope, IRole nodeRole) {
@@ -80,11 +85,12 @@ final class NodeApiFactory {
         .build();
   }
 
-  private static AddRoutesOptions deleteNode(Construct scope, ITable nodeTable) {
+  private static AddRoutesOptions deleteNode(
+      Construct scope, ITable nodeTable, IHttpRouteAuthorizer authorizer) {
     IFunction handler = deleteNodeHandler(scope);
     nodeTable.grantWriteData(handler);
     DeleteNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
-    return addRouteOptions(scope, handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE));
+    return addRouteOptions(handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE), authorizer);
   }
 
   private static IFunction deleteNodeHandler(Construct scope) {
@@ -97,10 +103,11 @@ final class NodeApiFactory {
         .build();
   }
 
-  private static AddRoutesOptions uploadCode(Construct scope, IBucket codeBucket) {
+  private static AddRoutesOptions uploadCode(
+      Construct scope, IBucket codeBucket, IHttpRouteAuthorizer authorizer) {
     IFunction handler = uploadCodeHandler(scope);
     codeBucket.grantPut(handler);
-    return addRouteOptions(scope, handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET));
+    return addRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET), authorizer);
   }
 
   private static IFunction uploadCodeHandler(Construct scope) {
@@ -126,20 +133,19 @@ final class NodeApiFactory {
   }
 
   private static AddRoutesOptions addRouteOptions(
-      Construct scope, IFunction handler, String handlerName, List<HttpMethod> methods) {
+      IFunction handler,
+      String handlerName,
+      List<HttpMethod> methods,
+      IHttpRouteAuthorizer authorizer) {
     return AddRoutesOptions.builder()
         .path(NODE_ENDPOINT)
         .methods(methods)
         .integration(new HttpLambdaIntegration(handlerName, handler))
-        .authorizer(authorizer(scope))
+        .authorizer(authorizer)
         .build();
   }
 
   private static void addStages(HttpApi api) {
-    addDevStage(api);
-  }
-
-  private static void addDevStage(HttpApi api) {
     api.addStage(DEV_STAGE_ID, HttpStageOptions.builder().stageName(DEV_STAGE).build());
   }
 
