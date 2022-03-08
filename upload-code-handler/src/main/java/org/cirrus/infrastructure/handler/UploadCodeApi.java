@@ -9,7 +9,7 @@ import org.cirrus.infrastructure.handler.api.HttpStatus;
 
 public class UploadCodeApi implements ApiCommand {
 
-  private static final UploadCodeComponent COMPONENT = DaggerUploadCodeComponent.create();
+  private static final UploadCodeComponent component = DaggerUploadCodeComponent.create();
   private final UploadCodeCommand command;
 
   @Inject
@@ -18,7 +18,7 @@ public class UploadCodeApi implements ApiCommand {
   }
 
   public static UploadCodeApi create() {
-    return COMPONENT.api();
+    return component.api();
   }
 
   @Override

@@ -15,7 +15,7 @@ import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 
 final class CreateNodeApi implements ApiCommand {
 
-  private static final CreateNodeComponent COMPONENT = DaggerCreateNodeComponent.create();
+  private static final CreateNodeComponent component = DaggerCreateNodeComponent.create();
   private final Command<?, ?> command;
 
   @Inject
@@ -24,7 +24,7 @@ final class CreateNodeApi implements ApiCommand {
   }
 
   public static CreateNodeApi create() {
-    return COMPONENT.api();
+    return component.api();
   }
 
   @Override

@@ -12,7 +12,7 @@ import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 
 final class DeleteNodeApi implements ApiCommand {
 
-  private static final DeleteNodeComponent COMPONENT = DaggerDeleteNodeComponent.create();
+  private static final DeleteNodeComponent component = DaggerDeleteNodeComponent.create();
   private final Command<?, ?> command;
 
   @Inject
@@ -21,7 +21,7 @@ final class DeleteNodeApi implements ApiCommand {
   }
 
   public static DeleteNodeApi create() {
-    return COMPONENT.api();
+    return component.api();
   }
 
   @Override
