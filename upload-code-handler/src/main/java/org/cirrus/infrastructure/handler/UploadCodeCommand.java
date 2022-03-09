@@ -19,7 +19,7 @@ final class UploadCodeCommand implements Command<UploadCodeRequest, UploadCodeRe
   @Override
   public UploadCodeResponse run(UploadCodeRequest request) {
     String key = Resources.createRandomId();
-    String url = functionService.getUploadUrl(key).toCompletableFuture().join();
+    String url = functionService.getUploadUrl(key).join();
     return UploadCodeResponse.builder().codeKey(key).uploadUrl(url).build();
   }
 

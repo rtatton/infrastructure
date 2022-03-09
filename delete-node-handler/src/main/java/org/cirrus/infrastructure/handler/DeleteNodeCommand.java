@@ -70,7 +70,7 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeRe
   }
 
   private CompletableFuture<NodeRecord> deleteRecord(String nodeId) {
-    return storageService.delete(nodeId).toCompletableFuture();
+    return storageService.delete(nodeId);
   }
 
   private DeleteNodeRequest mapToInput(String data) {
@@ -82,10 +82,10 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeRe
   }
 
   private CompletableFuture<?> deleteQueue(String queueId) {
-    return queueService.delete(queueId).toCompletableFuture();
+    return queueService.delete(queueId);
   }
 
   private CompletableFuture<?> deleteFunction(String functionId) {
-    return functionService.delete(functionId).toCompletableFuture();
+    return functionService.delete(functionId);
   }
 }

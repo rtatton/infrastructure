@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.service;
 
-import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,8 +18,8 @@ final class ServiceHelper {
     this.logger = logger;
   }
 
-  public <T> CompletionStage<Resource> createResource(
-      CompletionStage<T> stage, Function<T, String> getId) {
+  public <T> CompletableFuture<Resource> createResource(
+      CompletableFuture<T> stage, Function<T, String> getId) {
     return stage.handleAsync(
         (response, throwable) -> {
           Resource resource;
@@ -34,8 +34,8 @@ final class ServiceHelper {
         });
   }
 
-  public <T> CompletionStage<T> wrapThrowable(
-      CompletionStage<T> stage, Function<Throwable, RuntimeException> mapThrowable) {
+  public <T> CompletableFuture<T> wrapThrowable(
+      CompletableFuture<T> stage, Function<Throwable, RuntimeException> mapThrowable) {
     return stage.handleAsync(
         (response, throwable) -> {
           if (throwable != null) {

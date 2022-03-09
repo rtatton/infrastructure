@@ -17,9 +17,7 @@ final class PublishCodeCommand implements Command<PublishCodeRequest, PublishCod
 
   @Override
   public PublishCodeResponse run(PublishCodeRequest request) {
-    String codeId = request.codeKey();
-    String runtime = request.runtime();
-    String codeUri = functionService.publishCode(codeId, runtime).toCompletableFuture().join();
+    String codeUri = functionService.publishCode(request.codeKey(), request.runtime()).join();
     return PublishCodeResponse.of(codeUri);
   }
 

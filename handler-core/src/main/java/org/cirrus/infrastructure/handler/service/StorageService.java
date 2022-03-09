@@ -1,12 +1,12 @@
 package org.cirrus.infrastructure.handler.service;
 
-import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CompletableFuture;
 
 public interface StorageService<T> {
 
-  CompletionStage<Void> put(T value);
+  CompletableFuture<Void> put(T value);
 
-  CompletionStage<T> get(Object key);
+  CompletableFuture<T> get(Object key);
 
-  CompletionStage<T> delete(Object key);
+  CompletableFuture<T> delete(Object key);
 }

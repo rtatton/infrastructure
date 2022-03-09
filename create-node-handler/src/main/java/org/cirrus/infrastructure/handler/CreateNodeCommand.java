@@ -2,7 +2,6 @@ package org.cirrus.infrastructure.handler;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
@@ -62,9 +61,9 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
    */
   public CreateNodeResponse run(CreateNodeRequest request) {
     try {
-      CompletionStage<Node> createNode =
+      CompletableFuture<Node> createNode =
           checkIfNodeExists(request.nodeId()).thenComposeAsync(x -> createNode(request));
-      CompletionStage<Void> attachQueueThenSaveRecord =
+      CompletableFuture<Void> attachQueueThenSaveRecord =
           attachQueueThenSaveRecord(createNode, request.queueConfig());
       return getResponse(createNode, attachQueueThenSaveRecord);
     } catch (CompletionException exception) {
@@ -81,7 +80,7 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     return mapToOutput(run(mapToInput(request)));
   }
 
-  private CompletionStage<Void> checkIfNodeExists(String nodeId) {
+  private CompletableFuture<Void> checkIfNodeExists(String nodeId) {
     return storageService.get(nodeId).thenApplyAsync(this::throwIfPresent);
   }
 
@@ -92,18 +91,17 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     return null;
   }
 
-  private CompletionStage<Void> attachQueueThenSaveRecord(
-      CompletionStage<Node> createNode, QueueConfig config) {
+  private CompletableFuture<Void> attachQueueThenSaveRecord(
+      CompletableFuture<Node> createNode, QueueConfig config) {
     return createNode
         .thenComposeAsync(node -> attachQueue(node, config))
         .thenComposeAsync(this::saveRecord);
   }
 
   private CreateNodeResponse getResponse(
-      CompletionStage<Node> createNode, CompletionStage<Void> attachQueueThenSaveRecord) {
+      CompletableFuture<Node> createNode, CompletableFuture<Void> attachQueueThenSaveRecord) {
     return createNode
         .thenCombineAsync(attachQueueThenSaveRecord, (node, x) -> mapToResponse(node))
-        .toCompletableFuture()
         .join();
   }
 
@@ -115,15 +113,15 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     return mapper.read(data, CreateNodeRequest.class);
   }
 
-  private CompletionStage<Resource> createFunction(FunctionConfig config) {
+  private CompletableFuture<Resource> createFunction(FunctionConfig config) {
     return functionService.create(config);
   }
 
-  private CompletionStage<Resource> createQueue(QueueConfig config) {
+  private CompletableFuture<Resource> createQueue(QueueConfig config) {
     return queueService.create(config);
   }
 
-  private CompletionStage<Node> createNode(CreateNodeRequest request) {
+  private CompletableFuture<Node> createNode(CreateNodeRequest request) {
     FunctionConfig fConfig = request.functionConfig();
     QueueConfig qConfig = request.queueConfig();
     String nodeId = request.nodeId();
@@ -132,8 +130,8 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
         .thenComposeAsync(this::orPartialRollback);
   }
 
-  private CompletionStage<Node> orPartialRollback(Node node) {
-    CompletionStage<?> result;
+  private CompletableFuture<Node> orPartialRollback(Node node) {
+    CompletableFuture<?> result;
     Resource function = node.function;
     Resource queue = node.queue;
     if (function.failed() && queue.succeeded()) {
@@ -152,25 +150,25 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     throw (RuntimeException) throwable;
   }
 
-  private CompletionStage<Node> attachQueue(Node node, QueueConfig config) {
+  private CompletableFuture<Node> attachQueue(Node node, QueueConfig config) {
     return attachQueue(node.function.id(), node.queue.id(), config)
         .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
         .thenApplyAsync(x -> node);
   }
 
-  private CompletionStage<Void> saveRecord(Node node) {
+  private CompletableFuture<Void> saveRecord(Node node) {
     return saveRecord(node.nodeId, node.function.id(), node.queue.id())
         .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
         .thenApplyAsync(x -> null);
   }
 
-  private CompletionStage<?> orCompleteRollback(Node node, Throwable throwable) {
-    CompletionStage<?> result;
+  private CompletableFuture<?> orCompleteRollback(Node node, Throwable throwable) {
+    CompletableFuture<?> result;
     if (throwable == null) {
       result = CompletableFuture.completedFuture(node);
     } else {
-      CompletionStage<?> deleteFunction = deleteFunction(node.function.id());
-      CompletionStage<?> deleteQueue = deleteQueue(node.queue.id());
+      CompletableFuture<?> deleteFunction = deleteFunction(node.function.id());
+      CompletableFuture<?> deleteQueue = deleteQueue(node.queue.id());
       result = deleteFunction.runAfterBothAsync(deleteQueue, () -> throwException(throwable));
     }
     return result;
@@ -184,22 +182,23 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
         .build();
   }
 
-  private CompletionStage<?> deleteQueue(String queueId) {
+  private CompletableFuture<?> deleteQueue(String queueId) {
     return queueService.delete(queueId);
   }
 
-  private CompletionStage<?> deleteFunction(String functionId) {
+  private CompletableFuture<?> deleteFunction(String functionId) {
     return functionService.delete(functionId);
   }
 
-  private CompletionStage<Throwable> attachQueue(
+  private CompletableFuture<Throwable> attachQueue(
       String functionId, String queueId, QueueConfig config) {
     return functionService
         .attachQueue(functionId, queueId, config)
         .handleAsync((x, throwable) -> throwable);
   }
 
-  private CompletionStage<Throwable> saveRecord(String nodeId, String functionId, String queueId) {
+  private CompletableFuture<Throwable> saveRecord(
+      String nodeId, String functionId, String queueId) {
     return storageService
         .put(createNodeRecord(nodeId, functionId, queueId))
         .handleAsync((x, throwable) -> throwable);

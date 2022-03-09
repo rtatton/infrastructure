@@ -1,7 +1,6 @@
 package org.cirrus.infrastructure.handler.fixtures;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
@@ -23,7 +22,7 @@ public final class HandlerTests {
     // no-op
   }
 
-  public static CompletionStage<NodeRecord> nodeRecordStage() {
+  public static CompletableFuture<NodeRecord> nodeRecordStage() {
     return CompletableFuture.completedFuture(nodeRecord());
   }
 
@@ -31,48 +30,48 @@ public final class HandlerTests {
     return NodeRecord.builder().nodeId(NODE_ID).functionId(FUNCTION_ID).queueId(QUEUE_ID).build();
   }
 
-  public static <T> CompletionStage<T> noReturn() {
+  public static <T> CompletableFuture<T> noReturn() {
     return CompletableFuture.completedFuture(null);
   }
 
-  public static CompletionStage<Resource> function() {
+  public static CompletableFuture<Resource> function() {
     return CompletableFuture.completedFuture(Resource.builder().id(FUNCTION_ID).build());
   }
 
-  public static CompletionStage<Resource> queue() {
+  public static CompletableFuture<Resource> queue() {
     return CompletableFuture.completedFuture(Resource.builder().id(QUEUE_ID).build());
   }
 
-  public static CompletionStage<Resource> failedResource() {
+  public static CompletableFuture<Resource> failedResource() {
     Resource failed = Resource.builder().exception(new FailedResourceCreationException()).build();
     return CompletableFuture.completedFuture(failed);
   }
 
-  public static CompletionStage<String> eventSourceMappingId() {
+  public static CompletableFuture<String> eventSourceMappingId() {
     return CompletableFuture.completedFuture(EVENT_SOURCE_MAPPING_ID);
   }
 
-  public static <T> CompletionStage<T> failedStorageWrite() {
+  public static <T> CompletableFuture<T> failedStorageWrite() {
     return CompletableFuture.failedFuture(new FailedStorageWriteException());
   }
 
-  public static <T> CompletionStage<T> nodeAlreadyExists() {
+  public static <T> CompletableFuture<T> nodeAlreadyExists() {
     return CompletableFuture.failedFuture(new NodeAlreadyExistsException());
   }
 
-  public static <T> CompletionStage<T> noSuchNode() {
+  public static <T> CompletableFuture<T> noSuchNode() {
     return CompletableFuture.failedFuture(new NoSuchNodeException());
   }
 
-  public static <T> CompletionStage<T> failedStorageRead() {
+  public static <T> CompletableFuture<T> failedStorageRead() {
     return CompletableFuture.failedFuture(new FailedStorageReadException());
   }
 
-  public static <T> CompletionStage<T> failedResourceDeletion() {
+  public static <T> CompletableFuture<T> failedResourceDeletion() {
     return CompletableFuture.failedFuture(new FailedResourceDeletionException());
   }
 
-  public static <T> CompletionStage<T> failedEventSourceMapping() {
+  public static <T> CompletableFuture<T> failedEventSourceMapping() {
     return CompletableFuture.failedFuture(new FailedEventSourceMappingException());
   }
 }

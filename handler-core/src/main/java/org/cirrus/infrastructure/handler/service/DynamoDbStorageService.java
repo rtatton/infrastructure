@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.service;
 
-import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.FailedStorageDeleteException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
@@ -33,19 +33,19 @@ public class DynamoDbStorageService implements StorageService<NodeRecord> {
   }
 
   @Override
-  public CompletionStage<Void> put(NodeRecord value) {
+  public CompletableFuture<Void> put(NodeRecord value) {
     return helper.wrapThrowable(table.putItem(value), FailedStorageWriteException::new);
   }
 
   @Override
-  public CompletionStage<NodeRecord> get(Object key) {
+  public CompletableFuture<NodeRecord> get(Object key) {
     return helper
         .wrapThrowable(table.getItem(mapToKey(key)), FailedStorageReadException::new)
         .thenApplyAsync(DynamoDbStorageService::throwIfAbsent);
   }
 
   @Override
-  public CompletionStage<NodeRecord> delete(Object key) {
+  public CompletableFuture<NodeRecord> delete(Object key) {
     return helper
         .wrapThrowable(table.deleteItem(mapToKey(key)), FailedStorageDeleteException::new)
         .thenApplyAsync(DynamoDbStorageService::throwIfAbsent);

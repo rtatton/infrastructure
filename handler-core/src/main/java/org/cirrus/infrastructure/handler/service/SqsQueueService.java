@@ -1,7 +1,7 @@
 package org.cirrus.infrastructure.handler.service;
 
 import java.util.Map;
-import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
@@ -47,16 +47,16 @@ public class SqsQueueService implements QueueService {
   }
 
   @Override
-  public CompletionStage<Resource> create(QueueConfig config) {
+  public CompletableFuture<Resource> create(QueueConfig config) {
     String queueId = Resources.createRandomId();
     Map<QueueAttributeName, String> attributes = queueAttributes(config);
-    CompletionStage<CreateQueueResponse> response =
+    CompletableFuture<CreateQueueResponse> response =
         sqsClient.createQueue(builder -> builder.queueName(queueId).attributes(attributes));
     return helper.createResource(response, CreateQueueResponse::queueUrl);
   }
 
   @Override
-  public CompletionStage<Void> delete(String queueId) {
+  public CompletableFuture<Void> delete(String queueId) {
     return helper
         .wrapThrowable(
             sqsClient.deleteQueue(builder -> builder.queueUrl(queueId)),

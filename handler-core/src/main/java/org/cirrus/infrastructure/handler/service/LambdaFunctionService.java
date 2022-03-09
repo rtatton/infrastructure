@@ -2,7 +2,6 @@ package org.cirrus.infrastructure.handler.service;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.cirrus.infrastructure.handler.exception.FailedCodePublicationException;
@@ -57,12 +56,12 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   @Override
-  public CompletionStage<String> getUploadUrl(String codeKey) {
+  public CompletableFuture<String> getUploadUrl(String codeKey) {
     return CompletableFuture.completedFuture(signedUrl(codeKey));
   }
 
   @Override
-  public CompletionStage<String> publishCode(String codeId, String runtime) {
+  public CompletableFuture<String> publishCode(String codeId, String runtime) {
     return helper.wrapThrowable(
         lambdaClient
             .publishLayerVersion(
@@ -76,8 +75,8 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   @Override
-  public CompletionStage<Resource> create(FunctionConfig config) {
-    CompletionStage<CreateFunctionResponse> response =
+  public CompletableFuture<Resource> create(FunctionConfig config) {
+    CompletableFuture<CreateFunctionResponse> response =
         lambdaClient.createFunction(
             builder ->
                 builder
@@ -95,7 +94,7 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   @Override
-  public CompletionStage<Void> delete(String functionId) {
+  public CompletableFuture<Void> delete(String functionId) {
     return helper
         .wrapThrowable(
             lambdaClient.deleteFunction(builder -> builder.functionName(functionId)),
@@ -104,7 +103,7 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   @Override
-  public CompletionStage<String> attachQueue(
+  public CompletableFuture<String> attachQueue(
       String functionId, String queueId, QueueConfig config) {
     return helper
         .wrapThrowable(
