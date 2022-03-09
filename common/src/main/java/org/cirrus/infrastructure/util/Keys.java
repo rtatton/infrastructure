@@ -16,6 +16,8 @@ public final class Keys {
   public static final String CODE_BUCKET_NAME = "3a5588b6-afd2-4df0-95e7-c1317027ac4c";
   public static final String CODE_KEY = "codeKey";
 
+  public static final String CODE_URI = "codeUri";
+
   public static final String FUNCTION_HANDLER_NAME = "handlerName";
   public static final String FUNCTION_RUNTIME = "runtime";
   public static final String FUNCTION_MEMORY_SIZE = "memorySizeMegabytes";

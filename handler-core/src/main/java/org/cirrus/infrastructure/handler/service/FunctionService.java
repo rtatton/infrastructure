@@ -7,6 +7,8 @@ import org.cirrus.infrastructure.handler.model.Resource;
 
 public interface FunctionService {
 
+  CompletionStage<String> publishCode(String codeId, String runtime);
+
   CompletionStage<Resource> create(FunctionConfig config);
 
   CompletionStage<Void> delete(String functionId);
