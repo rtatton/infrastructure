@@ -88,27 +88,28 @@ class DeleteNodeCommandTests {
   }
 
   private void mockFailedDeleteQueue() {
-    when(queueService.delete(QUEUE_ID)).thenReturn(HandlerTests.failedResourceDeletion());
+    when(queueService.deleteQueue(QUEUE_ID)).thenReturn(HandlerTests.failedResourceDeletion());
   }
 
   private void mockFailedDeleteFunction() {
-    when(functionService.delete(FUNCTION_ID)).thenReturn(HandlerTests.failedResourceDeletion());
+    when(functionService.deleteFunction(FUNCTION_ID))
+        .thenReturn(HandlerTests.failedResourceDeletion());
   }
 
   private void mockSuccessfulDeleteFunction() {
-    when(functionService.delete(FUNCTION_ID)).thenReturn(HandlerTests.noReturn());
+    when(functionService.deleteFunction(FUNCTION_ID)).thenReturn(HandlerTests.noReturn());
   }
 
   private void mockSuccessfulDeleteQueue() {
-    when(queueService.delete(QUEUE_ID)).thenReturn(HandlerTests.noReturn());
+    when(queueService.deleteQueue(QUEUE_ID)).thenReturn(HandlerTests.noReturn());
   }
 
   private void mockSuccessfulDeleteRecord() {
-    when(storageService.delete(NODE_ID)).thenReturn(HandlerTests.nodeRecordStage());
+    when(storageService.deleteItem(NODE_ID)).thenReturn(HandlerTests.nodeRecordStage());
   }
 
   private void mockNonexistentNodeRecord() {
-    when(storageService.delete(NODE_ID)).thenReturn(HandlerTests.noSuchNode());
+    when(storageService.deleteItem(NODE_ID)).thenReturn(HandlerTests.noSuchNode());
   }
 
   private DeleteNodeResponse run() {

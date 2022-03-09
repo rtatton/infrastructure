@@ -47,7 +47,7 @@ public class SqsQueueService implements QueueService {
   }
 
   @Override
-  public CompletableFuture<Resource> create(QueueConfig config) {
+  public CompletableFuture<Resource> createQueue(QueueConfig config) {
     String queueId = Resources.createRandomId();
     Map<QueueAttributeName, String> attributes = queueAttributes(config);
     CompletableFuture<CreateQueueResponse> response =
@@ -56,7 +56,7 @@ public class SqsQueueService implements QueueService {
   }
 
   @Override
-  public CompletableFuture<Void> delete(String queueId) {
+  public CompletableFuture<Void> deleteQueue(String queueId) {
     return helper
         .wrapThrowable(
             sqsClient.deleteQueue(builder -> builder.queueUrl(queueId)),

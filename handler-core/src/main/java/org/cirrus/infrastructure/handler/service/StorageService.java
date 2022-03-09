@@ -4,9 +4,9 @@ import java.util.concurrent.CompletableFuture;
 
 public interface StorageService<T> {
 
-  CompletableFuture<Void> put(T value);
+  CompletableFuture<Void> putItem(T value);
 
-  CompletableFuture<T> get(Object key);
+  CompletableFuture<T> getItem(Object key);
 
-  CompletableFuture<T> delete(Object key);
+  CompletableFuture<T> deleteItem(Object key);
 }

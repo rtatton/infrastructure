@@ -81,7 +81,7 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
   }
 
   private CompletableFuture<Void> checkIfNodeExists(String nodeId) {
-    return storageService.get(nodeId).thenApplyAsync(this::throwIfPresent);
+    return storageService.getItem(nodeId).thenApplyAsync(this::throwIfPresent);
   }
 
   private <T> T throwIfPresent(Object response) {
@@ -114,11 +114,11 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
   }
 
   private CompletableFuture<Resource> createFunction(FunctionConfig config) {
-    return functionService.create(config);
+    return functionService.createFunction(config);
   }
 
   private CompletableFuture<Resource> createQueue(QueueConfig config) {
-    return queueService.create(config);
+    return queueService.createQueue(config);
   }
 
   private CompletableFuture<Node> createNode(CreateNodeRequest request) {
@@ -183,11 +183,11 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
   }
 
   private CompletableFuture<?> deleteQueue(String queueId) {
-    return queueService.delete(queueId);
+    return queueService.deleteQueue(queueId);
   }
 
   private CompletableFuture<?> deleteFunction(String functionId) {
-    return functionService.delete(functionId);
+    return functionService.deleteFunction(functionId);
   }
 
   private CompletableFuture<Throwable> attachQueue(
@@ -200,7 +200,7 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
   private CompletableFuture<Throwable> saveRecord(
       String nodeId, String functionId, String queueId) {
     return storageService
-        .put(createNodeRecord(nodeId, functionId, queueId))
+        .putItem(createNodeRecord(nodeId, functionId, queueId))
         .handleAsync((x, throwable) -> throwable);
   }
 

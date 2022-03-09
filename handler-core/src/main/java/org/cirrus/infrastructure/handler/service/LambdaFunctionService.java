@@ -75,7 +75,7 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   @Override
-  public CompletableFuture<Resource> create(FunctionConfig config) {
+  public CompletableFuture<Resource> createFunction(FunctionConfig config) {
     CompletableFuture<CreateFunctionResponse> response =
         lambdaClient.createFunction(
             builder ->
@@ -94,7 +94,7 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   @Override
-  public CompletableFuture<Void> delete(String functionId) {
+  public CompletableFuture<Void> deleteFunction(String functionId) {
     return helper
         .wrapThrowable(
             lambdaClient.deleteFunction(builder -> builder.functionName(functionId)),

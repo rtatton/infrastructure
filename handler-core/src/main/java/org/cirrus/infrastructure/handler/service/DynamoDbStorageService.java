@@ -33,19 +33,19 @@ public class DynamoDbStorageService implements StorageService<NodeRecord> {
   }
 
   @Override
-  public CompletableFuture<Void> put(NodeRecord value) {
+  public CompletableFuture<Void> putItem(NodeRecord value) {
     return helper.wrapThrowable(table.putItem(value), FailedStorageWriteException::new);
   }
 
   @Override
-  public CompletableFuture<NodeRecord> get(Object key) {
+  public CompletableFuture<NodeRecord> getItem(Object key) {
     return helper
         .wrapThrowable(table.getItem(mapToKey(key)), FailedStorageReadException::new)
         .thenApplyAsync(DynamoDbStorageService::throwIfAbsent);
   }
 
   @Override
-  public CompletableFuture<NodeRecord> delete(Object key) {
+  public CompletableFuture<NodeRecord> deleteItem(Object key) {
     return helper
         .wrapThrowable(table.deleteItem(mapToKey(key)), FailedStorageDeleteException::new)
         .thenApplyAsync(DynamoDbStorageService::throwIfAbsent);

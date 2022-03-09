@@ -11,9 +11,9 @@ public interface FunctionService {
 
   CompletableFuture<String> publishCode(String codeId, String runtime);
 
-  CompletableFuture<Resource> create(FunctionConfig config);
+  CompletableFuture<Resource> createFunction(FunctionConfig config);
 
-  CompletableFuture<Void> delete(String functionId);
+  CompletableFuture<Void> deleteFunction(String functionId);
 
   CompletableFuture<String> attachQueue(String functionId, String queueId, QueueConfig config);
 }

@@ -222,7 +222,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedDeleteFunction() {
-    when(functionService.delete(HandlerTests.FUNCTION_ID))
+    when(functionService.deleteFunction(HandlerTests.FUNCTION_ID))
         .thenReturn(HandlerTests.failedResourceDeletion());
   }
 
@@ -232,19 +232,19 @@ class CreateNodeHandlerTests {
 
   // Record should not exist yet before creating the node
   private void mockSuccessfulGetRecord() {
-    when(storageService.get(HandlerTests.NODE_ID)).thenReturn(HandlerTests.noReturn());
+    when(storageService.getItem(HandlerTests.NODE_ID)).thenReturn(HandlerTests.noReturn());
   }
 
   private void mockExistingNodeRecord() {
-    when(storageService.get(HandlerTests.NODE_ID)).thenReturn(HandlerTests.nodeAlreadyExists());
+    when(storageService.getItem(HandlerTests.NODE_ID)).thenReturn(HandlerTests.nodeAlreadyExists());
   }
 
   private void mockFailedGetRecord() {
-    when(storageService.get(HandlerTests.NODE_ID)).thenReturn(HandlerTests.failedStorageRead());
+    when(storageService.getItem(HandlerTests.NODE_ID)).thenReturn(HandlerTests.failedStorageRead());
   }
 
   private void mockFailedDeleteQueue() {
-    when(queueService.delete(HandlerTests.QUEUE_ID))
+    when(queueService.deleteQueue(HandlerTests.QUEUE_ID))
         .thenReturn(HandlerTests.failedResourceDeletion());
   }
 
@@ -256,11 +256,11 @@ class CreateNodeHandlerTests {
   }
 
   private void mockSuccessfulCreateFunction() {
-    when(functionService.create(functionConfig)).thenReturn(HandlerTests.function());
+    when(functionService.createFunction(functionConfig)).thenReturn(HandlerTests.function());
   }
 
   private void mockSuccessfulCreateQueue() {
-    when(queueService.create(queueConfig)).thenReturn(HandlerTests.queue());
+    when(queueService.createQueue(queueConfig)).thenReturn(HandlerTests.queue());
   }
 
   private void mockSuccessfulAttachQueue() {
@@ -269,7 +269,7 @@ class CreateNodeHandlerTests {
   }
 
   private void mockSuccessfulPutRecord() {
-    when(storageService.put(HandlerTests.nodeRecord())).thenReturn(HandlerTests.noReturn());
+    when(storageService.putItem(HandlerTests.nodeRecord())).thenReturn(HandlerTests.noReturn());
   }
 
   private CreateNodeResponse run() {
@@ -277,15 +277,15 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedCreateFunction() {
-    when(functionService.create(functionConfig)).thenReturn(HandlerTests.failedResource());
+    when(functionService.createFunction(functionConfig)).thenReturn(HandlerTests.failedResource());
   }
 
   private void mockSuccessfulDeleteQueue() {
-    when(queueService.delete(HandlerTests.QUEUE_ID)).thenReturn(HandlerTests.noReturn());
+    when(queueService.deleteQueue(HandlerTests.QUEUE_ID)).thenReturn(HandlerTests.noReturn());
   }
 
   private void mockFailedCreateQueue() {
-    when(queueService.create(queueConfig)).thenReturn(HandlerTests.failedResource());
+    when(queueService.createQueue(queueConfig)).thenReturn(HandlerTests.failedResource());
   }
 
   private void mockFailedAttachQueue() {
@@ -294,11 +294,12 @@ class CreateNodeHandlerTests {
   }
 
   private void mockFailedPutRecord() {
-    when(storageService.put(HandlerTests.nodeRecord()))
+    when(storageService.putItem(HandlerTests.nodeRecord()))
         .thenReturn(HandlerTests.failedStorageWrite());
   }
 
   private void mockSuccessfulDeleteFunction() {
-    when(functionService.delete(HandlerTests.FUNCTION_ID)).thenReturn(HandlerTests.noReturn());
+    when(functionService.deleteFunction(HandlerTests.FUNCTION_ID))
+        .thenReturn(HandlerTests.noReturn());
   }
 }
