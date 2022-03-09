@@ -23,25 +23,7 @@ public class SqsQueueService implements QueueService {
     this.helper = helper;
   }
 
-  @Override
-  public CompletionStage<Resource> create(QueueConfig config) {
-    String queueId = Resources.createRandomId();
-    Map<QueueAttributeName, String> props = getQueueProps(config);
-    CompletionStage<CreateQueueResponse> response =
-        sqsClient.createQueue(builder -> builder.queueName(queueId).attributes(props));
-    return helper.createResource(response, CreateQueueResponse::queueUrl);
-  }
-
-  @Override
-  public CompletionStage<Void> delete(String queueId) {
-    return helper
-        .wrapThrowable(
-            sqsClient.deleteQueue(builder -> builder.queueUrl(queueId)),
-            FailedResourceDeletionException::new)
-        .thenApplyAsync(x -> null);
-  }
-
-  private Map<QueueAttributeName, String> getQueueProps(QueueConfig config) {
+  private static Map<QueueAttributeName, String> queueAttributes(QueueConfig config) {
     return Map.of(
         QueueAttributeName.DELAY_SECONDS,
         String.valueOf(config.delaySeconds()),
@@ -62,5 +44,23 @@ public class SqsQueueService implements QueueService {
         TRUE,
         QueueAttributeName.CONTENT_BASED_DEDUPLICATION,
         TRUE);
+  }
+
+  @Override
+  public CompletionStage<Resource> create(QueueConfig config) {
+    String queueId = Resources.createRandomId();
+    Map<QueueAttributeName, String> attributes = queueAttributes(config);
+    CompletionStage<CreateQueueResponse> response =
+        sqsClient.createQueue(builder -> builder.queueName(queueId).attributes(attributes));
+    return helper.createResource(response, CreateQueueResponse::queueUrl);
+  }
+
+  @Override
+  public CompletionStage<Void> delete(String queueId) {
+    return helper
+        .wrapThrowable(
+            sqsClient.deleteQueue(builder -> builder.queueUrl(queueId)),
+            FailedResourceDeletionException::new)
+        .thenApplyAsync(x -> null);
   }
 }

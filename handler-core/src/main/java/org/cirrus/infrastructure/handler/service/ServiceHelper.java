@@ -35,12 +35,12 @@ final class ServiceHelper {
   }
 
   public <T> CompletionStage<T> wrapThrowable(
-      CompletionStage<T> stage, Function<Throwable, RuntimeException> mapToRuntimeException) {
+      CompletionStage<T> stage, Function<Throwable, RuntimeException> mapThrowable) {
     return stage.handleAsync(
         (response, throwable) -> {
           if (throwable != null) {
             logger.error(throwable.getLocalizedMessage());
-            throw mapToRuntimeException.apply(throwable);
+            throw mapThrowable.apply(throwable);
           }
           return response;
         });

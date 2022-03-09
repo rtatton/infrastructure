@@ -26,6 +26,14 @@ public class LambdaFunctionService implements FunctionService {
     this.helper = helper;
   }
 
+  private static String role() {
+    return System.getenv(Keys.NODE_FUNCTION_ROLE);
+  }
+
+  private static FunctionCode functionCode(FunctionConfig config) {
+    return FunctionCode.builder().s3Bucket(config.codeBucket()).s3Key(config.codeKey()).build();
+  }
+
   @Override
   public CompletionStage<Resource> create(FunctionConfig config) {
     CompletionStage<CreateFunctionResponse> response =
@@ -34,10 +42,11 @@ public class LambdaFunctionService implements FunctionService {
                 builder
                     .functionName(Resources.createRandomId())
                     .packageType(PackageType.ZIP)
-                    .code(getFunctionCode(config))
-                    .runtime(config.runtime())
+                    .code(functionCode(config))
+                    .runtime(config.runtime()) // TODO This should by Python for ACA-Py
                     .handler(config.handlerName())
                     .memorySize(config.memorySizeMegabytes())
+                    .layers() // TODO This is the controller
                     .timeout(config.timeoutSeconds())
                     .role(role())
                     .publish(true));
@@ -66,13 +75,5 @@ public class LambdaFunctionService implements FunctionService {
                         .batchSize(config.batchSize())),
             FailedEventSourceMappingException::new)
         .thenApplyAsync(CreateEventSourceMappingResponse::eventSourceArn);
-  }
-
-  private String role() {
-    return System.getenv(Keys.NODE_FUNCTION_ROLE);
-  }
-
-  private FunctionCode getFunctionCode(FunctionConfig config) {
-    return FunctionCode.builder().s3Bucket(config.codeBucket()).s3Key(config.codeKey()).build();
   }
 }

@@ -21,6 +21,17 @@ public class DynamoDbStorageService implements StorageService<NodeRecord> {
     this.helper = helper;
   }
 
+  private static Key mapToKey(Object key) {
+    return Key.builder().partitionValue((String) key).build();
+  }
+
+  private static NodeRecord throwIfAbsent(NodeRecord value) {
+    if (value == null) {
+      throw new NoSuchNodeException();
+    }
+    return value;
+  }
+
   @Override
   public CompletionStage<Void> put(NodeRecord value) {
     return helper.wrapThrowable(table.putItem(value), FailedStorageWriteException::new);
@@ -30,23 +41,13 @@ public class DynamoDbStorageService implements StorageService<NodeRecord> {
   public CompletionStage<NodeRecord> get(Object key) {
     return helper
         .wrapThrowable(table.getItem(mapToKey(key)), FailedStorageReadException::new)
-        .thenApplyAsync(this::throwIfAbsent);
+        .thenApplyAsync(DynamoDbStorageService::throwIfAbsent);
   }
 
+  @Override
   public CompletionStage<NodeRecord> delete(Object key) {
     return helper
         .wrapThrowable(table.deleteItem(mapToKey(key)), FailedStorageDeleteException::new)
-        .thenApplyAsync(this::throwIfAbsent);
-  }
-
-  private Key mapToKey(Object key) {
-    return Key.builder().partitionValue((String) key).build();
-  }
-
-  private NodeRecord throwIfAbsent(NodeRecord value) {
-    if (value == null) {
-      throw new NoSuchNodeException();
-    }
-    return value;
+        .thenApplyAsync(DynamoDbStorageService::throwIfAbsent);
   }
 }
