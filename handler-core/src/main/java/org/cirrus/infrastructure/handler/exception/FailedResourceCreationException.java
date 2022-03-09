@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.exception;
 
-public class FailedResourceCreationException extends RuntimeException {
+public class FailedResourceCreationException extends CirrusException {
 
   public FailedResourceCreationException() {}
 

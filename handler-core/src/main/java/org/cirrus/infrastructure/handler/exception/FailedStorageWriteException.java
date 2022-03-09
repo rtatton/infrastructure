@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.exception;
 
-public class FailedStorageWriteException extends RuntimeException {
+public class FailedStorageWriteException extends CirrusException {
 
   public FailedStorageWriteException() {}
 

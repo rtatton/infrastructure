@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.exception;
 
-public class FailedStorageDeleteException extends RuntimeException {
+public class FailedStorageDeleteException extends CirrusException {
 
   public FailedStorageDeleteException() {}
 

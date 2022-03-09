@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.exception;
 
-public class FailedResourceDeletionException extends RuntimeException {
+public class FailedResourceDeletionException extends CirrusException {
 
   public FailedResourceDeletionException() {}
 

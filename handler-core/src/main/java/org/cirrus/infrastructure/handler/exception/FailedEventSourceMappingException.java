@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.exception;
 
-public class FailedEventSourceMappingException extends RuntimeException {
+public class FailedEventSourceMappingException extends CirrusException {
 
   public FailedEventSourceMappingException() {}
 

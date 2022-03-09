@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.exception;
 
-public class NodeAlreadyExistsException extends RuntimeException {
+public class NodeAlreadyExistsException extends CirrusException {
 
   public NodeAlreadyExistsException() {}
 

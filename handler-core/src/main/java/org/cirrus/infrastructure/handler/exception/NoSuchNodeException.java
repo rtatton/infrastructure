@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.handler.exception;
 
-public class NoSuchNodeException extends RuntimeException {
+public class NoSuchNodeException extends CirrusException {
 
   public NoSuchNodeException() {}
 
