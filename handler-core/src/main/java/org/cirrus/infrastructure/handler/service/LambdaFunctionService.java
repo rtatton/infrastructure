@@ -1,5 +1,7 @@
 package org.cirrus.infrastructure.handler.service;
 
+import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -18,21 +20,32 @@ import software.amazon.awssdk.services.lambda.model.FunctionCode;
 import software.amazon.awssdk.services.lambda.model.LayerVersionContentInput;
 import software.amazon.awssdk.services.lambda.model.PackageType;
 import software.amazon.awssdk.services.lambda.model.PublishLayerVersionResponse;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 public class LambdaFunctionService implements FunctionService {
 
   private final LambdaAsyncClient lambdaClient;
+  private final S3Presigner signer;
   private final ServiceHelper helper;
   private final String uploadBucket;
+  private final String contentType;
+  private final Duration signatureTtl;
 
   @Inject
   public LambdaFunctionService(
       LambdaAsyncClient lambdaClient,
+      S3Presigner signer,
       ServiceHelper helper,
-      @Named("uploadBucket") String uploadBucket) {
+      @Named("uploadBucket") String uploadBucket,
+      @Named("uploadContentType") String contentType,
+      @Named("uploadSignatureTtl") Duration signatureTtl) {
     this.lambdaClient = lambdaClient;
+    this.signer = signer;
     this.helper = helper;
     this.uploadBucket = uploadBucket;
+    this.contentType = contentType;
+    this.signatureTtl = signatureTtl;
   }
 
   private static String role() {
@@ -41,6 +54,11 @@ public class LambdaFunctionService implements FunctionService {
 
   private static FunctionCode functionCode(FunctionConfig config) {
     return FunctionCode.builder().s3Bucket(config.codeBucket()).s3Key(config.codeKey()).build();
+  }
+
+  @Override
+  public CompletionStage<String> getUploadUrl(String codeKey) {
+    return CompletableFuture.completedFuture(signedUrl(codeKey));
   }
 
   @Override
@@ -98,6 +116,18 @@ public class LambdaFunctionService implements FunctionService {
                         .batchSize(config.batchSize())),
             FailedEventSourceMappingException::new)
         .thenApplyAsync(CreateEventSourceMappingResponse::eventSourceArn);
+  }
+
+  private String signedUrl(String key) {
+    return signer.presignPutObject(request(key)).url().toString();
+  }
+
+  private PutObjectPresignRequest request(String key) {
+    return PutObjectPresignRequest.builder()
+        .putObjectRequest(
+            builder -> builder.contentType(contentType).bucket(uploadBucket).key(key).build())
+        .signatureDuration(signatureTtl)
+        .build();
   }
 
   private LayerVersionContentInput layerContent(String codeKey) {

@@ -7,6 +7,8 @@ import org.cirrus.infrastructure.handler.model.Resource;
 
 public interface FunctionService {
 
+  CompletionStage<String> getUploadUrl(String codeKey);
+
   CompletionStage<String> publishCode(String codeId, String runtime);
 
   CompletionStage<Resource> create(FunctionConfig config);
