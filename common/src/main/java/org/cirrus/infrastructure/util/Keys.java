@@ -11,7 +11,8 @@ public final class Keys {
   public static final String QUEUE_CONFIG = "queueConfig";
   // Code keys
   public static final String CODE_UPLOAD_URL = "uploadUrl";
-  public static final String CODE_BUCKET_NAME = "3a5588b6-afd2-4df0-95e7-c1317027ac4c";
+  public static final String CODE_UPLOAD_BUCKET = "3a5588b6-afd2-4df0-95e7-c1317027ac4c";
+  public static final String RUNTIME_BUCKET = "337f82a0-b3cc-4a23-8830-b464b6fd02cb";
   public static final String CODE_ID = "codeId";
   public static final String ARTIFACT_ID = "artifactId";
   // Function keys

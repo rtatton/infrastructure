@@ -130,7 +130,7 @@ final class HandlerModule {
   @Singleton
   @Named("uploadBucket")
   public static String uploadBucket() {
-    return Keys.CODE_BUCKET_NAME;
+    return Keys.CODE_UPLOAD_BUCKET;
   }
 
   @Provides

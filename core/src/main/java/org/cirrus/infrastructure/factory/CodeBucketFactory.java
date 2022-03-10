@@ -15,7 +15,7 @@ final class CodeBucketFactory {
 
   @Builder.Factory
   public static IBucket codeBucket(@Builder.Parameter Construct scope) {
-    return Bucket.Builder.create(scope, Keys.CODE_BUCKET_NAME)
+    return Bucket.Builder.create(scope, Keys.CODE_UPLOAD_BUCKET)
         .removalPolicy(RemovalPolicy.DESTROY)
         .autoDeleteObjects(true)
         .enforceSsl(true)
