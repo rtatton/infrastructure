@@ -27,6 +27,7 @@ public abstract class PublishCodeRequest {
   @Value.Check
   protected void check() {
     Preconditions.notNullOrEmpty(codeId());
+    Preconditions.notNullOrEmpty(runtime());
     Preconditions.checkState(RUNTIMES.contains(runtime()));
   }
 
