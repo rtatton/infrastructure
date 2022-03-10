@@ -2,23 +2,29 @@ package org.cirrus.infrastructure.handler;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cirrus.infrastructure.util.Keys;
+import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface PublishCodeResponse {
+public abstract class PublishCodeResponse {
 
-  static Builder builder() {
+  public static Builder builder() {
     return ImmutablePublishCodeResponse.builder();
   }
 
-  static PublishCodeResponse of(String codeUri) {
+  public static PublishCodeResponse of(String codeUri) {
     return ImmutablePublishCodeResponse.of(codeUri);
   }
 
   @JsonProperty(Keys.CODE_URI)
-  String codeUri();
+  public abstract String codeUri();
 
-  interface Builder {
+  @Value.Check
+  protected void check() {
+    Preconditions.notNullOrEmpty(codeUri());
+  }
+
+  public interface Builder {
 
     Builder codeUri(String codeUri);
 

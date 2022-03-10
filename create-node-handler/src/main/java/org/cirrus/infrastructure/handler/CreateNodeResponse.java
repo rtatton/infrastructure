@@ -2,25 +2,33 @@ package org.cirrus.infrastructure.handler;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cirrus.infrastructure.util.Keys;
+import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface CreateNodeResponse {
+public abstract class CreateNodeResponse {
 
-  static Builder builder() {
+  public static Builder builder() {
     return ImmutableCreateNodeResponse.builder();
   }
 
   @JsonProperty(Keys.NODE_ID)
-  String nodeId();
+  public abstract String nodeId();
 
   @JsonProperty(Keys.FUNCTION_ID)
-  String functionId();
+  public abstract String functionId();
 
   @JsonProperty(Keys.QUEUE_ID)
-  String queueId();
+  public abstract String queueId();
 
-  interface Builder {
+  @Value.Default
+  protected void check() {
+    Preconditions.notNullOrEmpty(nodeId());
+    Preconditions.notNullOrEmpty(functionId());
+    Preconditions.notNullOrEmpty(queueId());
+  }
+
+  public interface Builder {
 
     CreateNodeResponse build();
 

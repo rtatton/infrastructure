@@ -22,6 +22,7 @@ public final class Keys {
   public static final String FUNCTION_RUNTIME = "runtime";
   public static final String FUNCTION_MEMORY_SIZE = "memorySizeMegabytes";
   public static final String FUNCTION_TIMEOUT = "timeoutSeconds";
+  public static final String FUNCTION_ENVIRONMENT = "environment";
 
   public static final String QUEUE_MESSAGE_RETENTION_PERIOD = "messageRetentionPeriodSeconds";
   public static final String QUEUE_DELAY_SECONDS = "delaySeconds";

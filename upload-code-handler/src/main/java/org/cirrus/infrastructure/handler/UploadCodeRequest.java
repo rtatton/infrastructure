@@ -3,17 +3,17 @@ package org.cirrus.infrastructure.handler;
 import org.immutables.value.Value;
 
 @Value.Immutable
-interface UploadCodeRequest {
+public abstract class UploadCodeRequest {
 
-  static UploadCodeRequest create() {
+  public static UploadCodeRequest create() {
     return ImmutableUploadCodeRequest.builder().build();
   }
 
-  static Builder builder() {
+  public static Builder builder() {
     return ImmutableUploadCodeRequest.builder();
   }
 
-  interface Builder {
+  public interface Builder {
 
     UploadCodeRequest build();
   }

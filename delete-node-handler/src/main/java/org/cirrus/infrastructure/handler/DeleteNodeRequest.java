@@ -2,19 +2,25 @@ package org.cirrus.infrastructure.handler;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cirrus.infrastructure.util.Keys;
+import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface DeleteNodeRequest {
+public abstract class DeleteNodeRequest {
 
-  static Builder builder() {
+  public static Builder builder() {
     return ImmutableDeleteNodeRequest.builder();
   }
 
   @JsonProperty(Keys.NODE_ID)
-  String nodeId();
+  public abstract String nodeId();
 
-  interface Builder {
+  @Value.Check
+  protected void check() {
+    Preconditions.notNullOrEmpty(nodeId());
+  }
+
+  public interface Builder {
 
     Builder nodeId(String nodeId);
 

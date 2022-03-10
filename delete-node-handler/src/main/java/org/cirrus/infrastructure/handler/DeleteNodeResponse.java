@@ -3,17 +3,17 @@ package org.cirrus.infrastructure.handler;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface DeleteNodeResponse {
+public abstract class DeleteNodeResponse {
 
-  static DeleteNodeResponse create() {
+  public static DeleteNodeResponse create() {
     return builder().build();
   }
 
-  static Builder builder() {
+  public static Builder builder() {
     return ImmutableDeleteNodeResponse.builder();
   }
 
-  interface Builder {
+  public interface Builder {
 
     DeleteNodeResponse build();
   }

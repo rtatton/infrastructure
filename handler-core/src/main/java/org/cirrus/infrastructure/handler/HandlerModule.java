@@ -9,6 +9,7 @@ import java.time.Duration;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
+import org.cirrus.infrastructure.handler.util.Resources;
 import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
@@ -20,9 +21,14 @@ import software.amazon.awssdk.http.crt.AwsCrtAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
+import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
+import software.amazon.awssdk.services.lambda.model.FunctionCode;
+import software.amazon.awssdk.services.lambda.model.PackageType;
+import software.amazon.awssdk.services.lambda.model.Runtime;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
+// TODO Be more explicit https://youtu.be/ddg1u5HLwg8?t=999
 @Module(includes = HandlerBindings.class)
 final class HandlerModule {
 
@@ -60,6 +66,18 @@ final class HandlerModule {
         .credentialsProvider(credentialsProvider)
         .httpClientBuilder(clientBuilder)
         .build();
+  }
+
+  @Provides
+  public static CreateFunctionRequest.Builder runtimeBuilder() {
+    return CreateFunctionRequest.builder()
+        .functionName(Resources.createRandomId())
+        .role(System.getenv(Keys.NODE_FUNCTION_ROLE))
+        .runtime(Runtime.PYTHON3_8) // TODO - environment variable
+        .handler("") // TODO - environment variable
+        .packageType(PackageType.ZIP)
+        .code(FunctionCode.builder().build()) // TODO - environment variable
+        .publish(true);
   }
 
   @Provides

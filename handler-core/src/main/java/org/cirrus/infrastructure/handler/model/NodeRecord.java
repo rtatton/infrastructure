@@ -9,26 +9,26 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 
 @DynamoDbImmutable(builder = NodeRecord.Builder.class)
 @Value.Immutable
-public interface NodeRecord {
+public abstract class NodeRecord {
 
-  static Builder builder() {
+  public static Builder builder() {
     return ImmutableNodeRecord.builder();
   }
 
   @DynamoDbPartitionKey
   @DynamoDbAttribute(Keys.NODE_ID)
   @JsonProperty(Keys.NODE_ID)
-  String nodeId();
+  public abstract String nodeId();
 
   @DynamoDbAttribute(Keys.FUNCTION_ID)
   @JsonProperty(Keys.FUNCTION_ID)
-  String functionId();
+  public abstract String functionId();
 
   @DynamoDbAttribute(Keys.QUEUE_ID)
   @JsonProperty(Keys.QUEUE_ID)
-  String queueId();
+  public abstract String queueId();
 
-  interface Builder {
+  public interface Builder {
 
     NodeRecord build();
 
