@@ -23,7 +23,7 @@ public class SqsQueueService implements QueueService {
     this.helper = helper;
   }
 
-  private static Map<QueueAttributeName, String> queueAttributes(QueueConfig config) {
+  private static Map<QueueAttributeName, String> attributes(QueueConfig config) {
     return Map.of(
         QueueAttributeName.DELAY_SECONDS,
         String.valueOf(config.delaySeconds()),
@@ -48,10 +48,10 @@ public class SqsQueueService implements QueueService {
 
   @Override
   public CompletableFuture<String> createQueue(QueueConfig config) {
-    String queueId = Resources.createRandomId();
-    Map<QueueAttributeName, String> attributes = queueAttributes(config);
     return helper.getOrThrow(
-        sqsClient.createQueue(builder -> builder.queueName(queueId).attributes(attributes)),
+        sqsClient.createQueue(
+            builder ->
+                builder.queueName(Resources.createRandomId()).attributes(attributes(config))),
         CreateQueueResponse::queueUrl,
         FailedResourceCreationException::new);
   }
