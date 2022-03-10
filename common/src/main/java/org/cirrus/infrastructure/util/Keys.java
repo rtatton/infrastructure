@@ -15,6 +15,9 @@ public final class Keys {
   public static final String RUNTIME_BUCKET = "337f82a0-b3cc-4a23-8830-b464b6fd02cb";
   public static final String CODE_ID = "codeId";
   public static final String ARTIFACT_ID = "artifactId";
+  public static final String NODE_HANDLER = "runtime.handle_request";
+  public static final String NODE_RUNTIME = "python3.8";
+  public static final String NODE_RUNTIME_KEY = "aries-cloudagent-python";
   // Function keys
   public static final String FUNCTION_RUNTIME = "runtime";
   public static final String FUNCTION_MEMORY_SIZE = "memorySizeMegabytes";

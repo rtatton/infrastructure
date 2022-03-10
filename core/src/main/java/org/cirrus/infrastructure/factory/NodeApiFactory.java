@@ -47,20 +47,29 @@ final class NodeApiFactory {
 
   @Builder.Factory
   public static IHttpApi nodeApi(
-      @Builder.Parameter Construct scope, ITable nodeTable, IBucket uploadBucket, IRole nodeRole) {
+      @Builder.Parameter Construct scope,
+      ITable nodeTable,
+      IBucket runtimeBucket,
+      IBucket uploadBucket,
+      IRole nodeRole) {
     HttpApi api = HttpApi.Builder.create(scope, API_ID).build();
-    addRoutes(scope, api, nodeTable, uploadBucket, nodeRole);
+    addRoutes(scope, api, nodeTable, runtimeBucket, uploadBucket, nodeRole);
     addStages(api);
     addMetrics(api);
     return api;
   }
 
   private static void addRoutes(
-      Construct scope, HttpApi api, ITable nodeTable, IBucket uploadBucket, IRole nodeRole) {
+      Construct scope,
+      HttpApi api,
+      ITable nodeTable,
+      IBucket runtimeBucket,
+      IBucket uploadBucket,
+      IRole nodeRole) {
     IHttpRouteAuthorizer authorizer = authorizer(scope);
     api.addRoutes(uploadCode(scope, uploadBucket, authorizer));
     api.addRoutes(publishCode(scope, authorizer));
-    api.addRoutes(createNode(scope, nodeTable, uploadBucket, nodeRole, authorizer));
+    api.addRoutes(createNode(scope, nodeTable, runtimeBucket, uploadBucket, nodeRole, authorizer));
     api.addRoutes(deleteNode(scope, nodeTable, authorizer));
   }
 
@@ -94,6 +103,7 @@ final class NodeApiFactory {
   private static AddRoutesOptions createNode(
       Construct scope,
       ITable nodeTable,
+      IBucket runtimeBucket,
       IBucket uploadBucket,
       IRole nodeRole,
       IHttpRouteAuthorizer authorizer) {
@@ -105,10 +115,10 @@ final class NodeApiFactory {
             .accessKeyId(accessKeyId())
             .secretAccessKey(secretAccessKey())
             .nodeRole(nodeRole.getRoleArn())
-            .nodeHandler("") // TODO
-            .nodeRuntime("") // TODO
-            .nodeRuntimeBucket("") // TODO
-            .nodeRuntimeKey("") // TODO
+            .nodeHandler(Keys.NODE_HANDLER)
+            .nodeRuntime(Keys.NODE_RUNTIME)
+            .nodeRuntimeBucket(runtimeBucket.getBucketName())
+            .nodeRuntimeKey(Keys.NODE_RUNTIME_KEY)
             .build();
     nodeTable.grantWriteData(handler);
     uploadBucket.grantRead(handler);

@@ -4,6 +4,8 @@ import org.cirrus.infrastructure.factory.CodeUploadBucketBuilder;
 import org.cirrus.infrastructure.factory.NodeApiBuilder;
 import org.cirrus.infrastructure.factory.NodeRoleBuilder;
 import org.cirrus.infrastructure.factory.NodeTableBuilder;
+import org.cirrus.infrastructure.factory.RuntimeBucketBuilder;
+import org.cirrus.infrastructure.factory.RuntimeDeploymentBuilder;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.iam.IRole;
@@ -25,10 +27,15 @@ public class DevelopmentStack extends Stack {
         .uploadBucket(codeUploadBucket(scope))
         .nodeRole(nodeRole(scope))
         .build();
+    RuntimeDeploymentBuilder.create(scope).runtimeBucket(runtimeBucket(scope)).build();
   }
 
   private static ITable nodeTable(Construct scope) {
     return NodeTableBuilder.create(scope).build();
+  }
+
+  private static IBucket runtimeBucket(Construct scope) {
+    return RuntimeBucketBuilder.create(scope).build();
   }
 
   private static IBucket codeUploadBucket(Construct scope) {
