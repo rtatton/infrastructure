@@ -9,7 +9,7 @@ public class PublishCodeHandler extends ApiHandler {
   private static final ApiCommand command = PublishCodeApi.create();
 
   @Override
-  protected ApiResponse handle(ApiRequest request) {
+  public ApiResponse run(ApiRequest request) {
     return command.run(request);
   }
 }
