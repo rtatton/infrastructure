@@ -2,6 +2,7 @@ package org.cirrus.infrastructure.handler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cirrus.infrastructure.util.Keys;
+import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
@@ -28,6 +29,18 @@ public abstract class NodeRecord {
   @JsonProperty(Keys.QUEUE_ID)
   public abstract String queueId();
 
+  @DynamoDbAttribute(Keys.CODE_ID)
+  @JsonProperty(Keys.CODE_ID)
+  public abstract String codeId();
+
+  @Value.Check
+  protected void check() {
+    Preconditions.notNullOrEmpty(nodeId());
+    Preconditions.notNullOrEmpty(functionId());
+    Preconditions.notNullOrEmpty(queueId());
+    Preconditions.notNullOrEmpty(codeId());
+  }
+
   public interface Builder {
 
     NodeRecord build();
@@ -37,5 +50,7 @@ public abstract class NodeRecord {
     Builder functionId(String functionId);
 
     Builder queueId(String queueId);
+
+    Builder codeId(String codeId);
   }
 }

@@ -46,10 +46,6 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
         .build();
   }
 
-  private static NodeRecord createNodeRecord(String nodeId, String functionId, String queueId) {
-    return NodeRecord.builder().nodeId(nodeId).functionId(functionId).queueId(queueId).build();
-  }
-
   private static <T> T throwIfPresent(Object response) {
     if (response != null) {
       throw new NodeAlreadyExistsException();
@@ -116,10 +112,12 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
   }
 
   private CompletableFuture<Node> createNodeOrRollback(CreateNodeRequest request) {
-    return createFunction(request.functionConfig())
+    FunctionConfig functionConfig = request.functionConfig();
+    String codeId = functionConfig.codeId();
+    return createFunction(functionConfig)
         .thenCombineAsync(
             createQueue(request.queueConfig()),
-            (function, queue) -> new Node(request.nodeId(), function, queue))
+            (function, queue) -> new Node(request.nodeId(), codeId, function, queue))
         .thenComposeAsync(this::orPartialRollback);
   }
 
@@ -153,7 +151,13 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
 
   private CompletableFuture<Node> saveRecordOrRollback(Node node) {
     return storageService
-        .putItem(createNodeRecord(node.nodeId, node.function.id, node.queue.id))
+        .putItem(
+            NodeRecord.builder()
+                .nodeId(node.nodeId)
+                .functionId(node.function.id)
+                .queueId(node.queue.id)
+                .codeId(node.codeId)
+                .build())
         .handleAsync((x, throwable) -> throwable)
         .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
         .thenApplyAsync(x -> node);
@@ -182,11 +186,13 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
   private static class Node {
 
     private final String nodeId;
+    private final String codeId;
     private final Resource function;
     private final Resource queue;
 
-    private Node(String nodeId, Resource function, Resource queue) {
+    private Node(String nodeId, String codeId, Resource function, Resource queue) {
       this.nodeId = nodeId;
+      this.codeId = codeId;
       this.function = function;
       this.queue = queue;
     }
