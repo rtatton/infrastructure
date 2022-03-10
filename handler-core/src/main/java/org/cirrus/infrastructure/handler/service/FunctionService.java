@@ -6,7 +6,7 @@ import org.cirrus.infrastructure.handler.model.QueueConfig;
 
 public interface FunctionService {
 
-  CompletableFuture<String> getUploadUrl(String codeKey);
+  CompletableFuture<String> getUploadUrl(String codeId);
 
   CompletableFuture<String> publishCode(String codeId, String runtime);
 

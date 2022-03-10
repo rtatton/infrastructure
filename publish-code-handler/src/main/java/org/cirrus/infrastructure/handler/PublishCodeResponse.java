@@ -12,21 +12,21 @@ public abstract class PublishCodeResponse {
     return ImmutablePublishCodeResponse.builder();
   }
 
-  public static PublishCodeResponse of(String codeUri) {
-    return ImmutablePublishCodeResponse.of(codeUri);
+  public static PublishCodeResponse of(String artifactId) {
+    return ImmutablePublishCodeResponse.of(artifactId);
   }
 
-  @JsonProperty(Keys.CODE_URI)
-  public abstract String codeUri();
+  @JsonProperty(Keys.ARTIFACT_ID)
+  public abstract String artifactId();
 
   @Value.Check
   protected void check() {
-    Preconditions.notNullOrEmpty(codeUri());
+    Preconditions.notNullOrEmpty(artifactId());
   }
 
   public interface Builder {
 
-    Builder codeUri(String codeUri);
+    Builder artifactId(String artifactId);
 
     PublishCodeResponse build();
   }

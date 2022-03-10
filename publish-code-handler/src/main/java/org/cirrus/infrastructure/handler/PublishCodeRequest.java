@@ -18,21 +18,21 @@ public abstract class PublishCodeRequest {
     return ImmutablePublishCodeRequest.builder();
   }
 
-  @JsonProperty(Keys.CODE_KEY)
-  public abstract String codeKey();
+  @JsonProperty(Keys.CODE_ID)
+  public abstract String codeId();
 
   @JsonProperty(Keys.FUNCTION_RUNTIME)
   public abstract String runtime();
 
   @Value.Check
   protected void check() {
-    Preconditions.notNullOrEmpty(codeKey());
+    Preconditions.notNullOrEmpty(codeId());
     Preconditions.checkState(RUNTIMES.contains(runtime()));
   }
 
   public interface Builder {
 
-    Builder codeKey(String codeKey);
+    Builder codeId(String codeId);
 
     Builder runtime(String runtime);
 

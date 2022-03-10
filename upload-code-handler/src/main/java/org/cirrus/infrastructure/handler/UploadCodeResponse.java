@@ -12,23 +12,23 @@ public abstract class UploadCodeResponse {
     return ImmutableUploadCodeResponse.builder();
   }
 
-  @JsonProperty(Keys.UPLOAD_URL)
+  @JsonProperty(Keys.CODE_UPLOAD_URL)
   public abstract String uploadUrl();
 
-  @JsonProperty(Keys.CODE_KEY)
-  public abstract String codeKey();
+  @JsonProperty(Keys.CODE_ID)
+  public abstract String codeId();
 
   @Value.Check
   protected void check() {
     Preconditions.notNullOrEmpty(uploadUrl());
-    Preconditions.notNullOrEmpty(codeKey());
+    Preconditions.notNullOrEmpty(codeId());
   }
 
   public interface Builder {
 
     Builder uploadUrl(String uploadUrl);
 
-    Builder codeKey(String codeKey);
+    Builder codeId(String codeId);
 
     UploadCodeResponse build();
   }

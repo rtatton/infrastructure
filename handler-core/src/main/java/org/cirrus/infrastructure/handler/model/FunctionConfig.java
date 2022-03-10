@@ -25,8 +25,8 @@ public abstract class FunctionConfig {
     return 60;
   }
 
-  @JsonProperty(Keys.CODE_URI)
-  public abstract String codeUri();
+  @JsonProperty(Keys.CODE_ID)
+  public abstract String codeId();
 
   @JsonProperty(Keys.FUNCTION_ENVIRONMENT)
   public abstract Map<String, String> environment();
@@ -35,7 +35,7 @@ public abstract class FunctionConfig {
   protected void check() {
     Preconditions.inRangeClosed(memorySizeMegabytes(), 128, 10240);
     Preconditions.inRangeClosed(timeoutSeconds(), 0, 900);
-    Preconditions.notNullOrEmpty(codeUri());
+    Preconditions.notNullOrEmpty(codeId());
   }
 
   public interface Builder {
@@ -46,7 +46,7 @@ public abstract class FunctionConfig {
 
     Builder timeoutSeconds(int timeout);
 
-    Builder codeUri(String codeUri);
+    Builder codeId(String codeId);
 
     Builder putAllEnvironment(Map<String, ? extends String> variables);
 

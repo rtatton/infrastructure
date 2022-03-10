@@ -48,8 +48,8 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   @Override
-  public CompletableFuture<String> getUploadUrl(String codeKey) {
-    return CompletableFuture.completedFuture(signedUrl(codeKey));
+  public CompletableFuture<String> getUploadUrl(String codeId) {
+    return CompletableFuture.completedFuture(signedUrl(codeId));
   }
 
   @Override
@@ -100,24 +100,24 @@ public class LambdaFunctionService implements FunctionService {
             builder ->
                 builder
                     .memorySize(config.memorySizeMegabytes())
-                    .layers(config.codeUri())
+                    .layers(config.codeId())
                     .timeout(config.timeoutSeconds()))
         .build();
   }
 
-  private String signedUrl(String key) {
-    return signer.presignPutObject(request(key)).url().toString();
+  private String signedUrl(String codeId) {
+    return signer.presignPutObject(request(codeId)).url().toString();
   }
 
-  private PutObjectPresignRequest request(String key) {
+  private PutObjectPresignRequest request(String codeId) {
     return PutObjectPresignRequest.builder()
         .putObjectRequest(
-            builder -> builder.contentType(contentType).bucket(uploadBucket).key(key).build())
+            builder -> builder.contentType(contentType).bucket(uploadBucket).key(codeId).build())
         .signatureDuration(signatureTtl)
         .build();
   }
 
-  private LayerVersionContentInput layerContent(String codeKey) {
-    return LayerVersionContentInput.builder().s3Bucket(uploadBucket).s3Key(codeKey).build();
+  private LayerVersionContentInput layerContent(String codeId) {
+    return LayerVersionContentInput.builder().s3Bucket(uploadBucket).s3Key(codeId).build();
   }
 }
