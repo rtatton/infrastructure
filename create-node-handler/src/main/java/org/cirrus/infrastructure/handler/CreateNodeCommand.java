@@ -2,7 +2,9 @@ package org.cirrus.infrastructure.handler;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
+import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
@@ -12,7 +14,6 @@ import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
-import org.cirrus.infrastructure.handler.model.Resource;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
@@ -35,6 +36,25 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     this.queueService = queueService;
     this.storageService = storageService;
     this.mapper = mapper;
+  }
+
+  private static CreateNodeResponse mapToResponse(Node node) {
+    return CreateNodeResponse.builder()
+        .nodeId(node.nodeId)
+        .functionId(node.function.id)
+        .queueId(node.queue.id)
+        .build();
+  }
+
+  private static NodeRecord createNodeRecord(String nodeId, String functionId, String queueId) {
+    return NodeRecord.builder().nodeId(nodeId).functionId(functionId).queueId(queueId).build();
+  }
+
+  private static <T> T throwIfPresent(Object response) {
+    if (response != null) {
+      throw new NodeAlreadyExistsException();
+    }
+    return null;
   }
 
   /**
@@ -61,13 +81,14 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
    */
   public CreateNodeResponse run(CreateNodeRequest request) {
     try {
-      CompletableFuture<Node> createNode =
-          checkIfNodeExists(request.nodeId()).thenComposeAsync(x -> createNode(request));
-      CompletableFuture<Void> attachQueueThenSaveRecord =
-          attachQueueThenSaveRecord(createNode, request.queueConfig());
-      return getResponse(createNode, attachQueueThenSaveRecord);
+      return checkIfNodeExists(request.nodeId())
+          .thenComposeAsync(x -> createNodeOrRollback(request))
+          .thenComposeAsync(node -> attachQueueOrRollback(node, request.queueConfig()))
+          .thenComposeAsync(this::saveRecordOrRollback)
+          .thenApplyAsync(CreateNodeCommand::mapToResponse)
+          .join();
     } catch (CompletionException exception) {
-      throw (RuntimeException) exception.getCause();
+      throw (CirrusException) exception.getCause();
     }
   }
 
@@ -81,28 +102,7 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
   }
 
   private CompletableFuture<Void> checkIfNodeExists(String nodeId) {
-    return storageService.getItem(nodeId).thenApplyAsync(this::throwIfPresent);
-  }
-
-  private <T> T throwIfPresent(Object response) {
-    if (response != null) {
-      throw new NodeAlreadyExistsException();
-    }
-    return null;
-  }
-
-  private CompletableFuture<Void> attachQueueThenSaveRecord(
-      CompletableFuture<Node> createNode, QueueConfig config) {
-    return createNode
-        .thenComposeAsync(node -> attachQueue(node, config))
-        .thenComposeAsync(this::saveRecord);
-  }
-
-  private CreateNodeResponse getResponse(
-      CompletableFuture<Node> createNode, CompletableFuture<Void> attachQueueThenSaveRecord) {
-    return createNode
-        .thenCombineAsync(attachQueueThenSaveRecord, (node, x) -> mapToResponse(node))
-        .join();
+    return storageService.getItem(nodeId).thenApplyAsync(CreateNodeCommand::throwIfPresent);
   }
 
   private String mapToOutput(CreateNodeResponse response) {
@@ -114,19 +114,18 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
   }
 
   private CompletableFuture<Resource> createFunction(FunctionConfig config) {
-    return functionService.createFunction(config);
+    return functionService.createFunction(config).handleAsync(Resource::new);
   }
 
   private CompletableFuture<Resource> createQueue(QueueConfig config) {
-    return queueService.createQueue(config);
+    return queueService.createQueue(config).handleAsync(Resource::new);
   }
 
-  private CompletableFuture<Node> createNode(CreateNodeRequest request) {
-    FunctionConfig fConfig = request.functionConfig();
-    QueueConfig qConfig = request.queueConfig();
-    String nodeId = request.nodeId();
-    return createFunction(fConfig)
-        .thenCombineAsync(createQueue(qConfig), (func, queue) -> new Node(nodeId, func, queue))
+  private CompletableFuture<Node> createNodeOrRollback(CreateNodeRequest request) {
+    return createFunction(request.functionConfig())
+        .thenCombineAsync(
+            createQueue(request.queueConfig()),
+            (function, queue) -> new Node(request.nodeId(), function, queue))
         .thenComposeAsync(this::orPartialRollback);
   }
 
@@ -135,9 +134,9 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     Resource function = node.function;
     Resource queue = node.queue;
     if (function.failed() && queue.succeeded()) {
-      result = deleteQueue(queue.id()).thenRunAsync(() -> throwException(function.exception()));
+      result = deleteQueue(queue.id).thenRunAsync(() -> throwException(function.throwable));
     } else if (function.succeeded() && queue.failed()) {
-      result = deleteFunction(function.id()).thenRunAsync(() -> throwException(queue.exception()));
+      result = deleteFunction(function.id).thenRunAsync(() -> throwException(queue.throwable));
     } else if (function.failed() && queue.failed()) {
       result = CompletableFuture.failedFuture(new FailedResourceCreationException());
     } else {
@@ -150,16 +149,20 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     throw (RuntimeException) throwable;
   }
 
-  private CompletableFuture<Node> attachQueue(Node node, QueueConfig config) {
-    return attachQueue(node.function.id(), node.queue.id(), config)
+  private CompletableFuture<Node> attachQueueOrRollback(Node node, QueueConfig config) {
+    return functionService
+        .attachQueue(node.function.id, node.queue.id, config)
+        .handleAsync((x, throwable) -> throwable)
         .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
         .thenApplyAsync(x -> node);
   }
 
-  private CompletableFuture<Void> saveRecord(Node node) {
-    return saveRecord(node.nodeId, node.function.id(), node.queue.id())
+  private CompletableFuture<Node> saveRecordOrRollback(Node node) {
+    return storageService
+        .putItem(createNodeRecord(node.nodeId, node.function.id, node.queue.id))
+        .handleAsync((x, throwable) -> throwable)
         .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
-        .thenApplyAsync(x -> null);
+        .thenApplyAsync(x -> node);
   }
 
   private CompletableFuture<?> orCompleteRollback(Node node, Throwable throwable) {
@@ -167,19 +170,11 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     if (throwable == null) {
       result = CompletableFuture.completedFuture(node);
     } else {
-      CompletableFuture<?> deleteFunction = deleteFunction(node.function.id());
-      CompletableFuture<?> deleteQueue = deleteQueue(node.queue.id());
+      CompletableFuture<?> deleteFunction = deleteFunction(node.function.id);
+      CompletableFuture<?> deleteQueue = deleteQueue(node.queue.id);
       result = deleteFunction.runAfterBothAsync(deleteQueue, () -> throwException(throwable));
     }
     return result;
-  }
-
-  private CreateNodeResponse mapToResponse(Node node) {
-    return CreateNodeResponse.builder()
-        .nodeId(node.nodeId)
-        .functionId(node.function.id())
-        .queueId(node.queue.id())
-        .build();
   }
 
   private CompletableFuture<?> deleteQueue(String queueId) {
@@ -188,24 +183,6 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
 
   private CompletableFuture<?> deleteFunction(String functionId) {
     return functionService.deleteFunction(functionId);
-  }
-
-  private CompletableFuture<Throwable> attachQueue(
-      String functionId, String queueId, QueueConfig config) {
-    return functionService
-        .attachQueue(functionId, queueId, config)
-        .handleAsync((x, throwable) -> throwable);
-  }
-
-  private CompletableFuture<Throwable> saveRecord(
-      String nodeId, String functionId, String queueId) {
-    return storageService
-        .putItem(createNodeRecord(nodeId, functionId, queueId))
-        .handleAsync((x, throwable) -> throwable);
-  }
-
-  private NodeRecord createNodeRecord(String nodeId, String functionId, String queueId) {
-    return NodeRecord.builder().nodeId(nodeId).functionId(functionId).queueId(queueId).build();
   }
 
   private static class Node {
@@ -218,6 +195,25 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
       this.nodeId = nodeId;
       this.function = function;
       this.queue = queue;
+    }
+  }
+
+  private static class Resource {
+
+    private final String id;
+    private final Throwable throwable;
+
+    private Resource(@Nullable String id, @Nullable Throwable throwable) {
+      this.id = id;
+      this.throwable = throwable;
+    }
+
+    public boolean failed() {
+      return id == null && throwable != null;
+    }
+
+    public boolean succeeded() {
+      return id != null && throwable == null;
     }
   }
 }

@@ -3,9 +3,9 @@ package org.cirrus.infrastructure.handler.service;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
+import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
-import org.cirrus.infrastructure.handler.model.Resource;
 import org.cirrus.infrastructure.handler.util.Resources;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
@@ -47,20 +47,19 @@ public class SqsQueueService implements QueueService {
   }
 
   @Override
-  public CompletableFuture<Resource> createQueue(QueueConfig config) {
+  public CompletableFuture<String> createQueue(QueueConfig config) {
     String queueId = Resources.createRandomId();
     Map<QueueAttributeName, String> attributes = queueAttributes(config);
-    CompletableFuture<CreateQueueResponse> response =
-        sqsClient.createQueue(builder -> builder.queueName(queueId).attributes(attributes));
-    return helper.createResource(response, CreateQueueResponse::queueUrl);
+    return helper.getOrThrow(
+        sqsClient.createQueue(builder -> builder.queueName(queueId).attributes(attributes)),
+        CreateQueueResponse::queueUrl,
+        FailedResourceCreationException::new);
   }
 
   @Override
   public CompletableFuture<Void> deleteQueue(String queueId) {
-    return helper
-        .wrapThrowable(
-            sqsClient.deleteQueue(builder -> builder.queueUrl(queueId)),
-            FailedResourceDeletionException::new)
-        .thenApplyAsync(x -> null);
+    return helper.getOrThrow(
+        sqsClient.deleteQueue(builder -> builder.queueUrl(queueId)),
+        FailedResourceDeletionException::new);
   }
 }

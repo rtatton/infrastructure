@@ -4,8 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
-import org.cirrus.infrastructure.handler.model.Resource;
+import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.util.Logger;
 
 @Singleton
@@ -18,25 +17,21 @@ final class ServiceHelper {
     this.logger = logger;
   }
 
-  public <T> CompletableFuture<Resource> createResource(
-      CompletableFuture<T> stage, Function<T, String> getId) {
-    return stage.handleAsync(
-        (response, throwable) -> {
-          Resource resource;
-          if (throwable == null) {
-            resource = Resource.builder().id(getId.apply(response)).build();
-          } else {
-            logger.error(throwable.getLocalizedMessage());
-            RuntimeException exception = new FailedResourceCreationException(throwable);
-            resource = Resource.builder().exception(exception).build();
-          }
-          return resource;
-        });
+  public <T, U> CompletableFuture<U> getOrThrow(
+      CompletableFuture<T> future,
+      Function<T, U> mapResult,
+      Function<Throwable, CirrusException> mapThrowable) {
+    return wrapThrowable(future, mapThrowable).thenApplyAsync(mapResult);
+  }
+
+  public <T> CompletableFuture<Void> getOrThrow(
+      CompletableFuture<T> future, Function<Throwable, CirrusException> mapThrowable) {
+    return getOrThrow(future, x -> null, mapThrowable);
   }
 
   public <T> CompletableFuture<T> wrapThrowable(
-      CompletableFuture<T> stage, Function<Throwable, RuntimeException> mapThrowable) {
-    return stage.handleAsync(
+      CompletableFuture<T> future, Function<Throwable, CirrusException> mapThrowable) {
+    return future.handleAsync(
         (response, throwable) -> {
           if (throwable != null) {
             logger.error(throwable.getLocalizedMessage());

@@ -6,10 +6,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.cirrus.infrastructure.handler.exception.FailedCodePublicationException;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
+import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
-import org.cirrus.infrastructure.handler.model.Resource;
 import org.cirrus.infrastructure.handler.util.Resources;
 import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
@@ -62,21 +62,20 @@ public class LambdaFunctionService implements FunctionService {
 
   @Override
   public CompletableFuture<String> publishCode(String codeId, String runtime) {
-    return helper.wrapThrowable(
-        lambdaClient
-            .publishLayerVersion(
-                builder ->
-                    builder
-                        .layerName(codeId)
-                        .compatibleRuntimesWithStrings(runtime)
-                        .content(layerContent(codeId)))
-            .thenApplyAsync(PublishLayerVersionResponse::layerArn),
+    return helper.getOrThrow(
+        lambdaClient.publishLayerVersion(
+            builder ->
+                builder
+                    .layerName(codeId)
+                    .compatibleRuntimesWithStrings(runtime)
+                    .content(layerContent(codeId))),
+        PublishLayerVersionResponse::layerArn,
         FailedCodePublicationException::new);
   }
 
   @Override
-  public CompletableFuture<Resource> createFunction(FunctionConfig config) {
-    CompletableFuture<CreateFunctionResponse> response =
+  public CompletableFuture<String> createFunction(FunctionConfig config) {
+    return helper.getOrThrow(
         lambdaClient.createFunction(
             builder ->
                 builder
@@ -89,32 +88,30 @@ public class LambdaFunctionService implements FunctionService {
                     .layers() // TODO This is the controller
                     .timeout(config.timeoutSeconds())
                     .role(role())
-                    .publish(true));
-    return helper.createResource(response, CreateFunctionResponse::functionArn);
+                    .publish(true)),
+        CreateFunctionResponse::functionArn,
+        FailedResourceCreationException::new);
   }
 
   @Override
   public CompletableFuture<Void> deleteFunction(String functionId) {
-    return helper
-        .wrapThrowable(
-            lambdaClient.deleteFunction(builder -> builder.functionName(functionId)),
-            FailedResourceDeletionException::new)
-        .thenApplyAsync(x -> null);
+    return helper.getOrThrow(
+        lambdaClient.deleteFunction(builder -> builder.functionName(functionId)),
+        FailedResourceDeletionException::new);
   }
 
   @Override
   public CompletableFuture<String> attachQueue(
       String functionId, String queueId, QueueConfig config) {
-    return helper
-        .wrapThrowable(
-            lambdaClient.createEventSourceMapping(
-                builder ->
-                    builder
-                        .functionName(functionId)
-                        .eventSourceArn(queueId)
-                        .batchSize(config.batchSize())),
-            FailedEventSourceMappingException::new)
-        .thenApplyAsync(CreateEventSourceMappingResponse::eventSourceArn);
+    return helper.getOrThrow(
+        lambdaClient.createEventSourceMapping(
+            builder ->
+                builder
+                    .functionName(functionId)
+                    .eventSourceArn(queueId)
+                    .batchSize(config.batchSize())),
+        CreateEventSourceMappingResponse::eventSourceArn,
+        FailedEventSourceMappingException::new);
   }
 
   private String signedUrl(String key) {

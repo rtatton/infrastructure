@@ -9,7 +9,6 @@ import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
-import org.cirrus.infrastructure.handler.model.Resource;
 
 public final class HandlerTests {
 
@@ -34,17 +33,16 @@ public final class HandlerTests {
     return CompletableFuture.completedFuture(null);
   }
 
-  public static CompletableFuture<Resource> function() {
-    return CompletableFuture.completedFuture(Resource.builder().id(FUNCTION_ID).build());
+  public static CompletableFuture<String> function() {
+    return CompletableFuture.completedFuture(FUNCTION_ID);
   }
 
-  public static CompletableFuture<Resource> queue() {
-    return CompletableFuture.completedFuture(Resource.builder().id(QUEUE_ID).build());
+  public static CompletableFuture<String> queue() {
+    return CompletableFuture.completedFuture(QUEUE_ID);
   }
 
-  public static CompletableFuture<Resource> failedResource() {
-    Resource failed = Resource.builder().exception(new FailedResourceCreationException()).build();
-    return CompletableFuture.completedFuture(failed);
+  public static CompletableFuture<String> failedResource() {
+    return CompletableFuture.failedFuture(new FailedResourceCreationException());
   }
 
   public static CompletableFuture<String> eventSourceMappingId() {

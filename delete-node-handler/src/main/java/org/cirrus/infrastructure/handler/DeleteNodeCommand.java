@@ -3,6 +3,7 @@ package org.cirrus.infrastructure.handler;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import javax.inject.Inject;
+import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageDeleteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
@@ -43,11 +44,11 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeRe
    */
   public DeleteNodeResponse run(DeleteNodeRequest request) {
     try {
-      CompletableFuture<NodeRecord> getRecord = deleteRecord(request.nodeId());
-      CompletableFuture.allOf(deleteFunction(getRecord), deleteQueue(getRecord)).join();
+      CompletableFuture<NodeRecord> deleteRecord = deleteRecord(request.nodeId());
+      CompletableFuture.allOf(deleteFunction(deleteRecord), deleteQueue(deleteRecord)).join();
       return DeleteNodeResponse.create();
     } catch (CompletionException exception) {
-      throw (RuntimeException) exception.getCause();
+      throw (CirrusException) exception.getCause();
     }
   }
 
@@ -57,16 +58,16 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeRe
    * @see DeleteNodeCommand#run(DeleteNodeRequest)
    */
   public String runFromString(String request) {
-    mapToOutPut(run(mapToInput(request)));
-    return null;
+    return mapToOutPut(run(mapToInput(request)));
   }
 
-  private CompletableFuture<?> deleteFunction(CompletableFuture<NodeRecord> getRecord) {
-    return getRecord.thenComposeAsync(record -> deleteFunction(record.functionId()));
+  private CompletableFuture<?> deleteFunction(CompletableFuture<NodeRecord> deleteRecord) {
+    return deleteRecord.thenComposeAsync(
+        record -> functionService.deleteFunction(record.functionId()));
   }
 
-  private CompletableFuture<?> deleteQueue(CompletableFuture<NodeRecord> getRecord) {
-    return getRecord.thenComposeAsync(record -> deleteQueue(record.queueId()));
+  private CompletableFuture<?> deleteQueue(CompletableFuture<NodeRecord> deleteRecord) {
+    return deleteRecord.thenComposeAsync(record -> queueService.deleteQueue(record.queueId()));
   }
 
   private CompletableFuture<NodeRecord> deleteRecord(String nodeId) {
@@ -79,13 +80,5 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeRe
 
   private String mapToOutPut(DeleteNodeResponse response) {
     return mapper.write(response);
-  }
-
-  private CompletableFuture<?> deleteQueue(String queueId) {
-    return queueService.deleteQueue(queueId);
-  }
-
-  private CompletableFuture<?> deleteFunction(String functionId) {
-    return functionService.deleteFunction(functionId);
   }
 }
