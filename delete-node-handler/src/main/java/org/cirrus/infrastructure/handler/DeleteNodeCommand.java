@@ -53,12 +53,14 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeRe
   }
 
   /**
-   * @param request JSON-formatted {@link DeleteNodeRequest}
+   * @param input JSON-formatted {@link DeleteNodeRequest}
    * @return JSON-formatted {@link DeleteNodeResponse}
    * @see DeleteNodeCommand#run(DeleteNodeRequest)
    */
-  public String runFromString(String request) {
-    return mapToOutPut(run(mapToInput(request)));
+  public String runFromString(String input) {
+    DeleteNodeRequest request = mapper.read(input, DeleteNodeRequest.class);
+    DeleteNodeResponse response = run(request);
+    return mapper.write(response);
   }
 
   private CompletableFuture<?> deleteFunction(CompletableFuture<NodeRecord> deleteRecord) {
@@ -72,13 +74,5 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeRe
 
   private CompletableFuture<NodeRecord> deleteRecord(String nodeId) {
     return storageService.deleteItem(nodeId);
-  }
-
-  private DeleteNodeRequest mapToInput(String data) {
-    return mapper.read(data, DeleteNodeRequest.class);
-  }
-
-  private String mapToOutPut(DeleteNodeResponse response) {
-    return mapper.write(response);
   }
 }

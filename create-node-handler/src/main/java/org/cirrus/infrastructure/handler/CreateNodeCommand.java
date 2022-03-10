@@ -93,24 +93,18 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
   }
 
   /**
-   * @param request JSON-formatted {@link CreateNodeRequest}
+   * @param input JSON-formatted {@link CreateNodeRequest}
    * @return JSON-formatted {@link CreateNodeResponse}
    * @see CreateNodeCommand#run(CreateNodeRequest)
    */
-  public String runFromString(String request) {
-    return mapToOutput(run(mapToInput(request)));
+  public String runFromString(String input) {
+    CreateNodeRequest request = mapper.read(input, CreateNodeRequest.class);
+    CreateNodeResponse response = run(request);
+    return mapper.write(response);
   }
 
   private CompletableFuture<Void> checkIfNodeExists(String nodeId) {
     return storageService.getItem(nodeId).thenApplyAsync(CreateNodeCommand::throwIfPresent);
-  }
-
-  private String mapToOutput(CreateNodeResponse response) {
-    return mapper.write(response);
-  }
-
-  private CreateNodeRequest mapToInput(String data) {
-    return mapper.read(data, CreateNodeRequest.class);
   }
 
   private CompletableFuture<Resource> createFunction(FunctionConfig config) {
