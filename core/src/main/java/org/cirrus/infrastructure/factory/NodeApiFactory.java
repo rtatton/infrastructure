@@ -27,14 +27,14 @@ import software.constructs.Construct;
 final class NodeApiFactory {
 
   private static final String API_ID = "NodeApi";
+  private static final String UPLOAD_CODE_HANDLER = "UploadCodeHandler";
   private static final String PUBLISH_CODE_HANDLER = "PublishCodeHandler";
   private static final String CREATE_NODE_HANDLER = "CreateNodeHandler";
   private static final String DELETE_NODE_HANDLER = "DeleteNodeHandler";
-  private static final String UPLOAD_CODE_HANDLER = "UploadCodeHandler";
+  private static final String UPLOAD_CODE_PATH = "../upload-code-handler";
   private static final String PUBLISH_CODE_PATH = "../publish-code-handler";
   private static final String CREATE_NODE_PATH = "../create-node-handler";
   private static final String DELETE_NODE_PATH = "../delete-node-handler";
-  private static final String UPLOAD_CODE_PATH = "../upload-code-handler";
   private static final String NODE_ENDPOINT = "/node";
   private static final String DEV_STAGE_ID = "DevStage";
   private static final String DEV_STAGE = "dev";
@@ -58,10 +58,27 @@ final class NodeApiFactory {
   private static void addRoutes(
       Construct scope, HttpApi api, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
     IHttpRouteAuthorizer authorizer = authorizer(scope);
+    api.addRoutes(uploadCode(scope, codeBucket, authorizer));
     api.addRoutes(publishCode(scope, authorizer));
     api.addRoutes(createNode(scope, nodeTable, codeBucket, nodeRole, authorizer));
     api.addRoutes(deleteNode(scope, nodeTable, authorizer));
-    api.addRoutes(uploadCode(scope, codeBucket, authorizer));
+  }
+
+  private static AddRoutesOptions uploadCode(
+      Construct scope, IBucket codeBucket, IHttpRouteAuthorizer authorizer) {
+    IFunction handler = uploadCodeHandler(scope);
+    codeBucket.grantPut(handler);
+    return addRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET), authorizer);
+  }
+
+  private static IFunction uploadCodeHandler(Construct scope) {
+    return UploadCodeHandlerBuilder.create(scope)
+        .apiHandler(UPLOAD_CODE_HANDLER)
+        .codePath(UPLOAD_CODE_PATH)
+        .region(region())
+        .accessKeyId(accessKeyId())
+        .secretAccessKey(secretAccessKey())
+        .build();
   }
 
   private static AddRoutesOptions publishCode(Construct scope, IHttpRouteAuthorizer authorizer) {
@@ -119,23 +136,6 @@ final class NodeApiFactory {
     return DeleteNodeHandlerBuilder.create(scope)
         .apiHandler(DELETE_NODE_HANDLER)
         .codePath(DELETE_NODE_PATH)
-        .region(region())
-        .accessKeyId(accessKeyId())
-        .secretAccessKey(secretAccessKey())
-        .build();
-  }
-
-  private static AddRoutesOptions uploadCode(
-      Construct scope, IBucket codeBucket, IHttpRouteAuthorizer authorizer) {
-    IFunction handler = uploadCodeHandler(scope);
-    codeBucket.grantPut(handler);
-    return addRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET), authorizer);
-  }
-
-  private static IFunction uploadCodeHandler(Construct scope) {
-    return UploadCodeHandlerBuilder.create(scope)
-        .apiHandler(UPLOAD_CODE_HANDLER)
-        .codePath(UPLOAD_CODE_PATH)
         .region(region())
         .accessKeyId(accessKeyId())
         .secretAccessKey(secretAccessKey())

@@ -31,6 +31,19 @@ final class ApiHandlerFactory {
   }
 
   @Builder.Factory
+  public static IFunction uploadCodeHandler(
+      @Builder.Parameter Construct scope,
+      String apiHandler,
+      String codePath,
+      String region,
+      String accessKeyId,
+      String secretAccessKey) {
+    return apiHandlerBuilder(scope, apiHandler, codePath)
+        .environment(environment(region, accessKeyId, secretAccessKey))
+        .build();
+  }
+
+  @Builder.Factory
   public static IFunction publishCodeHandler(
       @Builder.Parameter Construct scope,
       String apiHandler,
@@ -67,19 +80,6 @@ final class ApiHandlerFactory {
 
   @Builder.Factory
   public static IFunction deleteNodeHandler(
-      @Builder.Parameter Construct scope,
-      String apiHandler,
-      String codePath,
-      String region,
-      String accessKeyId,
-      String secretAccessKey) {
-    return apiHandlerBuilder(scope, apiHandler, codePath)
-        .environment(environment(region, accessKeyId, secretAccessKey))
-        .build();
-  }
-
-  @Builder.Factory
-  public static IFunction uploadCodeHandler(
       @Builder.Parameter Construct scope,
       String apiHandler,
       String codePath,
