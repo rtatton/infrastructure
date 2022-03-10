@@ -61,6 +61,14 @@ final class NodeApiFactory {
     api.addRoutes(uploadCode(scope, codeBucket, authorizer));
   }
 
+  private static AddRoutesOptions publishCode(Construct scope) {
+    return null;
+  }
+
+  private static IFunction publishCodeHandler(Construct scope) {
+    return null;
+  }
+
   private static AddRoutesOptions createNode(
       Construct scope,
       ITable nodeTable,
@@ -76,12 +84,16 @@ final class NodeApiFactory {
 
   private static IFunction createNodeHandler(Construct scope, IRole nodeRole) {
     return CreateNodeHandlerBuilder.create(scope)
+        .apiHandler(CREATE_NODE_HANDLER)
+        .codePath(CREATE_NODE_PATH)
         .region(region())
         .accessKeyId(accessKeyId())
         .secretAccessKey(secretAccessKey())
-        .nodeFunctionRole(nodeRole.getRoleArn())
-        .handlerName(CREATE_NODE_HANDLER)
-        .codePath(CREATE_NODE_PATH)
+        .nodeRole(nodeRole.getRoleArn())
+        .nodeHandler("") // TODO
+        .nodeRuntime("") // TODO
+        .nodeRuntimeBucket("") // TODO
+        .nodeRuntimeKey("") // TODO
         .build();
   }
 
@@ -95,11 +107,11 @@ final class NodeApiFactory {
 
   private static IFunction deleteNodeHandler(Construct scope) {
     return DeleteNodeHandlerBuilder.create(scope)
+        .apiHandler(DELETE_NODE_HANDLER)
+        .codePath(DELETE_NODE_PATH)
         .region(region())
         .accessKeyId(accessKeyId())
         .secretAccessKey(secretAccessKey())
-        .handlerName(DELETE_NODE_HANDLER)
-        .codePath(DELETE_NODE_PATH)
         .build();
   }
 
@@ -112,11 +124,11 @@ final class NodeApiFactory {
 
   private static IFunction uploadCodeHandler(Construct scope) {
     return UploadCodeHandlerBuilder.create(scope)
+        .apiHandler(UPLOAD_CODE_HANDLER)
+        .codePath(UPLOAD_CODE_PATH)
         .region(region())
         .accessKeyId(accessKeyId())
         .secretAccessKey(secretAccessKey())
-        .handlerName(UPLOAD_CODE_HANDLER)
-        .codePath(UPLOAD_CODE_PATH)
         .build();
   }
 

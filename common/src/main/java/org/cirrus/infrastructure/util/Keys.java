@@ -28,11 +28,11 @@ public final class Keys {
   public static final String QUEUE_VISIBILITY_TIMEOUT = "visibilityTimeoutSeconds";
   public static final String QUEUE_BATCH_SIZE = "batchSize";
   // Environment variables
-  public static final String NODE_FUNCTION_BUCKET = "FUNCTION_BUCKET";
-  public static final String NODE_FUNCTION_KEY = "FUNCTION_KEY";
-  public static final String NODE_FUNCTION_HANDLER = "FUNCTION_HANDLER";
-  public static final String NODE_FUNCTION_RUNTIME = "FUNCTION_RUNTIME";
-  public static final String NODE_FUNCTION_ROLE = "FUNCTION_ROLE";
+  public static final String NODE_FUNCTION_BUCKET = "NODE_FUNCTION_BUCKET";
+  public static final String NODE_FUNCTION_KEY = "NODE_FUNCTION_KEY";
+  public static final String NODE_FUNCTION_HANDLER = "NODE_FUNCTION_HANDLER";
+  public static final String NODE_FUNCTION_RUNTIME = "NODE_FUNCTION_RUNTIME";
+  public static final String NODE_FUNCTION_ROLE = "NODE_FUNCTION_ROLE";
   public static final String AWS_REGION = "AWS_REGION";
   // DO NOT CHANGE VALUE; MUST BE 'AWS_ACCESS_KEY_ID'
   public static final String AWS_ACCESS_KEY_ID = "AWS_ACCESS_KEY_ID";

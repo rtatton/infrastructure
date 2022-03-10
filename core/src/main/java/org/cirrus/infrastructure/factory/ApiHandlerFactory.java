@@ -33,26 +33,34 @@ final class ApiHandlerFactory {
   @Builder.Factory
   public static IFunction createNodeHandler(
       @Builder.Parameter Construct scope,
-      String handlerName,
+      String apiHandler,
       String codePath,
       String region,
       String accessKeyId,
       String secretAccessKey,
-      String nodeFunctionRole) {
+      String nodeRole,
+      String nodeHandler,
+      String nodeRuntime,
+      String nodeRuntimeBucket,
+      String nodeRuntimeKey) {
     Map<String, String> environment = environment(region, accessKeyId, secretAccessKey);
-    environment.put(Keys.NODE_FUNCTION_ROLE, nodeFunctionRole);
-    return apiHandlerBuilder(scope, handlerName, codePath).environment(environment).build();
+    environment.put(Keys.NODE_FUNCTION_ROLE, nodeRole);
+    environment.put(Keys.NODE_FUNCTION_HANDLER, nodeHandler);
+    environment.put(Keys.NODE_FUNCTION_RUNTIME, nodeRuntime);
+    environment.put(Keys.NODE_FUNCTION_BUCKET, nodeRuntimeBucket);
+    environment.put(Keys.NODE_FUNCTION_KEY, nodeRuntimeKey);
+    return apiHandlerBuilder(scope, apiHandler, codePath).environment(environment).build();
   }
 
   @Builder.Factory
   public static IFunction deleteNodeHandler(
       @Builder.Parameter Construct scope,
-      String handlerName,
+      String apiHandler,
       String codePath,
       String region,
       String accessKeyId,
       String secretAccessKey) {
-    return apiHandlerBuilder(scope, handlerName, codePath)
+    return apiHandlerBuilder(scope, apiHandler, codePath)
         .environment(environment(region, accessKeyId, secretAccessKey))
         .build();
   }
@@ -60,12 +68,12 @@ final class ApiHandlerFactory {
   @Builder.Factory
   public static IFunction uploadCodeHandler(
       @Builder.Parameter Construct scope,
-      String handlerName,
+      String apiHandler,
       String codePath,
       String region,
       String accessKeyId,
       String secretAccessKey) {
-    return apiHandlerBuilder(scope, handlerName, codePath)
+    return apiHandlerBuilder(scope, apiHandler, codePath)
         .environment(environment(region, accessKeyId, secretAccessKey))
         .build();
   }
