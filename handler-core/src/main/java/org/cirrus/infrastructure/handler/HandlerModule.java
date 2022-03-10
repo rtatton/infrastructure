@@ -26,6 +26,7 @@ import software.amazon.awssdk.services.lambda.model.PackageType;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
+// TODO Refactor to be more modular
 // TODO Be more explicit https://youtu.be/ddg1u5HLwg8?t=999
 @Module(includes = HandlerBindings.class)
 final class HandlerModule {
