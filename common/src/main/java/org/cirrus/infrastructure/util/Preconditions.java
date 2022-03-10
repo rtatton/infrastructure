@@ -12,7 +12,7 @@ public final class Preconditions {
     }
   }
 
-  public static Number inRangeClosed(double value, double upper, double lower) {
+  public static double inRangeClosed(double value, double upper, double lower) {
     checkState(value <= upper && value >= lower);
     return value;
   }
