@@ -47,25 +47,25 @@ final class NodeApiFactory {
 
   @Builder.Factory
   public static IHttpApi nodeApi(
-      @Builder.Parameter Construct scope, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
+      @Builder.Parameter Construct scope, ITable nodeTable, IBucket uploadBucket, IRole nodeRole) {
     HttpApi api = HttpApi.Builder.create(scope, API_ID).build();
-    addRoutes(scope, api, nodeTable, codeBucket, nodeRole);
+    addRoutes(scope, api, nodeTable, uploadBucket, nodeRole);
     addStages(api);
     addMetrics(api);
     return api;
   }
 
   private static void addRoutes(
-      Construct scope, HttpApi api, ITable nodeTable, IBucket codeBucket, IRole nodeRole) {
+      Construct scope, HttpApi api, ITable nodeTable, IBucket uploadBucket, IRole nodeRole) {
     IHttpRouteAuthorizer authorizer = authorizer(scope);
-    api.addRoutes(uploadCode(scope, codeBucket, authorizer));
+    api.addRoutes(uploadCode(scope, uploadBucket, authorizer));
     api.addRoutes(publishCode(scope, authorizer));
-    api.addRoutes(createNode(scope, nodeTable, codeBucket, nodeRole, authorizer));
+    api.addRoutes(createNode(scope, nodeTable, uploadBucket, nodeRole, authorizer));
     api.addRoutes(deleteNode(scope, nodeTable, authorizer));
   }
 
   private static AddRoutesOptions uploadCode(
-      Construct scope, IBucket codeBucket, IHttpRouteAuthorizer authorizer) {
+      Construct scope, IBucket uploadBucket, IHttpRouteAuthorizer authorizer) {
     IFunction handler =
         UploadCodeHandlerBuilder.create(scope)
             .apiHandler(UPLOAD_CODE_HANDLER)
@@ -74,7 +74,7 @@ final class NodeApiFactory {
             .accessKeyId(accessKeyId())
             .secretAccessKey(secretAccessKey())
             .build();
-    codeBucket.grantPut(handler);
+    uploadBucket.grantPut(handler);
     return addRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET), authorizer);
   }
 
@@ -94,7 +94,7 @@ final class NodeApiFactory {
   private static AddRoutesOptions createNode(
       Construct scope,
       ITable nodeTable,
-      IBucket codeBucket,
+      IBucket uploadBucket,
       IRole nodeRole,
       IHttpRouteAuthorizer authorizer) {
     IFunction handler =
@@ -111,7 +111,7 @@ final class NodeApiFactory {
             .nodeRuntimeKey("") // TODO
             .build();
     nodeTable.grantWriteData(handler);
-    codeBucket.grantRead(handler);
+    uploadBucket.grantRead(handler);
     CreateNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
     return addRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST), authorizer);
   }

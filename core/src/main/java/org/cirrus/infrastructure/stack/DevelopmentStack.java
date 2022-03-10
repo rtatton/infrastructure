@@ -1,6 +1,6 @@
 package org.cirrus.infrastructure.stack;
 
-import org.cirrus.infrastructure.factory.CodeBucketBuilder;
+import org.cirrus.infrastructure.factory.CodeUploadBucketBuilder;
 import org.cirrus.infrastructure.factory.NodeApiBuilder;
 import org.cirrus.infrastructure.factory.NodeRoleBuilder;
 import org.cirrus.infrastructure.factory.NodeTableBuilder;
@@ -22,7 +22,7 @@ public class DevelopmentStack extends Stack {
   private static void createResources(Construct scope) {
     NodeApiBuilder.create(scope)
         .nodeTable(nodeTable(scope))
-        .codeBucket(codeBucket(scope))
+        .uploadBucket(codeUploadBucket(scope))
         .nodeRole(nodeRole(scope))
         .build();
   }
@@ -31,8 +31,8 @@ public class DevelopmentStack extends Stack {
     return NodeTableBuilder.create(scope).build();
   }
 
-  private static IBucket codeBucket(Construct scope) {
-    return CodeBucketBuilder.create(scope).build();
+  private static IBucket codeUploadBucket(Construct scope) {
+    return CodeUploadBucketBuilder.create(scope).build();
   }
 
   private static IRole nodeRole(Construct scope) {

@@ -1,5 +1,6 @@
 package org.cirrus.infrastructure.factory;
 
+import java.util.Arrays;
 import java.util.List;
 import org.immutables.builder.Builder;
 import software.amazon.awscdk.services.iam.IPrincipal;
@@ -33,53 +34,41 @@ final class IamFactory {
 
   @Builder.Factory
   public static List<PolicyStatement> publishCodePolicy() {
-    return List.of(
-        PolicyStatement.Builder.create()
-            .actions(List.of(PUBLISH_LAYER))
-            .resources(any())
-            .principals(lambdaPrincipal())
-            .build());
+    return List.of(lambdaPolicy(PUBLISH_LAYER));
   }
 
   @Builder.Factory
   public static List<PolicyStatement> createNodePolicy() {
     return List.of(
-        PolicyStatement.Builder.create()
-            .actions(
-                List.of(
-                    CREATE_FUNCTION,
-                    DELETE_FUNCTION,
-                    CREATE_EVENT_SOURCE_MAPPING,
-                    DELETE_EVENT_SOURCE_MAPPING,
-                    CREATE_QUEUE,
-                    DELETE_QUEUE))
-            .resources(any())
-            .principals(lambdaPrincipal())
-            .build());
+        lambdaPolicy(
+            CREATE_FUNCTION,
+            DELETE_FUNCTION,
+            CREATE_EVENT_SOURCE_MAPPING,
+            DELETE_EVENT_SOURCE_MAPPING,
+            CREATE_QUEUE,
+            DELETE_QUEUE));
   }
 
   @Builder.Factory
   public static List<PolicyStatement> deleteNodePolicy() {
-    return List.of(
-        PolicyStatement.Builder.create()
-            .actions(List.of(DELETE_FUNCTION, DELETE_EVENT_SOURCE_MAPPING, DELETE_QUEUE))
-            .resources(any())
-            .principals(lambdaPrincipal())
-            .build());
+    return List.of(lambdaPolicy(DELETE_FUNCTION, DELETE_EVENT_SOURCE_MAPPING, DELETE_QUEUE));
   }
 
   @Builder.Factory
   public static IRole nodeRole(@Builder.Parameter Construct scope) {
     Role role = Role.Builder.create(scope, NODE_ROLE).build();
-    role.addToPolicy(
-        PolicyStatement.Builder.create()
-            .actions(List.of(SEND_MESSAGE, GET_QUEUE_URL))
-            .resources(any())
-            .principals(lambdaPrincipal())
-            .build());
+    role.addToPolicy(lambdaPolicy(SEND_MESSAGE, GET_QUEUE_URL));
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(LAMBDA_SQS_EXECUTION_ROLE));
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(EFS_READ_WRITE_ROLE));
     return role;
+  }
+
+  private static PolicyStatement lambdaPolicy(String... actions) {
+    return PolicyStatement.Builder.create()
+        .actions(Arrays.asList(actions))
+        .resources(any())
+        .principals(lambdaPrincipal())
+        .build();
   }
 
   private static List<IPrincipal> lambdaPrincipal() {
