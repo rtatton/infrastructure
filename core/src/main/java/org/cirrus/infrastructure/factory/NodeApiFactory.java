@@ -176,28 +176,22 @@ final class NodeApiFactory {
 
   private static IUserPool userPool(Construct scope) {
     return UserPool.Builder.create(scope, USER_POOL_ID)
-        .passwordPolicy(passwordPolicy())
-        .standardAttributes(standardAttributes())
+        .passwordPolicy(
+            PasswordPolicy.builder()
+                .minLength(10)
+                .requireDigits(true)
+                .requireLowercase(true)
+                .requireUppercase(true)
+                .requireSymbols(true)
+                .build())
+        .standardAttributes(
+            StandardAttributes.builder()
+                .email(StandardAttribute.builder().required(true).mutable(true).build())
+                .phoneNumber(StandardAttribute.builder().required(true).mutable(true).build())
+                .build())
         .selfSignUpEnabled(true)
         .mfa(Mfa.REQUIRED)
         .accountRecovery(AccountRecovery.PHONE_WITHOUT_MFA_AND_EMAIL)
-        .build();
-  }
-
-  private static PasswordPolicy passwordPolicy() {
-    return PasswordPolicy.builder()
-        .minLength(10)
-        .requireDigits(true)
-        .requireLowercase(true)
-        .requireUppercase(true)
-        .requireSymbols(true)
-        .build();
-  }
-
-  private static StandardAttributes standardAttributes() {
-    return StandardAttributes.builder()
-        .email(StandardAttribute.builder().required(true).mutable(true).build())
-        .phoneNumber(StandardAttribute.builder().required(true).mutable(true).build())
         .build();
   }
 
