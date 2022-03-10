@@ -12,13 +12,6 @@ public final class Preconditions {
     }
   }
 
-  public static <T> T checkNotNull(T object) {
-    if (object == null) {
-      throw new NullPointerException();
-    }
-    return object;
-  }
-
   public static Number inRangeClosed(double value, double upper, double lower) {
     checkState(value <= upper && value >= lower);
     return value;
@@ -27,9 +20,5 @@ public final class Preconditions {
   public static String notNullOrEmpty(String string) {
     checkState(string != null && !string.isEmpty());
     return string;
-  }
-
-  public static <T> T notNull(T object) {
-    return checkNotNull(object);
   }
 }
