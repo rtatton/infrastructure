@@ -66,35 +66,29 @@ final class NodeApiFactory {
 
   private static AddRoutesOptions uploadCode(
       Construct scope, IBucket codeBucket, IHttpRouteAuthorizer authorizer) {
-    IFunction handler = uploadCodeHandler(scope);
+    IFunction handler =
+        UploadCodeHandlerBuilder.create(scope)
+            .apiHandler(UPLOAD_CODE_HANDLER)
+            .codePath(UPLOAD_CODE_PATH)
+            .region(region())
+            .accessKeyId(accessKeyId())
+            .secretAccessKey(secretAccessKey())
+            .build();
     codeBucket.grantPut(handler);
     return addRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET), authorizer);
   }
 
-  private static IFunction uploadCodeHandler(Construct scope) {
-    return UploadCodeHandlerBuilder.create(scope)
-        .apiHandler(UPLOAD_CODE_HANDLER)
-        .codePath(UPLOAD_CODE_PATH)
-        .region(region())
-        .accessKeyId(accessKeyId())
-        .secretAccessKey(secretAccessKey())
-        .build();
-  }
-
   private static AddRoutesOptions publishCode(Construct scope, IHttpRouteAuthorizer authorizer) {
-    IFunction handler = publishCodeHandler(scope);
+    IFunction handler =
+        PublishCodeHandlerBuilder.create(scope)
+            .apiHandler(PUBLISH_CODE_HANDLER)
+            .codePath(PUBLISH_CODE_PATH)
+            .region(region())
+            .accessKeyId(accessKeyId())
+            .secretAccessKey(secretAccessKey())
+            .build();
     PublishCodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
     return addRouteOptions(handler, PUBLISH_CODE_HANDLER, List.of(HttpMethod.POST), authorizer);
-  }
-
-  private static IFunction publishCodeHandler(Construct scope) {
-    return PublishCodeHandlerBuilder.create(scope)
-        .apiHandler(PUBLISH_CODE_HANDLER)
-        .codePath(PUBLISH_CODE_PATH)
-        .region(region())
-        .accessKeyId(accessKeyId())
-        .secretAccessKey(secretAccessKey())
-        .build();
   }
 
   private static AddRoutesOptions createNode(
@@ -103,44 +97,38 @@ final class NodeApiFactory {
       IBucket codeBucket,
       IRole nodeRole,
       IHttpRouteAuthorizer authorizer) {
-    IFunction handler = createNodeHandler(scope, nodeRole);
+    IFunction handler =
+        CreateNodeHandlerBuilder.create(scope)
+            .apiHandler(CREATE_NODE_HANDLER)
+            .codePath(CREATE_NODE_PATH)
+            .region(region())
+            .accessKeyId(accessKeyId())
+            .secretAccessKey(secretAccessKey())
+            .nodeRole(nodeRole.getRoleArn())
+            .nodeHandler("") // TODO
+            .nodeRuntime("") // TODO
+            .nodeRuntimeBucket("") // TODO
+            .nodeRuntimeKey("") // TODO
+            .build();
     nodeTable.grantWriteData(handler);
     codeBucket.grantRead(handler);
     CreateNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
     return addRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST), authorizer);
   }
 
-  private static IFunction createNodeHandler(Construct scope, IRole nodeRole) {
-    return CreateNodeHandlerBuilder.create(scope)
-        .apiHandler(CREATE_NODE_HANDLER)
-        .codePath(CREATE_NODE_PATH)
-        .region(region())
-        .accessKeyId(accessKeyId())
-        .secretAccessKey(secretAccessKey())
-        .nodeRole(nodeRole.getRoleArn())
-        .nodeHandler("") // TODO
-        .nodeRuntime("") // TODO
-        .nodeRuntimeBucket("") // TODO
-        .nodeRuntimeKey("") // TODO
-        .build();
-  }
-
   private static AddRoutesOptions deleteNode(
       Construct scope, ITable nodeTable, IHttpRouteAuthorizer authorizer) {
-    IFunction handler = deleteNodeHandler(scope);
+    IFunction handler =
+        DeleteNodeHandlerBuilder.create(scope)
+            .apiHandler(DELETE_NODE_HANDLER)
+            .codePath(DELETE_NODE_PATH)
+            .region(region())
+            .accessKeyId(accessKeyId())
+            .secretAccessKey(secretAccessKey())
+            .build();
     nodeTable.grantWriteData(handler);
     DeleteNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
     return addRouteOptions(handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE), authorizer);
-  }
-
-  private static IFunction deleteNodeHandler(Construct scope) {
-    return DeleteNodeHandlerBuilder.create(scope)
-        .apiHandler(DELETE_NODE_HANDLER)
-        .codePath(DELETE_NODE_PATH)
-        .region(region())
-        .accessKeyId(accessKeyId())
-        .secretAccessKey(secretAccessKey())
-        .build();
   }
 
   private static String accessKeyId() {
