@@ -22,9 +22,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
-import software.amazon.awssdk.services.lambda.model.FunctionCode;
 import software.amazon.awssdk.services.lambda.model.PackageType;
-import software.amazon.awssdk.services.lambda.model.Runtime;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
@@ -73,10 +71,14 @@ final class HandlerModule {
     return CreateFunctionRequest.builder()
         .functionName(Resources.createRandomId())
         .role(System.getenv(Keys.NODE_FUNCTION_ROLE))
-        .runtime(Runtime.PYTHON3_8) // TODO - environment variable
-        .handler("") // TODO - environment variable
+        .runtime(System.getenv(Keys.NODE_FUNCTION_RUNTIME))
+        .handler(System.getenv(Keys.NODE_FUNCTION_HANDLER))
         .packageType(PackageType.ZIP)
-        .code(FunctionCode.builder().build()) // TODO - environment variable
+        .code(
+            builder ->
+                builder
+                    .s3Bucket(System.getenv(Keys.NODE_FUNCTION_BUCKET))
+                    .s3Key(System.getenv(Keys.NODE_FUNCTION_KEY)))
         .publish(true);
   }
 
@@ -127,7 +129,7 @@ final class HandlerModule {
   @Provides
   @Singleton
   @Named("uploadBucket")
-  public static String codeBucketName() {
+  public static String uploadBucket() {
     return Keys.CODE_BUCKET_NAME;
   }
 
