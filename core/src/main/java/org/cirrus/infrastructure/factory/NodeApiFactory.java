@@ -83,6 +83,7 @@ final class NodeApiFactory {
 
   private static AddRoutesOptions publishCode(Construct scope, IHttpRouteAuthorizer authorizer) {
     IFunction handler = publishCodeHandler(scope);
+    PublishCodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
     return addRouteOptions(handler, PUBLISH_CODE_HANDLER, List.of(HttpMethod.POST), authorizer);
   }
 

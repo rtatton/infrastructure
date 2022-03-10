@@ -14,6 +14,7 @@ final class IamFactory {
 
   private static final String LAMBDA_SERVICE = "lambda.amazonaws.com";
   private static final String ANY = "*";
+  private static final String PUBLISH_LAYER = "lambda:PublishLayerVersion";
   private static final String CREATE_FUNCTION = "lambda:CreateFunction";
   private static final String DELETE_FUNCTION = "lambda:DeleteFunction";
   private static final String CREATE_EVENT_SOURCE_MAPPING = "lambda:CreateEventSourceMapping";
@@ -28,6 +29,16 @@ final class IamFactory {
 
   private IamFactory() {
     // no-op
+  }
+
+  @Builder.Factory
+  public static List<PolicyStatement> publishCodePolicy() {
+    return List.of(
+        PolicyStatement.Builder.create()
+            .actions(List.of(PUBLISH_LAYER))
+            .resources(any())
+            .principals(lambdaPrincipal())
+            .build());
   }
 
   @Builder.Factory
