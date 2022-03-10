@@ -13,5 +13,6 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$versions.jackson"
     implementation "com.fasterxml.jackson.module:jackson-module-blackbird:$versions.jackson"
     implementation "org.immutables:value:$versions.immutables"
+    implementation "org.immutables:builder:$versions.immutables"
     implementation "com.google.dagger:dagger-compiler:$versions.dagger"
 }
