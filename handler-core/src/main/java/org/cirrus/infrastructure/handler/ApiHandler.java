@@ -10,23 +10,15 @@ import org.cirrus.infrastructure.handler.api.ApiResponse;
 public abstract class ApiHandler
     implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
 
-  private static ApiRequest mapInput(APIGatewayV2HTTPEvent event) {
-    return ApiRequest.of(event.getBody());
-  }
-
-  private static APIGatewayV2HTTPResponse mapOutput(ApiResponse response) {
+  @Override
+  public APIGatewayV2HTTPResponse handleRequest(APIGatewayV2HTTPEvent event, Context context) {
+    ApiRequest request = ApiRequest.of(event.getBody());
+    ApiResponse response = handle(request);
     return APIGatewayV2HTTPResponse.builder()
         .withBody(response.body())
         .withStatusCode(response.status())
         .withIsBase64Encoded(false)
         .build();
-  }
-
-  @Override
-  public APIGatewayV2HTTPResponse handleRequest(APIGatewayV2HTTPEvent event, Context context) {
-    ApiRequest request = mapInput(event);
-    ApiResponse response = handle(request);
-    return mapOutput(response);
   }
 
   protected abstract ApiResponse handle(ApiRequest request);
