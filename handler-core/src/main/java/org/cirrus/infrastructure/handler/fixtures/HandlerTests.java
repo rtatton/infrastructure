@@ -15,6 +15,7 @@ public final class HandlerTests {
   public static final String NODE_ID = "nodeId";
   public static final String FUNCTION_ID = "functionId";
   public static final String QUEUE_ID = "queueId";
+  public static final String CODE_ID = "codeId";
   public static final String EVENT_SOURCE_MAPPING_ID = "eventSourceMappingId";
 
   private HandlerTests() {
@@ -26,7 +27,12 @@ public final class HandlerTests {
   }
 
   public static NodeRecord nodeRecord() {
-    return NodeRecord.builder().nodeId(NODE_ID).functionId(FUNCTION_ID).queueId(QUEUE_ID).build();
+    return NodeRecord.builder()
+        .nodeId(NODE_ID)
+        .functionId(FUNCTION_ID)
+        .queueId(QUEUE_ID)
+        .codeId(CODE_ID)
+        .build();
   }
 
   public static <T> CompletableFuture<T> noReturn() {

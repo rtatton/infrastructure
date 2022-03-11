@@ -17,4 +17,10 @@ public class CirrusException extends RuntimeException {
   public CirrusException(Throwable cause) {
     super(cause);
   }
+
+  public static CirrusException cast(Throwable throwable) {
+    return throwable instanceof CirrusException
+        ? (CirrusException) throwable
+        : new CirrusException(throwable);
+  }
 }

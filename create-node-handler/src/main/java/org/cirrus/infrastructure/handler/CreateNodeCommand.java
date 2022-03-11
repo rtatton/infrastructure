@@ -84,7 +84,7 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
           .thenApplyAsync(CreateNodeCommand::mapToResponse)
           .join();
     } catch (CompletionException exception) {
-      throw (CirrusException) exception.getCause();
+      throw CirrusException.cast(exception.getCause());
     }
   }
 

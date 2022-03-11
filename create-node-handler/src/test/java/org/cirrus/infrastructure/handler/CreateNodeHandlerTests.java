@@ -230,6 +230,10 @@ class CreateNodeHandlerTests {
     when(request.nodeId()).thenReturn(HandlerTests.NODE_ID);
   }
 
+  private void mockGetCodeId() {
+    when(functionConfig.codeId()).thenReturn(HandlerTests.CODE_ID);
+  }
+
   // Record should not exist yet before creating the node
   private void mockSuccessfulGetRecord() {
     when(storageService.getItem(HandlerTests.NODE_ID)).thenReturn(HandlerTests.noReturn());
@@ -252,6 +256,7 @@ class CreateNodeHandlerTests {
   private void mockRequest() {
     when(request.functionConfig()).thenReturn(functionConfig);
     mockGetRequestNodeId();
+    mockGetCodeId();
     when(request.queueConfig()).thenReturn(queueConfig);
   }
 
