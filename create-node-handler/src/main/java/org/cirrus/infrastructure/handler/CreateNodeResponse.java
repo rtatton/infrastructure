@@ -23,9 +23,9 @@ public abstract class CreateNodeResponse {
 
   @Value.Default
   protected void check() {
-    Preconditions.notNullOrEmpty(nodeId());
-    Preconditions.notNullOrEmpty(functionId());
-    Preconditions.notNullOrEmpty(queueId());
+    Preconditions.checkNotNullOrEmpty(nodeId());
+    Preconditions.checkNotNullOrEmpty(functionId());
+    Preconditions.checkNotNullOrEmpty(queueId());
   }
 
   public interface Builder {

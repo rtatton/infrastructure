@@ -20,8 +20,8 @@ public abstract class UploadCodeResponse {
 
   @Value.Check
   protected void check() {
-    Preconditions.notNullOrEmpty(uploadUrl());
-    Preconditions.notNullOrEmpty(codeId());
+    Preconditions.checkNotNullOrEmpty(uploadUrl());
+    Preconditions.checkNotNullOrEmpty(codeId());
   }
 
   public interface Builder {

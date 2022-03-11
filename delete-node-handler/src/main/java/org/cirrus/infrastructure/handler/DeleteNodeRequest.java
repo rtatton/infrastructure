@@ -17,7 +17,7 @@ public abstract class DeleteNodeRequest {
 
   @Value.Check
   protected void check() {
-    Preconditions.notNullOrEmpty(nodeId());
+    Preconditions.checkNotNullOrEmpty(nodeId());
   }
 
   public interface Builder {

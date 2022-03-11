@@ -35,10 +35,10 @@ public abstract class NodeRecord {
 
   @Value.Check
   protected void check() {
-    Preconditions.notNullOrEmpty(nodeId());
-    Preconditions.notNullOrEmpty(functionId());
-    Preconditions.notNullOrEmpty(queueId());
-    Preconditions.notNullOrEmpty(codeId());
+    Preconditions.checkNotNullOrEmpty(nodeId());
+    Preconditions.checkNotNullOrEmpty(functionId());
+    Preconditions.checkNotNullOrEmpty(queueId());
+    Preconditions.checkNotNullOrEmpty(codeId());
   }
 
   public interface Builder {

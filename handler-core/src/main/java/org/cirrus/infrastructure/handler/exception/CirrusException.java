@@ -1,5 +1,7 @@
 package org.cirrus.infrastructure.handler.exception;
 
+import org.cirrus.infrastructure.util.Preconditions;
+
 public class CirrusException extends RuntimeException {
 
   public CirrusException() {
@@ -7,19 +9,19 @@ public class CirrusException extends RuntimeException {
   }
 
   public CirrusException(String message) {
-    super(message);
+    super(Preconditions.checkNotNullOrEmpty(message));
   }
 
   public CirrusException(String message, Throwable cause) {
-    super(message, cause);
+    super(Preconditions.checkNotNullOrEmpty(message), Preconditions.checkNotNull(cause));
   }
 
   public CirrusException(Throwable cause) {
-    super(cause);
+    super(Preconditions.checkNotNull(cause));
   }
 
   public static CirrusException cast(Throwable throwable) {
-    return throwable instanceof CirrusException
+    return Preconditions.checkNotNull(throwable) instanceof CirrusException
         ? (CirrusException) throwable
         : new CirrusException(throwable);
   }

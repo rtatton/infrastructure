@@ -21,7 +21,7 @@ public abstract class PublishCodeResponse {
 
   @Value.Check
   protected void check() {
-    Preconditions.notNullOrEmpty(artifactId());
+    Preconditions.checkNotNullOrEmpty(artifactId());
   }
 
   public interface Builder {

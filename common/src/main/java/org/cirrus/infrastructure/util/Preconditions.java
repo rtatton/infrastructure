@@ -12,13 +12,21 @@ public final class Preconditions {
     }
   }
 
-  public static double inRangeClosed(double value, double upper, double lower) {
+  public static <T> T checkNotNull(T value) {
+    if (value == null) {
+      throw new NullPointerException();
+    }
+    return value;
+  }
+
+  public static double checkInRangeClosed(double value, double upper, double lower) {
     checkState(value <= upper && value >= lower);
     return value;
   }
 
-  public static String notNullOrEmpty(String string) {
-    checkState(string != null && !string.isEmpty());
+  public static String checkNotNullOrEmpty(String string) {
+    checkNotNull(string);
+    checkState(!string.isEmpty());
     return string;
   }
 }

@@ -33,9 +33,9 @@ public abstract class FunctionConfig {
 
   @Value.Check
   protected void check() {
-    Preconditions.inRangeClosed(memorySizeMegabytes(), 128, 10240);
-    Preconditions.inRangeClosed(timeoutSeconds(), 0, 900);
-    Preconditions.notNullOrEmpty(codeId());
+    Preconditions.checkInRangeClosed(memorySizeMegabytes(), 128, 10240);
+    Preconditions.checkInRangeClosed(timeoutSeconds(), 0, 900);
+    Preconditions.checkNotNullOrEmpty(codeId());
   }
 
   public interface Builder {

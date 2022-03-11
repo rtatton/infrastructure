@@ -46,11 +46,11 @@ public abstract class QueueConfig {
 
   @Value.Check
   protected void check() {
-    Preconditions.inRangeClosed(delaySeconds(), 0, 900);
-    Preconditions.inRangeClosed(maxMessageSizeBytes(), 1024, 262144);
-    Preconditions.inRangeClosed(receiveMessageWaitTimeSeconds(), 0, 20);
-    Preconditions.inRangeClosed(visibilityTimeoutSeconds(), 0, 43200);
-    Preconditions.inRangeClosed(batchSize(), 0, 10);
+    Preconditions.checkInRangeClosed(delaySeconds(), 0, 900);
+    Preconditions.checkInRangeClosed(maxMessageSizeBytes(), 1024, 262144);
+    Preconditions.checkInRangeClosed(receiveMessageWaitTimeSeconds(), 0, 20);
+    Preconditions.checkInRangeClosed(visibilityTimeoutSeconds(), 0, 43200);
+    Preconditions.checkInRangeClosed(batchSize(), 0, 10);
   }
 
   public interface Builder {
