@@ -3,6 +3,7 @@ package org.cirrus.infrastructure.handler;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
