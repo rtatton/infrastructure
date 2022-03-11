@@ -65,11 +65,12 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeRe
 
   private CompletableFuture<?> deleteFunction(CompletableFuture<NodeRecord> deleteRecord) {
     return deleteRecord.thenComposeAsync(
-        record -> functionService.deleteFunction(record.functionId()));
+        nodeRecord -> functionService.deleteFunction(nodeRecord.functionId()));
   }
 
   private CompletableFuture<?> deleteQueue(CompletableFuture<NodeRecord> deleteRecord) {
-    return deleteRecord.thenComposeAsync(record -> queueService.deleteQueue(record.queueId()));
+    return deleteRecord.thenComposeAsync(
+        nodeRecord -> queueService.deleteQueue(nodeRecord.queueId()));
   }
 
   private CompletableFuture<NodeRecord> deleteRecord(String nodeId) {
