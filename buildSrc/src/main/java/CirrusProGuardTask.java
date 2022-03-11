@@ -39,9 +39,8 @@ public abstract class CirrusProGuardTask extends ProGuardTask {
     injars(inJarsPath());
     outjars(outJarsPath());
     libraryjars(libraryFilterArgs(), libraryJarFiles());
-    // Since Gradle 3.4+ with the deprecation of "compile" in favor of "implementation"
-    // Ref: https://stackoverflow.com/a/48067438
-    libraryjars(getProjectRuntimeConfigurationFiles());
+    // https://stackoverflow.com/a/17765962
+    injars(getProjectRuntimeConfigurationFiles());
     // The entry point to the application.
     keep(getEntryPoint().get());
     if (getDebugEnabled()) {
@@ -94,6 +93,8 @@ public abstract class CirrusProGuardTask extends ProGuardTask {
   }
 
   private Set<File> getProjectRuntimeConfigurationFiles() {
+    // Since Gradle 3.4+ with the deprecation of "compile" in favor of "implementation"
+    // Ref: https://stackoverflow.com/a/48067438
     ConfigurationContainer configurations = getProject().getConfigurations();
     return Objects.requireNonNull(configurations.findByName(RUNTIME_CLASSPATH)).getFiles();
   }
