@@ -1,5 +1,7 @@
 # infrastructure
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9f5c899091aa4a1bb09083fad5fc809c)](https://app.codacy.com/gh/project-cirrus/infrastructure?utm_source=github.com&utm_medium=referral&utm_content=project-cirrus/infrastructure&utm_campaign=Badge_Grade_Settings)
+
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands
