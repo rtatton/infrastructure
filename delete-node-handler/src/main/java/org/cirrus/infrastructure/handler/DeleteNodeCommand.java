@@ -48,7 +48,7 @@ final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeRe
       CompletableFuture.allOf(deleteFunction(deleteRecord), deleteQueue(deleteRecord)).join();
       return DeleteNodeResponse.create();
     } catch (CompletionException exception) {
-      throw (CirrusException) exception.getCause();
+      throw CirrusException.cast(exception.getCause());
     }
   }
 

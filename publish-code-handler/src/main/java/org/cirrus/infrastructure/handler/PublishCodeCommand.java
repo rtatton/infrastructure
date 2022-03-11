@@ -1,6 +1,8 @@
 package org.cirrus.infrastructure.handler;
 
+import java.util.concurrent.CompletionException;
 import javax.inject.Inject;
+import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
@@ -17,8 +19,12 @@ final class PublishCodeCommand implements Command<PublishCodeRequest, PublishCod
 
   @Override
   public PublishCodeResponse run(PublishCodeRequest request) {
-    String artifactId = functionService.publishCode(request.codeId(), request.runtime()).join();
-    return PublishCodeResponse.of(artifactId);
+    try {
+      String artifactId = functionService.publishCode(request.codeId(), request.runtime()).join();
+      return PublishCodeResponse.of(artifactId);
+    } catch (CompletionException exception) {
+      throw CirrusException.cast(exception.getCause());
+    }
   }
 
   @Override

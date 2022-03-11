@@ -1,6 +1,8 @@
 package org.cirrus.infrastructure.handler;
 
+import java.util.concurrent.CompletionException;
 import javax.inject.Inject;
+import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.util.Mapper;
 import org.cirrus.infrastructure.handler.util.Resources;
@@ -18,9 +20,13 @@ final class UploadCodeCommand implements Command<UploadCodeRequest, UploadCodeRe
 
   @Override
   public UploadCodeResponse run(UploadCodeRequest request) {
-    String codeId = Resources.createRandomId();
-    String uploadUrl = functionService.getUploadUrl(codeId).join();
-    return UploadCodeResponse.builder().codeId(codeId).uploadUrl(uploadUrl).build();
+    try {
+      String codeId = Resources.createRandomId();
+      String uploadUrl = functionService.getUploadUrl(codeId).join();
+      return UploadCodeResponse.builder().codeId(codeId).uploadUrl(uploadUrl).build();
+    } catch (CompletionException exception) {
+      throw CirrusException.cast(exception.getCause());
+    }
   }
 
   @Override
