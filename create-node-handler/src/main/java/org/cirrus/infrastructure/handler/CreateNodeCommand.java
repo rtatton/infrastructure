@@ -183,7 +183,7 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     return functionService.deleteFunction(functionId);
   }
 
-  private static class Node {
+  private static final class Node {
 
     private final String nodeId;
     private final String codeId;
@@ -198,7 +198,7 @@ final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeRe
     }
   }
 
-  private static class Resource {
+  private static final class Resource {
 
     private final String id;
     private final Throwable throwable;
