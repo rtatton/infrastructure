@@ -3,7 +3,6 @@ package org.cirrus.infrastructure.handler;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
@@ -28,7 +27,7 @@ import org.mockito.quality.Strictness;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
-class CreateNodeHandlerTests {
+class CreateNodeCommandTests {
 
   @Mock private FunctionService functionService;
   @Mock private QueueService queueService;
