@@ -1,5 +1,7 @@
 package org.cirrus.infrastructure.handler.api;
 
+import java.util.Set;
+
 public final class HttpStatus {
 
   public static final int OK = 200;
@@ -14,7 +16,23 @@ public final class HttpStatus {
 
   public static final int INTERNAL_SERVER_ERROR = 500;
 
+  private static final Set<Integer> STATUSES =
+      Set.of(
+          OK,
+          CREATED,
+          ACCEPTED,
+          NO_CONTENT,
+          BAD_REQUEST,
+          UNAUTHORIZED,
+          FORBIDDEN,
+          NOT_FOUND,
+          INTERNAL_SERVER_ERROR);
+
   private HttpStatus() {
     // no-op
+  }
+
+  public static boolean contains(int status) {
+    return STATUSES.contains(status);
   }
 }
