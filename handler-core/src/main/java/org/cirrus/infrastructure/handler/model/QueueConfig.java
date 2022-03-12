@@ -8,6 +8,10 @@ import org.immutables.value.Value;
 @Value.Immutable
 public abstract class QueueConfig {
 
+  public static Builder builder() {
+    return ImmutableQueueConfig.builder();
+  }
+
   @Value.Default
   @JsonProperty(Keys.QUEUE_MESSAGE_RETENTION_PERIOD)
   public int messageRetentionPeriodSeconds() {
