@@ -16,6 +16,7 @@ public abstract class PublishCodeResponse {
     return ImmutablePublishCodeResponse.of(artifactId);
   }
 
+  @Value.Parameter
   @JsonProperty(Keys.ARTIFACT_ID)
   public abstract String artifactId();
 

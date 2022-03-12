@@ -14,6 +14,7 @@ public abstract class ApiRequest {
     return ImmutableApiRequest.of(body);
   }
 
+  @Value.Parameter
   public abstract String body();
 
   @Value.Check

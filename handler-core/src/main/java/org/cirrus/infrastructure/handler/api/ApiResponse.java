@@ -14,8 +14,10 @@ public abstract class ApiResponse {
     return ImmutableApiResponse.of(body, status);
   }
 
+  @Value.Parameter
   public abstract String body();
 
+  @Value.Parameter
   public abstract int status();
 
   @Value.Check
