@@ -1,21 +1,27 @@
 package org.cirrus.infrastructure.handler.api;
 
+import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface ApiRequest {
+public abstract class ApiRequest {
 
-  static Builder builder() {
+  public static Builder builder() {
     return ImmutableApiRequest.builder();
   }
 
-  static ApiRequest of(String body) {
+  public static ApiRequest of(String body) {
     return ImmutableApiRequest.of(body);
   }
 
-  String body();
+  public abstract String body();
 
-  interface Builder {
+  @Value.Check
+  protected void check() {
+    Preconditions.checkNotNullOrEmpty(body());
+  }
+
+  public interface Builder {
 
     Builder body(String body);
 
