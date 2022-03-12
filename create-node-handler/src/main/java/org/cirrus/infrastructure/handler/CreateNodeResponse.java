@@ -21,7 +21,7 @@ public abstract class CreateNodeResponse {
   @JsonProperty(Keys.QUEUE_ID)
   public abstract String queueId();
 
-  @Value.Default
+  @Value.Check
   protected void check() {
     Preconditions.checkNotNullOrEmpty(nodeId());
     Preconditions.checkNotNullOrEmpty(functionId());
