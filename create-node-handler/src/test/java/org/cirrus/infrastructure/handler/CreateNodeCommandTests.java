@@ -16,27 +16,21 @@ import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
-import org.cirrus.infrastructure.handler.util.Mapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class CreateNodeCommandTests {
 
   @Mock private FunctionService functionService;
   @Mock private QueueService queueService;
   @Mock private StorageService<NodeRecord> storageService;
-  @Mock private Mapper mapper;
   @Mock private FunctionConfig functionConfig;
   @Mock private QueueConfig queueConfig;
   @Mock private CreateNodeRequest request;
-
   @InjectMocks private CreateNodeCommand command;
 
   private static CreateNodeResponse createNodeResponse() {
