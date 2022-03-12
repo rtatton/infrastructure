@@ -19,8 +19,8 @@ public final class Preconditions {
     return value;
   }
 
-  public static double checkInRangeClosed(double value, double upper, double lower) {
-    checkState(value <= upper && value >= lower);
+  public static double checkInRangeClosed(double value, double lower, double upper) {
+    checkState(value >= lower && value <= upper);
     return value;
   }
 
