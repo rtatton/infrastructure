@@ -21,8 +21,8 @@ public class DynamoDbStorageService implements StorageService<NodeRecord> {
     this.helper = helper;
   }
 
-  private static Key mapToKey(Object key) {
-    return Key.builder().partitionValue((String) key).build();
+  private static Key mapToKey(String key) {
+    return Key.builder().partitionValue(key).build();
   }
 
   private static NodeRecord throwIfAbsent(NodeRecord value) {
@@ -38,7 +38,7 @@ public class DynamoDbStorageService implements StorageService<NodeRecord> {
   }
 
   @Override
-  public CompletableFuture<NodeRecord> getItem(Object key) {
+  public CompletableFuture<NodeRecord> getItem(String key) {
     return helper.getOrThrow(
         table.getItem(mapToKey(key)),
         DynamoDbStorageService::throwIfAbsent,
@@ -46,7 +46,7 @@ public class DynamoDbStorageService implements StorageService<NodeRecord> {
   }
 
   @Override
-  public CompletableFuture<NodeRecord> deleteItem(Object key) {
+  public CompletableFuture<NodeRecord> deleteItem(String key) {
     return helper.getOrThrow(
         table.deleteItem(mapToKey(key)),
         DynamoDbStorageService::throwIfAbsent,

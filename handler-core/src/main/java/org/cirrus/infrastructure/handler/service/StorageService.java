@@ -6,7 +6,7 @@ public interface StorageService<T> {
 
   CompletableFuture<Void> putItem(T value);
 
-  CompletableFuture<T> getItem(Object key);
+  CompletableFuture<T> getItem(String key);
 
-  CompletableFuture<T> deleteItem(Object key);
+  CompletableFuture<T> deleteItem(String key);
 }
