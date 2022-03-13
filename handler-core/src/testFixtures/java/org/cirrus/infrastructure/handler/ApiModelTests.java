@@ -1,6 +1,7 @@
 package org.cirrus.infrastructure.handler;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import org.cirrus.infrastructure.handler.util.Mapper;
 import org.junit.jupiter.api.Test;
 
