@@ -1,5 +1,6 @@
 plugins {
     id "java"
+    id "java-test-fixtures"
 }
 
 repositories {
@@ -27,6 +28,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:$versions.jUnit"
     testImplementation "org.mockito:mockito-core:$versions.mockito"
     testImplementation "org.mockito:mockito-junit-jupiter:$versions.mockito"
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter:$versions.jUnit"
+    testFixturesImplementation "org.mockito:mockito-core:$versions.mockito"
+    testFixturesImplementation "org.mockito:mockito-junit-jupiter:$versions.mockito"
 }
 
 test {
