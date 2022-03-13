@@ -20,7 +20,6 @@ public final class HandlerTests {
   public static final String CODE_ID = "codeId";
   public static final String ARTIFACT_ID = "artifactId";
   public static final String UPLOAD_URL = "uploadUrl";
-  public static final String RUNTIME = "runtime";
   public static final String EVENT_SOURCE_MAPPING_ID = "eventSourceMappingId";
 
   private HandlerTests() {
