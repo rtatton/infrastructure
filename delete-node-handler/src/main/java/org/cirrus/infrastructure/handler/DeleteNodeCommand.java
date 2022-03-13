@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
+import org.cirrus.infrastructure.handler.exception.FailedMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageDeleteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
@@ -35,11 +36,12 @@ public class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeR
   /**
    * Deletes a cloud-based node with computing and messaging capabilities.
    *
-   * @param request Contains the identifier of the node to delete.
+   * @param request A request that contains the identifier of the node to delete.
    * @throws NoSuchNodeException Thrown when the requested node identifier does not exist.
    * @throws FailedStorageDeleteException Thrown when an error occurs when attempting to access the
    *     storage service to delete the requested node resource identifiers.
    * @throws FailedResourceDeletionException Thrown when any of cloud resources fail to be deleted.
+   * @throws CirrusException Thrown when any unknown exception occurs.
    * @return An empty response.
    */
   public DeleteNodeResponse run(DeleteNodeRequest request) {
@@ -53,8 +55,11 @@ public class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeR
   }
 
   /**
-   * @param input JSON-formatted {@link DeleteNodeRequest}
-   * @return JSON-formatted {@link DeleteNodeResponse}
+   * @param input A JSON-formatted {@link DeleteNodeRequest}
+   * @return A JSON-formatted {@link DeleteNodeResponse}
+   * @throws FailedMappingException Thrown when the input fails to be converted into a {@link
+   *     DeleteNodeRequest} instance, or the output fails to be converted into a {@link
+   *     DeleteNodeResponse} instance.
    * @see DeleteNodeCommand#run(DeleteNodeRequest)
    */
   public String runFromString(String input) {

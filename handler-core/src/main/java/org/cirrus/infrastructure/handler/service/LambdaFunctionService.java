@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.cirrus.infrastructure.handler.exception.FailedCodePublicationException;
+import org.cirrus.infrastructure.handler.exception.FailedCodeUploadException;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
@@ -49,7 +50,11 @@ public class LambdaFunctionService implements FunctionService {
 
   @Override
   public CompletableFuture<String> getUploadUrl(String codeId) {
-    return CompletableFuture.completedFuture(signedUrl(codeId));
+    try {
+      return CompletableFuture.completedFuture(signedUrl(codeId));
+    } catch (FailedCodeUploadException exception) {
+      return CompletableFuture.failedFuture(exception);
+    }
   }
 
   @Override
@@ -107,7 +112,11 @@ public class LambdaFunctionService implements FunctionService {
   }
 
   private String signedUrl(String codeId) {
-    return signer.presignPutObject(request(codeId)).url().toString();
+    try {
+      return signer.presignPutObject(request(codeId)).url().toString();
+    } catch (Exception exception) {
+      throw new FailedCodeUploadException(exception);
+    }
   }
 
   private PutObjectPresignRequest request(String codeId) {

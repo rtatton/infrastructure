@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
+import org.cirrus.infrastructure.handler.exception.FailedMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
@@ -56,7 +57,8 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
   /**
    * Creates a cloud-based node with computing and messaging capabilities.
    *
-   * @param request Contains the identifier of the node and resource configuration.
+   * @param request A request that contains the identifier of the node and resource configuration.
+   * @return A response containing the resource identifiers of the node.
    * @throws NodeAlreadyExistsException Thrown when the requested node identifier already exists.
    * @throws FailedStorageReadException Thrown when an error occurs when attempting to access the
    *     storage service to check if the requested node identifier already exists.
@@ -73,7 +75,7 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
    *     queue as an event source mapping to the function, but failing to store the resource
    *     identifiers. If, in the processing of rolling back, one of the created resources fails to
    *     be deleted, this exception is overridden by a {@link FailedResourceDeletionException}.
-   * @return A response containing the resource identifiers of the node.
+   * @throws CirrusException Thrown when any unknown exception occurs.
    */
   public CreateNodeResponse run(CreateNodeRequest request) {
     try {
@@ -89,8 +91,11 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
   }
 
   /**
-   * @param input JSON-formatted {@link CreateNodeRequest}
-   * @return JSON-formatted {@link CreateNodeResponse}
+   * @param input A JSON-formatted {@link CreateNodeRequest}
+   * @return A JSON-formatted {@link CreateNodeResponse}
+   * @throws FailedMappingException Thrown when the input fails to be converted into a {@link
+   *     CreateNodeRequest} instance, or the output fails to be converted into a {@link
+   *     CreateNodeResponse} instance.
    * @see CreateNodeCommand#run(CreateNodeRequest)
    */
   public String runFromString(String input) {
