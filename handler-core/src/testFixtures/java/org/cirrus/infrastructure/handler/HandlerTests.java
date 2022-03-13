@@ -1,4 +1,4 @@
-package org.cirrus.infrastructure.handler.fixtures;
+package org.cirrus.infrastructure.handler;
 
 import java.util.concurrent.CompletableFuture;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
@@ -8,7 +8,9 @@ import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
+import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
+import org.cirrus.infrastructure.handler.model.QueueConfig;
 
 public final class HandlerTests {
 
@@ -24,6 +26,14 @@ public final class HandlerTests {
 
   public static CompletableFuture<NodeRecord> nodeRecordStage() {
     return CompletableFuture.completedFuture(nodeRecord());
+  }
+
+  public static FunctionConfig functionConfig() {
+    return FunctionConfig.builder().codeId(CODE_ID).build();
+  }
+
+  public static QueueConfig queueConfig() {
+    return QueueConfig.builder().build();
   }
 
   public static NodeRecord nodeRecord() {
