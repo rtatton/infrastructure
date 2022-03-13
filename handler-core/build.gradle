@@ -31,11 +31,3 @@ configurations {
         exclude group: "software.amazon.awssdk", module: "url-connection-client"
     }
 }
-
-task("proguard", type: CirrusProGuardTask) {
-    def className = "org.cirrus.infrastructure.handler.AbstractHandler"
-    def contextType = "com.amazonaws.services.lambda.runtime.Context"
-    def eventType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent"
-    def returnType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse"
-    entryPoint = "class $className {$returnType handleRequest($eventType, $contextType);}"
-}
