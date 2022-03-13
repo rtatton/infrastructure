@@ -7,7 +7,7 @@ import org.cirrus.infrastructure.handler.api.ApiResponse;
 import org.cirrus.infrastructure.handler.api.HttpStatus;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 
-final class DeleteNodeApi implements ApiCommand {
+public class DeleteNodeApi implements ApiCommand {
 
   private static final DeleteNodeComponent component = DaggerDeleteNodeComponent.create();
   private final Command<?, ?> command;

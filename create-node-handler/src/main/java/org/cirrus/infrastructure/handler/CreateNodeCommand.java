@@ -19,7 +19,7 @@ import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-final class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {
+public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {
 
   private final FunctionService functionService;
   private final QueueService queueService;

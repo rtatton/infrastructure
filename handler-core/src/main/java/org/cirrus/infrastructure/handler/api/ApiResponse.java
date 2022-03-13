@@ -23,7 +23,6 @@ public abstract class ApiResponse {
   @Value.Check
   protected void check() {
     Preconditions.checkState(HttpStatus.contains(status()));
-    Preconditions.checkNotNullOrEmpty(body());
   }
 
   interface Builder {

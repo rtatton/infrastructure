@@ -7,7 +7,7 @@ import org.cirrus.infrastructure.handler.api.ApiResponse;
 import org.cirrus.infrastructure.handler.api.HttpStatus;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 
-final class CreateNodeApi implements ApiCommand {
+public class CreateNodeApi implements ApiCommand {
 
   private static final CreateNodeComponent component = DaggerCreateNodeComponent.create();
   private final Command<?, ?> command;

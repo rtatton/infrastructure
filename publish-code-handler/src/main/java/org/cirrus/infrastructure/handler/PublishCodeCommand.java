@@ -6,7 +6,7 @@ import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-final class PublishCodeCommand implements Command<PublishCodeRequest, PublishCodeResponse> {
+public class PublishCodeCommand implements Command<PublishCodeRequest, PublishCodeResponse> {
 
   private final FunctionService functionService;
   private final Mapper mapper;

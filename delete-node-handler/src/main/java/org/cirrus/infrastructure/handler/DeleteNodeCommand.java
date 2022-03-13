@@ -13,7 +13,7 @@ import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-final class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeResponse> {
+public class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeResponse> {
 
   private final FunctionService functionService;
   private final QueueService queueService;

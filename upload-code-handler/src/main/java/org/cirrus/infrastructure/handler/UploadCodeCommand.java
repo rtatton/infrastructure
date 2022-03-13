@@ -7,7 +7,7 @@ import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.util.Mapper;
 import org.cirrus.infrastructure.handler.util.Resources;
 
-final class UploadCodeCommand implements Command<UploadCodeRequest, UploadCodeResponse> {
+public class UploadCodeCommand implements Command<UploadCodeRequest, UploadCodeResponse> {
 
   private final FunctionService functionService;
   private final Mapper mapper;

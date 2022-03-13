@@ -25,4 +25,10 @@ public class CirrusException extends RuntimeException {
         ? (CirrusException) throwable
         : new CirrusException(throwable);
   }
+
+  @Override
+  public String getMessage() {
+    String message = super.getMessage();
+    return message == null ? "" : message;
+  }
 }
