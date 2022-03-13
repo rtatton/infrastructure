@@ -16,6 +16,11 @@ public abstract class DeleteNodeRequest {
     return ImmutableDeleteNodeRequest.builder();
   }
 
+  public static DeleteNodeRequest of(String nodeId) {
+    return ImmutableDeleteNodeRequest.of(nodeId);
+  }
+
+  @Value.Parameter
   @JsonProperty(Keys.NODE_ID)
   public abstract String nodeId();
 
