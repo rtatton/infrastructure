@@ -1,7 +1,6 @@
 package org.cirrus.infrastructure.handler;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 import org.cirrus.infrastructure.handler.util.Mapper;
 import org.junit.jupiter.api.Test;
 
@@ -18,22 +17,22 @@ public abstract class ApiModelTests<Request, Response> {
   }
 
   @Test
-  public void doesNotThrowExceptionWhenWritingRequest() {
+  public final void doesNotThrowExceptionWhenWritingRequest() {
     assertDoesNotThrow(this::writeRequest);
   }
 
   @Test
-  public void doesNotThrowExceptionWhenReadingRequest() {
+  public final void doesNotThrowExceptionWhenReadingRequest() {
     assertDoesNotThrow(this::readRequest);
   }
 
   @Test
-  public void doesNotThrowExceptionWhenWritingResponse() {
+  public final void doesNotThrowExceptionWhenWritingResponse() {
     assertDoesNotThrow(this::writeResponse);
   }
 
   @Test
-  public void doesNotThrowExceptionWhenReadingResponse() {
+  public final void doesNotThrowExceptionWhenReadingResponse() {
     assertDoesNotThrow(this::readResponse);
   }
 
