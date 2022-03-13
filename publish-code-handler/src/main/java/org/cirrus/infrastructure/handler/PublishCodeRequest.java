@@ -1,6 +1,8 @@
 package org.cirrus.infrastructure.handler;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.cirrus.infrastructure.util.Keys;
@@ -9,6 +11,8 @@ import org.immutables.value.Value;
 import software.amazon.awssdk.services.lambda.model.Runtime;
 
 @Value.Immutable
+@JsonSerialize(as = ImmutablePublishCodeRequest.class)
+@JsonDeserialize(as = ImmutablePublishCodeRequest.class)
 public abstract class PublishCodeRequest {
 
   private static final Set<String> RUNTIMES =

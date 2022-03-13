@@ -1,11 +1,15 @@
 package org.cirrus.infrastructure.handler;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.cirrus.infrastructure.util.Keys;
 import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable
+@JsonSerialize(as = ImmutableCreateNodeResponse.class)
+@JsonDeserialize(as = ImmutableCreateNodeResponse.class)
 public abstract class CreateNodeResponse {
 
   public static Builder builder() {

@@ -1,7 +1,5 @@
 package org.cirrus.infrastructure.util;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,10 +9,8 @@ import org.immutables.value.Value.Style.ImplementationVisibility;
 
 @Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS)
-@JsonSerialize
-@JsonDeserialize // TODO Is this possible?
 @Value.Style(
-    get = {"is*", "has*", "*"},
+    get = {"is*", "has*", "get*", "*"},
     strictBuilder = true,
     typeAbstract = "*",
     depluralize = true,

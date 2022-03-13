@@ -1,12 +1,16 @@
 package org.cirrus.infrastructure.handler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Map;
 import org.cirrus.infrastructure.util.Keys;
 import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable
+@JsonSerialize(as = ImmutableFunctionConfig.class)
+@JsonDeserialize(as = ImmutableFunctionConfig.class)
 public abstract class FunctionConfig {
 
   public static Builder builder() {

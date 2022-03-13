@@ -1,11 +1,15 @@
 package org.cirrus.infrastructure.handler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.cirrus.infrastructure.util.Keys;
 import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
 
 @Value.Immutable
+@JsonSerialize(as = ImmutableQueueConfig.class)
+@JsonDeserialize(as = ImmutableQueueConfig.class)
 public abstract class QueueConfig {
 
   public static Builder builder() {

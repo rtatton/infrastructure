@@ -1,6 +1,8 @@
 package org.cirrus.infrastructure.handler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.cirrus.infrastructure.util.Keys;
 import org.cirrus.infrastructure.util.Preconditions;
 import org.immutables.value.Value;
@@ -8,8 +10,10 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
-@DynamoDbImmutable(builder = NodeRecord.Builder.class)
 @Value.Immutable
+@JsonSerialize(as = ImmutableNodeRecord.class)
+@JsonDeserialize(as = ImmutableNodeRecord.class)
+@DynamoDbImmutable(builder = NodeRecord.Builder.class)
 public abstract class NodeRecord {
 
   public static Builder builder() {
