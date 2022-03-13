@@ -9,7 +9,6 @@ import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionExcepti
 import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
 import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
-import org.cirrus.infrastructure.handler.fixtures.HandlerTests;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
