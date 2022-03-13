@@ -1,4 +1,5 @@
 plugins {
     id "cirrus-java"
     id "java-library"
+    id "java-test-fixtures"
 }

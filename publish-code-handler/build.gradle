@@ -9,4 +9,5 @@ application {
 
 dependencies {
     implementation project(":handler-core")
+    testImplementation(testFixtures(project(":handler-core")))
 }
