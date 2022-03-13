@@ -3,6 +3,7 @@ package org.cirrus.infrastructure.handler;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
