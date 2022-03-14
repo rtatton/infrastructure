@@ -21,23 +21,20 @@ final class ServiceHelper {
       CompletableFuture<T> future,
       Function<T, U> mapResult,
       Function<Throwable, CirrusException> mapThrowable) {
-    return wrapThrowable(future, mapThrowable).thenApplyAsync(mapResult);
+    return future
+        .handleAsync(
+            (response, throwable) -> {
+              if (throwable != null) {
+                logger.error(throwable.getLocalizedMessage());
+                throw mapThrowable.apply(throwable);
+              }
+              return response;
+            })
+        .thenApplyAsync(mapResult);
   }
 
   public <T> CompletableFuture<Void> getOrThrow(
       CompletableFuture<T> future, Function<Throwable, CirrusException> mapThrowable) {
     return getOrThrow(future, x -> null, mapThrowable);
-  }
-
-  public <T> CompletableFuture<T> wrapThrowable(
-      CompletableFuture<T> future, Function<Throwable, CirrusException> mapThrowable) {
-    return future.handleAsync(
-        (response, throwable) -> {
-          if (throwable != null) {
-            logger.error(throwable.getLocalizedMessage());
-            throw mapThrowable.apply(throwable);
-          }
-          return response;
-        });
   }
 }
