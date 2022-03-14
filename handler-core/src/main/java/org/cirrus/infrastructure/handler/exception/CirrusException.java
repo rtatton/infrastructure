@@ -21,7 +21,7 @@ public class CirrusException extends RuntimeException {
   }
 
   public static CirrusException cast(Throwable throwable) {
-    return Preconditions.checkNotNull(throwable) instanceof CirrusException
+    return throwable instanceof CirrusException
         ? (CirrusException) throwable
         : new CirrusException(throwable);
   }
