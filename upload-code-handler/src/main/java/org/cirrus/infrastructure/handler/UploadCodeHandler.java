@@ -1,6 +1,7 @@
 package org.cirrus.infrastructure.handler;
 
 import org.cirrus.infrastructure.handler.api.ApiCommand;
+import org.cirrus.infrastructure.handler.api.ApiHandler;
 import org.cirrus.infrastructure.handler.api.ApiRequest;
 import org.cirrus.infrastructure.handler.api.ApiResponse;
 
