@@ -118,7 +118,7 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
 
   private CompletableFuture<Node> createNodeOrRollback(CreateNodeRequest request) {
     FunctionConfig functionConfig = request.functionConfig();
-    String codeId = functionConfig.codeId();
+    String codeId = functionConfig.artifactId();
     return createFunction(functionConfig)
         .thenCombineAsync(
             createQueue(request.queueConfig()),

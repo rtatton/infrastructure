@@ -105,7 +105,7 @@ public class LambdaFunctionService implements FunctionService {
             builder ->
                 builder
                     .memorySize(config.memorySizeMegabytes())
-                    .layers(config.codeId())
+                    .layers(config.artifactId())
                     .timeout(config.timeoutSeconds())
                     .environment(envBuilder -> envBuilder.variables(config.environment())))
         .build();

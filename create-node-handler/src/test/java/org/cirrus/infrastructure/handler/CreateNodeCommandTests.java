@@ -224,7 +224,7 @@ class CreateNodeCommandTests {
   }
 
   private void mockGetCodeId() {
-    when(functionConfig.codeId()).thenReturn(HandlerTests.CODE_ID);
+    when(functionConfig.artifactId()).thenReturn(HandlerTests.CODE_ID);
   }
 
   // Record should not exist yet before creating the node

@@ -29,8 +29,8 @@ public abstract class FunctionConfig {
     return 60;
   }
 
-  @JsonProperty(Keys.CODE_ID)
-  public abstract String codeId();
+  @JsonProperty(Keys.ARTIFACT_ID)
+  public abstract String artifactId();
 
   @JsonProperty(Keys.FUNCTION_ENVIRONMENT)
   public abstract Map<String, String> environment();
@@ -39,7 +39,7 @@ public abstract class FunctionConfig {
   protected void check() {
     Preconditions.checkInRangeClosed(memorySizeMegabytes(), 128, 10240);
     Preconditions.checkInRangeClosed(timeoutSeconds(), 0, 900);
-    Preconditions.checkNotNullOrEmpty(codeId());
+    Preconditions.checkNotNullOrEmpty(artifactId());
   }
 
   public abstract static class Builder {
@@ -50,7 +50,7 @@ public abstract class FunctionConfig {
 
     public abstract Builder timeoutSeconds(int timeout);
 
-    public abstract Builder codeId(String codeId);
+    public abstract Builder artifactId(String artifactId);
 
     public abstract Builder putAllEnvironment(Map<String, ? extends String> variables);
 

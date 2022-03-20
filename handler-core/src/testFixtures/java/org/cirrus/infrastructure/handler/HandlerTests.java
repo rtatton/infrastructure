@@ -31,7 +31,7 @@ public final class HandlerTests {
   }
 
   public static FunctionConfig functionConfig() {
-    return FunctionConfig.builder().codeId(CODE_ID).build();
+    return FunctionConfig.builder().artifactId(ARTIFACT_ID).build();
   }
 
   public static QueueConfig queueConfig() {
