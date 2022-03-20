@@ -29,10 +29,10 @@ public abstract class PublishCodeResponse {
     Preconditions.checkNotNullOrEmpty(artifactId());
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    Builder artifactId(String artifactId);
+    public abstract Builder artifactId(String artifactId);
 
-    PublishCodeResponse build();
+    public abstract PublishCodeResponse build();
   }
 }

@@ -29,10 +29,10 @@ public abstract class DeleteNodeRequest {
     Preconditions.checkNotNullOrEmpty(nodeId());
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    Builder nodeId(String nodeId);
+    public abstract Builder nodeId(String nodeId);
 
-    DeleteNodeRequest build();
+    public abstract DeleteNodeRequest build();
   }
 }

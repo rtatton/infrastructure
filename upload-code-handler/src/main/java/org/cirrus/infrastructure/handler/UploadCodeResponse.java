@@ -28,12 +28,12 @@ public abstract class UploadCodeResponse {
     Preconditions.checkNotNullOrEmpty(codeId());
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    Builder uploadUrl(String uploadUrl);
+    public abstract Builder uploadUrl(String uploadUrl);
 
-    Builder codeId(String codeId);
+    public abstract Builder codeId(String codeId);
 
-    UploadCodeResponse build();
+    public abstract UploadCodeResponse build();
   }
 }

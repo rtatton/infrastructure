@@ -17,8 +17,8 @@ public abstract class DeleteNodeResponse {
     return ImmutableDeleteNodeResponse.builder();
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    DeleteNodeResponse build();
+    public abstract DeleteNodeResponse build();
   }
 }

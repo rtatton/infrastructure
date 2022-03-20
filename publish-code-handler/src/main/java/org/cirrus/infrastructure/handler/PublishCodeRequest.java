@@ -35,12 +35,12 @@ public abstract class PublishCodeRequest {
     Preconditions.checkState(RUNTIMES.contains(runtime()));
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    Builder codeId(String codeId);
+    public abstract Builder codeId(String codeId);
 
-    Builder runtime(String runtime);
+    public abstract Builder runtime(String runtime);
 
-    PublishCodeRequest build();
+    public abstract PublishCodeRequest build();
   }
 }

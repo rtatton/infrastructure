@@ -17,8 +17,8 @@ public abstract class UploadCodeRequest {
     return ImmutableUploadCodeRequest.builder();
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    UploadCodeRequest build();
+    public abstract UploadCodeRequest build();
   }
 }

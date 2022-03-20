@@ -32,14 +32,14 @@ public abstract class CreateNodeRequest {
     Preconditions.checkNotNullOrEmpty(nodeId());
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    CreateNodeRequest build();
+    public abstract CreateNodeRequest build();
 
-    Builder nodeId(String nodeId);
+    public abstract Builder nodeId(String nodeId);
 
-    Builder functionConfig(FunctionConfig config);
+    public abstract Builder functionConfig(FunctionConfig config);
 
-    Builder queueConfig(QueueConfig config);
+    public abstract Builder queueConfig(QueueConfig config);
   }
 }
