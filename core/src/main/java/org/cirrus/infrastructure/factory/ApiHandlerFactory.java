@@ -93,11 +93,13 @@ final class ApiHandlerFactory {
 
   private static Map<String, String> environment(
       String region, String accessKeyId, String secretAccessKey) {
-    Map<String, String> environment = new HashMap<>();
-    environment.put(Keys.AWS_REGION, region);
-    environment.put(Keys.AWS_ACCESS_KEY_ID, accessKeyId);
-    environment.put(Keys.AWS_SECRET_ACCESS_KEY, secretAccessKey);
-    return environment;
+    return new HashMap<>() {
+      {
+        put(Keys.AWS_REGION, region);
+        put(Keys.AWS_ACCESS_KEY_ID, accessKeyId);
+        put(Keys.AWS_SECRET_ACCESS_KEY, secretAccessKey);
+      }
+    };
   }
 
   /**
