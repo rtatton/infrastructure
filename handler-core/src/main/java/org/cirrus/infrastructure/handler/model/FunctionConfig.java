@@ -42,20 +42,20 @@ public abstract class FunctionConfig {
     Preconditions.checkNotNullOrEmpty(codeId());
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    FunctionConfig build();
+    public abstract FunctionConfig build();
 
-    Builder memorySizeMegabytes(int memorySize);
+    public abstract Builder memorySizeMegabytes(int memorySize);
 
-    Builder timeoutSeconds(int timeout);
+    public abstract Builder timeoutSeconds(int timeout);
 
-    Builder codeId(String codeId);
+    public abstract Builder codeId(String codeId);
 
-    Builder putAllEnvironment(Map<String, ? extends String> variables);
+    public abstract Builder putAllEnvironment(Map<String, ? extends String> variables);
 
-    Builder putEnvironment(Map.Entry<String, ? extends String> variable);
+    public abstract Builder putEnvironment(Map.Entry<String, ? extends String> variable);
 
-    Builder putEnvironment(String key, String value);
+    public abstract Builder putEnvironment(String key, String value);
   }
 }

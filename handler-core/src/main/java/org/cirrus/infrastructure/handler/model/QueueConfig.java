@@ -61,20 +61,20 @@ public abstract class QueueConfig {
     Preconditions.checkInRangeClosed(batchSize(), 0, 10);
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    QueueConfig build();
+    public abstract QueueConfig build();
 
-    Builder delaySeconds(int delay);
+    public abstract Builder delaySeconds(int delay);
 
-    Builder maxMessageSizeBytes(int maximumSize);
+    public abstract Builder maxMessageSizeBytes(int maximumSize);
 
-    Builder messageRetentionPeriodSeconds(int retentionPeriod);
+    public abstract Builder messageRetentionPeriodSeconds(int retentionPeriod);
 
-    Builder receiveMessageWaitTimeSeconds(int receiveWaitTime);
+    public abstract Builder receiveMessageWaitTimeSeconds(int receiveWaitTime);
 
-    Builder visibilityTimeoutSeconds(int visibilityTimeout);
+    public abstract Builder visibilityTimeoutSeconds(int visibilityTimeout);
 
-    Builder batchSize(int batchSize);
+    public abstract Builder batchSize(int batchSize);
   }
 }

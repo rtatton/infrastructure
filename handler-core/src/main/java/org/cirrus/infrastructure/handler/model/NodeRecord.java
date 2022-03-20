@@ -45,16 +45,16 @@ public abstract class NodeRecord {
     Preconditions.checkNotNullOrEmpty(codeId());
   }
 
-  public interface Builder {
+  public abstract static class Builder {
 
-    NodeRecord build();
+    public abstract NodeRecord build();
 
-    Builder nodeId(String nodeId);
+    public abstract Builder nodeId(String nodeId);
 
-    Builder functionId(String functionId);
+    public abstract Builder functionId(String functionId);
 
-    Builder queueId(String queueId);
+    public abstract Builder queueId(String queueId);
 
-    Builder codeId(String codeId);
+    public abstract Builder codeId(String codeId);
   }
 }
