@@ -4,10 +4,8 @@ import java.util.concurrent.CompletableFuture;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
-import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
-import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
@@ -43,7 +41,7 @@ public final class HandlerTests {
         .nodeId(NODE_ID)
         .functionId(FUNCTION_ID)
         .queueId(QUEUE_ID)
-        .codeId(CODE_ID)
+        .artifactId(CODE_ID)
         .build();
   }
 
@@ -71,16 +69,8 @@ public final class HandlerTests {
     return CompletableFuture.failedFuture(new FailedStorageWriteException());
   }
 
-  public static <T> CompletableFuture<T> nodeAlreadyExists() {
-    return CompletableFuture.failedFuture(new NodeAlreadyExistsException());
-  }
-
   public static <T> CompletableFuture<T> noSuchNode() {
     return CompletableFuture.failedFuture(new NoSuchNodeException());
-  }
-
-  public static <T> CompletableFuture<T> failedStorageRead() {
-    return CompletableFuture.failedFuture(new FailedStorageReadException());
   }
 
   public static <T> CompletableFuture<T> failedResourceDeletion() {

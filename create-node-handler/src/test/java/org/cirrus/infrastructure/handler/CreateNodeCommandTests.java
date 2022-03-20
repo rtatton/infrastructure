@@ -2,19 +2,19 @@ package org.cirrus.infrastructure.handler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
-import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
-import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,43 +32,25 @@ class CreateNodeCommandTests {
   @Mock private CreateNodeRequest request;
   @InjectMocks private CreateNodeCommand command;
 
-  private static CreateNodeResponse createNodeResponse() {
-    return CreateNodeResponse.builder()
-        .nodeId(HandlerTests.NODE_ID)
-        .functionId(HandlerTests.FUNCTION_ID)
-        .queueId(HandlerTests.QUEUE_ID)
-        .build();
+  @BeforeEach
+  public void setUp() {
+    mockRequest();
   }
 
   @Test
   public void returnsResponseWhenSuccessful() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockSuccessfulCreateQueue();
     mockSuccessfulAttachQueue();
     mockSuccessfulPutRecord();
-    assertEquals(createNodeResponse(), run());
-  }
-
-  @Test
-  public void throwsExceptionWhenGetRecordFails() {
-    mockGetRequestNodeId();
-    mockFailedGetRecord();
-    assertThrows(FailedStorageReadException.class, this::run);
-  }
-
-  @Test
-  public void throwsExceptionWhenNodeAlreadyExists() {
-    mockGetRequestNodeId();
-    mockExistingNodeRecord();
-    assertThrows(NodeAlreadyExistsException.class, this::run);
+    CreateNodeResponse response = run();
+    assertEquals(HandlerTests.FUNCTION_ID, response.functionId());
+    assertEquals(HandlerTests.QUEUE_ID, response.queueId());
+    assertEquals(HandlerTests.ARTIFACT_ID, response.artifactId());
   }
 
   @Test
   public void throwsExceptionWhenCreateFunctionFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockFailedCreateFunction();
     mockSuccessfulCreateQueue();
     mockSuccessfulDeleteQueue();
@@ -77,8 +59,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenCreateFunctionAndDeleteQueueFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockFailedCreateFunction();
     mockSuccessfulCreateQueue();
     mockFailedDeleteQueue();
@@ -87,8 +67,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenCreateQueueFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockFailedCreateQueue();
     mockSuccessfulDeleteFunction();
@@ -97,8 +75,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenCreateQueueAndDeleteFunctionFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockFailedCreateQueue();
     mockFailedDeleteFunction();
@@ -107,8 +83,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenCreateFunctionAndCreateQueueFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockFailedCreateFunction();
     mockFailedCreateQueue();
     assertThrows(FailedResourceCreationException.class, this::run);
@@ -116,8 +90,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenAttachQueueFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockSuccessfulCreateQueue();
     mockFailedAttachQueue();
@@ -128,8 +100,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenAttachQueueAndDeleteFunctionFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockSuccessfulCreateQueue();
     mockFailedAttachQueue();
@@ -140,8 +110,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenAttachQueueAndDeleteQueueFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockSuccessfulCreateQueue();
     mockFailedAttachQueue();
@@ -152,8 +120,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenAttachQueueAndDeleteFunctionAndDeleteQueueFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockSuccessfulCreateQueue();
     mockFailedAttachQueue();
@@ -164,8 +130,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenPutRecordFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockSuccessfulCreateQueue();
     mockSuccessfulAttachQueue();
@@ -177,8 +141,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenPutRecordAndDeleteFunctionFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockSuccessfulCreateQueue();
     mockSuccessfulAttachQueue();
@@ -190,8 +152,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenPutRecordAndDeleteQueueFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockSuccessfulCreateQueue();
     mockSuccessfulAttachQueue();
@@ -203,8 +163,6 @@ class CreateNodeCommandTests {
 
   @Test
   public void throwsExceptionWhenPutRecordAndDeleteFunctionAndDeleteQueueFails() {
-    mockRequest();
-    mockSuccessfulGetRecord();
     mockSuccessfulCreateFunction();
     mockSuccessfulCreateQueue();
     mockSuccessfulAttachQueue();
@@ -219,25 +177,8 @@ class CreateNodeCommandTests {
         .thenReturn(HandlerTests.failedResourceDeletion());
   }
 
-  private void mockGetRequestNodeId() {
-    when(request.nodeId()).thenReturn(HandlerTests.NODE_ID);
-  }
-
-  private void mockGetCodeId() {
-    when(functionConfig.artifactId()).thenReturn(HandlerTests.CODE_ID);
-  }
-
-  // Record should not exist yet before creating the node
-  private void mockSuccessfulGetRecord() {
-    when(storageService.getItem(HandlerTests.NODE_ID)).thenReturn(HandlerTests.noReturn());
-  }
-
-  private void mockExistingNodeRecord() {
-    when(storageService.getItem(HandlerTests.NODE_ID)).thenReturn(HandlerTests.nodeAlreadyExists());
-  }
-
-  private void mockFailedGetRecord() {
-    when(storageService.getItem(HandlerTests.NODE_ID)).thenReturn(HandlerTests.failedStorageRead());
+  private void mockGetArtifactId() {
+    when(functionConfig.artifactId()).thenReturn(HandlerTests.ARTIFACT_ID);
   }
 
   private void mockFailedDeleteQueue() {
@@ -248,8 +189,7 @@ class CreateNodeCommandTests {
   // Immutables requires non-null attributes, so the request must be mocked.
   private void mockRequest() {
     when(request.functionConfig()).thenReturn(functionConfig);
-    mockGetRequestNodeId();
-    mockGetCodeId();
+    mockGetArtifactId();
     when(request.queueConfig()).thenReturn(queueConfig);
   }
 
@@ -267,7 +207,8 @@ class CreateNodeCommandTests {
   }
 
   private void mockSuccessfulPutRecord() {
-    when(storageService.putItem(HandlerTests.nodeRecord())).thenReturn(HandlerTests.noReturn());
+    // Random node ID is generated, so we have to match based on the class type.
+    when(storageService.putItem(any(NodeRecord.class))).thenReturn(HandlerTests.noReturn());
   }
 
   private CreateNodeResponse run() {
@@ -292,7 +233,7 @@ class CreateNodeCommandTests {
   }
 
   private void mockFailedPutRecord() {
-    when(storageService.putItem(HandlerTests.nodeRecord()))
+    when(storageService.putItem(any(NodeRecord.class)))
         .thenReturn(HandlerTests.failedStorageWrite());
   }
 

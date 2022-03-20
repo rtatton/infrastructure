@@ -24,7 +24,6 @@ class CreateNodeModelTests extends ApiModelTests<CreateNodeRequest, CreateNodeRe
 
   protected CreateNodeRequest request() {
     return CreateNodeRequest.builder()
-        .nodeId(HandlerTests.NODE_ID)
         .functionConfig(HandlerTests.functionConfig())
         .queueConfig(HandlerTests.queueConfig())
         .build();
@@ -35,6 +34,7 @@ class CreateNodeModelTests extends ApiModelTests<CreateNodeRequest, CreateNodeRe
         .nodeId(HandlerTests.NODE_ID)
         .functionId(HandlerTests.FUNCTION_ID)
         .queueId(HandlerTests.QUEUE_ID)
+        .artifactId(HandlerTests.ARTIFACT_ID)
         .build();
   }
 }

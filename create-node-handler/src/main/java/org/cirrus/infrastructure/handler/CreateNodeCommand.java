@@ -9,9 +9,7 @@ import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingExcep
 import org.cirrus.infrastructure.handler.exception.FailedMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
-import org.cirrus.infrastructure.handler.exception.FailedStorageReadException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
-import org.cirrus.infrastructure.handler.exception.NodeAlreadyExistsException;
 import org.cirrus.infrastructure.handler.model.FunctionConfig;
 import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.model.QueueConfig;
@@ -19,6 +17,7 @@ import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
 import org.cirrus.infrastructure.handler.util.Mapper;
+import org.cirrus.infrastructure.handler.util.Resources;
 
 public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {
 
@@ -44,14 +43,8 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
         .nodeId(node.nodeId)
         .functionId(node.function.id)
         .queueId(node.queue.id)
+        .artifactId(node.artifactId)
         .build();
-  }
-
-  private static <T> T throwIfPresent(Object response) {
-    if (response != null) {
-      throw new NodeAlreadyExistsException();
-    }
-    return null;
   }
 
   /**
@@ -59,9 +52,6 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
    *
    * @param request A request that contains the identifier of the node and resource configuration.
    * @return A response containing the resource identifiers of the node.
-   * @throws NodeAlreadyExistsException Thrown when the requested node identifier already exists.
-   * @throws FailedStorageReadException Thrown when an error occurs when attempting to access the
-   *     storage service to check if the requested node identifier already exists.
    * @throws FailedResourceCreationException Thrown when any of the resources fail to be created.
    * @throws FailedResourceDeletionException Thrown when any of the created cloud resources fail to
    *     be deleted. During creation of the node, this is thrown when attempting to rollback after
@@ -79,8 +69,7 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
    */
   public CreateNodeResponse run(CreateNodeRequest request) {
     try {
-      return checkIfNodeExists(request.nodeId())
-          .thenComposeAsync(x -> createNodeOrRollback(request))
+      return createNodeOrRollback(request)
           .thenComposeAsync(node -> attachQueueOrRollback(node, request.queueConfig()))
           .thenComposeAsync(this::saveRecordOrRollback)
           .thenApplyAsync(CreateNodeCommand::mapToResponse)
@@ -104,10 +93,6 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
     return mapper.write(response);
   }
 
-  private CompletableFuture<Void> checkIfNodeExists(String nodeId) {
-    return storageService.getItem(nodeId).thenApplyAsync(CreateNodeCommand::throwIfPresent);
-  }
-
   private CompletableFuture<Resource> createFunction(FunctionConfig config) {
     return functionService.createFunction(config).handleAsync(Resource::new);
   }
@@ -118,10 +103,11 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
 
   private CompletableFuture<Node> createNodeOrRollback(CreateNodeRequest request) {
     FunctionConfig config = request.functionConfig();
+    String nodeId = Resources.createRandomId();
     return createFunction(config)
         .thenCombineAsync(
             createQueue(request.queueConfig()),
-            (function, queue) -> new Node(request.nodeId(), config.artifactId(), function, queue))
+            (function, queue) -> new Node(nodeId, config.artifactId(), function, queue))
         .thenComposeAsync(this::orPartialRollback);
   }
 
@@ -160,7 +146,7 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
                 .nodeId(node.nodeId)
                 .functionId(node.function.id)
                 .queueId(node.queue.id)
-                .codeId(node.codeId)
+                .artifactId(node.artifactId)
                 .build())
         .handleAsync((x, throwable) -> throwable)
         .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
@@ -190,13 +176,13 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
   private static final class Node {
 
     private final String nodeId;
-    private final String codeId;
+    private final String artifactId;
     private final Resource function;
     private final Resource queue;
 
-    private Node(String nodeId, String codeId, Resource function, Resource queue) {
+    private Node(String nodeId, String artifactId, Resource function, Resource queue) {
       this.nodeId = nodeId;
-      this.codeId = codeId;
+      this.artifactId = artifactId;
       this.function = function;
       this.queue = queue;
     }

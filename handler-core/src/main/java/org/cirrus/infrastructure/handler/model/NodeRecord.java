@@ -33,16 +33,16 @@ public abstract class NodeRecord {
   @JsonProperty(Keys.QUEUE_ID)
   public abstract String queueId();
 
-  @DynamoDbAttribute(Keys.CODE_ID)
-  @JsonProperty(Keys.CODE_ID)
-  public abstract String codeId();
+  @DynamoDbAttribute(Keys.ARTIFACT_ID)
+  @JsonProperty(Keys.ARTIFACT_ID)
+  public abstract String artifactId();
 
   @Value.Check
   protected void check() {
     Preconditions.checkNotNullOrEmpty(nodeId());
     Preconditions.checkNotNullOrEmpty(functionId());
     Preconditions.checkNotNullOrEmpty(queueId());
-    Preconditions.checkNotNullOrEmpty(codeId());
+    Preconditions.checkNotNullOrEmpty(artifactId());
   }
 
   public abstract static class Builder {
@@ -55,6 +55,6 @@ public abstract class NodeRecord {
 
     public abstract Builder queueId(String queueId);
 
-    public abstract Builder codeId(String codeId);
+    public abstract Builder artifactId(String artifactId);
   }
 }
