@@ -38,15 +38,6 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
     this.mapper = mapper;
   }
 
-  private static CreateNodeResponse mapToResponse(Node node) {
-    return CreateNodeResponse.builder()
-        .nodeId(node.nodeId)
-        .functionId(node.function.id)
-        .queueId(node.queue.id)
-        .artifactId(node.artifactId)
-        .build();
-  }
-
   /**
    * Creates a cloud-based node with computing and messaging capabilities.
    *
@@ -72,7 +63,7 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
       return createNodeOrRollback(request)
           .thenComposeAsync(node -> attachQueueOrRollback(node, request.queueConfig()))
           .thenComposeAsync(this::saveRecordOrRollback)
-          .thenApplyAsync(CreateNodeCommand::mapToResponse)
+          .thenApplyAsync(Node::toResponse)
           .join();
     } catch (CompletionException exception) {
       throw CirrusException.cast(exception.getCause());
@@ -112,17 +103,15 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
   }
 
   private CompletableFuture<Node> orPartialRollback(Node node) {
-    CompletableFuture<?> result;
+    CompletableFuture<?> result = CompletableFuture.completedFuture(node);
     Resource function = node.function;
     Resource queue = node.queue;
     if (function.failed() && queue.succeeded()) {
-      result = deleteQueue(queue.id).thenRunAsync(() -> throwException(function.throwable));
+      result = deleteQueue(node).thenRunAsync(() -> throwException(function.throwable));
     } else if (function.succeeded() && queue.failed()) {
-      result = deleteFunction(function.id).thenRunAsync(() -> throwException(queue.throwable));
+      result = deleteFunction(node).thenRunAsync(() -> throwException(queue.throwable));
     } else if (function.failed() && queue.failed()) {
       result = CompletableFuture.failedFuture(new FailedResourceCreationException());
-    } else {
-      result = CompletableFuture.completedFuture(node);
     }
     return result.thenApplyAsync(x -> node);
   }
@@ -135,42 +124,31 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
     return functionService
         .attachQueue(node.function.id, node.queue.id, config)
         .handleAsync((x, throwable) -> throwable)
-        .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
-        .thenApplyAsync(x -> node);
+        .thenComposeAsync(throwable -> orCompleteRollback(node, throwable));
   }
 
   private CompletableFuture<Node> saveRecordOrRollback(Node node) {
     return storageService
-        .putItem(
-            NodeRecord.builder()
-                .nodeId(node.nodeId)
-                .functionId(node.function.id)
-                .queueId(node.queue.id)
-                .artifactId(node.artifactId)
-                .build())
+        .putItem(node.toRecord())
         .handleAsync((x, throwable) -> throwable)
-        .thenComposeAsync(throwable -> orCompleteRollback(node, throwable))
-        .thenApplyAsync(x -> node);
+        .thenComposeAsync(throwable -> orCompleteRollback(node, throwable));
   }
 
-  private CompletableFuture<?> orCompleteRollback(Node node, Throwable throwable) {
-    CompletableFuture<?> result;
-    if (throwable == null) {
-      result = CompletableFuture.completedFuture(node);
-    } else {
-      CompletableFuture<?> deleteFunction = deleteFunction(node.function.id);
-      CompletableFuture<?> deleteQueue = deleteQueue(node.queue.id);
-      result = deleteFunction.runAfterBothAsync(deleteQueue, () -> throwException(throwable));
+  private CompletableFuture<Node> orCompleteRollback(Node node, Throwable throwable) {
+    CompletableFuture<?> result = CompletableFuture.completedFuture(node);
+    if (throwable != null) {
+      Runnable throwException = () -> throwException(throwable);
+      result = deleteFunction(node).runAfterBothAsync(deleteQueue(node), throwException);
     }
-    return result;
+    return result.thenApplyAsync(x -> node);
   }
 
-  private CompletableFuture<?> deleteQueue(String queueId) {
-    return queueService.deleteQueue(queueId);
+  private CompletableFuture<?> deleteQueue(Node node) {
+    return queueService.deleteQueue(node.queue.id);
   }
 
-  private CompletableFuture<?> deleteFunction(String functionId) {
-    return functionService.deleteFunction(functionId);
+  private CompletableFuture<?> deleteFunction(Node node) {
+    return functionService.deleteFunction(node.function.id);
   }
 
   private static final class Node {
@@ -185,6 +163,24 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
       this.artifactId = artifactId;
       this.function = function;
       this.queue = queue;
+    }
+
+    public NodeRecord toRecord() {
+      return NodeRecord.builder()
+          .nodeId(nodeId)
+          .functionId(function.id)
+          .queueId(queue.id)
+          .artifactId(artifactId)
+          .build();
+    }
+
+    public CreateNodeResponse toResponse() {
+      return CreateNodeResponse.builder()
+          .nodeId(nodeId)
+          .functionId(function.id)
+          .queueId(queue.id)
+          .artifactId(artifactId)
+          .build();
     }
   }
 
