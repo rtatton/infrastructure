@@ -84,14 +84,6 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
     return mapper.write(response);
   }
 
-  private CompletableFuture<Resource> createFunction(FunctionConfig config) {
-    return functionService.createFunction(config).handleAsync(Resource::new);
-  }
-
-  private CompletableFuture<Resource> createQueue(QueueConfig config) {
-    return queueService.createQueue(config).handleAsync(Resource::new);
-  }
-
   private CompletableFuture<Node> createNodeOrRollback(CreateNodeRequest request) {
     FunctionConfig config = request.functionConfig();
     String nodeId = Resources.createRandomId();
@@ -100,6 +92,14 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
             createQueue(request.queueConfig()),
             (function, queue) -> new Node(nodeId, config.artifactId(), function, queue))
         .thenComposeAsync(this::orPartialRollback);
+  }
+
+  private CompletableFuture<Resource> createFunction(FunctionConfig config) {
+    return functionService.createFunction(config).handleAsync(Resource::new);
+  }
+
+  private CompletableFuture<Resource> createQueue(QueueConfig config) {
+    return queueService.createQueue(config).handleAsync(Resource::new);
   }
 
   private CompletableFuture<Node> orPartialRollback(Node node) {
