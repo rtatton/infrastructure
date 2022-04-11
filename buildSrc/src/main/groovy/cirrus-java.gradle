@@ -10,7 +10,7 @@ repositories {
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(11)
-        vendor = JvmVendorSpec.ADOPTOPENJDK
+        vendor = JvmVendorSpec.AMAZON
     }
 }
 

@@ -3,6 +3,7 @@ package org.cirrus.infrastructure.factory;
 import java.util.List;
 import org.cirrus.infrastructure.util.Keys;
 import org.immutables.builder.Builder;
+import software.amazon.awscdk.services.apigateway.LambdaRestApi;
 import software.amazon.awscdk.services.apigatewayv2.AddRoutesOptions;
 import software.amazon.awscdk.services.apigatewayv2.HttpApi;
 import software.amazon.awscdk.services.apigatewayv2.HttpMethod;
@@ -52,11 +53,17 @@ final class NodeApiFactory {
       IBucket runtimeBucket,
       IBucket uploadBucket,
       IRole nodeRole) {
-    HttpApi api = HttpApi.Builder.create(scope, API_ID).build();
+    HttpApi api = newApi(scope);
     addRoutes(scope, api, nodeTable, runtimeBucket, uploadBucket, nodeRole);
     addStages(api);
     addMetrics(api);
     return api;
+  }
+
+  private static HttpApi newApi(Construct scope) {
+    // TODO Left-off here: try migrating to REST API
+    LambdaRestApi.Builder.create(scope, API_ID).build();
+    return HttpApi.Builder.create(scope, API_ID).defaultAuthorizer(authorizer(scope)).build();
   }
 
   private static void addRoutes(
@@ -66,15 +73,13 @@ final class NodeApiFactory {
       IBucket runtimeBucket,
       IBucket uploadBucket,
       IRole nodeRole) {
-    IHttpRouteAuthorizer authorizer = authorizer(scope);
-    api.addRoutes(uploadCode(scope, uploadBucket, authorizer));
-    api.addRoutes(publishCode(scope, authorizer));
-    api.addRoutes(createNode(scope, nodeTable, runtimeBucket, uploadBucket, nodeRole, authorizer));
-    api.addRoutes(deleteNode(scope, nodeTable, authorizer));
+    api.addRoutes(uploadCode(scope, uploadBucket));
+    api.addRoutes(publishCode(scope));
+    api.addRoutes(createNode(scope, nodeTable, runtimeBucket, uploadBucket, nodeRole));
+    api.addRoutes(deleteNode(scope, nodeTable));
   }
 
-  private static AddRoutesOptions uploadCode(
-      Construct scope, IBucket uploadBucket, IHttpRouteAuthorizer authorizer) {
+  private static AddRoutesOptions uploadCode(Construct scope, IBucket uploadBucket) {
     IFunction handler =
         UploadCodeHandlerBuilder.create(scope)
             .apiHandler(UPLOAD_CODE_HANDLER)
@@ -84,10 +89,10 @@ final class NodeApiFactory {
             .secretAccessKey(secretAccessKey())
             .build();
     uploadBucket.grantPut(handler);
-    return addRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET), authorizer);
+    return addRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET));
   }
 
-  private static AddRoutesOptions publishCode(Construct scope, IHttpRouteAuthorizer authorizer) {
+  private static AddRoutesOptions publishCode(Construct scope) {
     IFunction handler =
         PublishCodeHandlerBuilder.create(scope)
             .apiHandler(PUBLISH_CODE_HANDLER)
@@ -97,7 +102,7 @@ final class NodeApiFactory {
             .secretAccessKey(secretAccessKey())
             .build();
     PublishCodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
-    return addRouteOptions(handler, PUBLISH_CODE_HANDLER, List.of(HttpMethod.POST), authorizer);
+    return addRouteOptions(handler, PUBLISH_CODE_HANDLER, List.of(HttpMethod.POST));
   }
 
   private static AddRoutesOptions createNode(
@@ -105,8 +110,7 @@ final class NodeApiFactory {
       ITable nodeTable,
       IBucket runtimeBucket,
       IBucket uploadBucket,
-      IRole nodeRole,
-      IHttpRouteAuthorizer authorizer) {
+      IRole nodeRole) {
     IFunction handler =
         CreateNodeHandlerBuilder.create(scope)
             .apiHandler(CREATE_NODE_HANDLER)
@@ -123,11 +127,10 @@ final class NodeApiFactory {
     nodeTable.grantWriteData(handler);
     uploadBucket.grantRead(handler);
     CreateNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
-    return addRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST), authorizer);
+    return addRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST));
   }
 
-  private static AddRoutesOptions deleteNode(
-      Construct scope, ITable nodeTable, IHttpRouteAuthorizer authorizer) {
+  private static AddRoutesOptions deleteNode(Construct scope, ITable nodeTable) {
     IFunction handler =
         DeleteNodeHandlerBuilder.create(scope)
             .apiHandler(DELETE_NODE_HANDLER)
@@ -138,7 +141,7 @@ final class NodeApiFactory {
             .build();
     nodeTable.grantWriteData(handler);
     DeleteNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
-    return addRouteOptions(handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE), authorizer);
+    return addRouteOptions(handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE));
   }
 
   private static String accessKeyId() {
@@ -154,15 +157,11 @@ final class NodeApiFactory {
   }
 
   private static AddRoutesOptions addRouteOptions(
-      IFunction handler,
-      String handlerName,
-      List<HttpMethod> methods,
-      IHttpRouteAuthorizer authorizer) {
+      IFunction handler, String handlerName, List<HttpMethod> methods) {
     return AddRoutesOptions.builder()
         .path(NODE_ENDPOINT)
         .methods(methods)
         .integration(new HttpLambdaIntegration(handlerName, handler))
-        .authorizer(authorizer)
         .build();
   }
 

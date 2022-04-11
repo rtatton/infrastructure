@@ -17,42 +17,47 @@ public class DevelopmentStack extends Stack {
   private static final String RUNTIME_SOURCE_PATH = "runtimeSourcePath";
   private static final String STACK_ID = "DevStack";
 
-  public DevelopmentStack(Construct scope) {
+  private DevelopmentStack(Construct scope) {
     super(scope, STACK_ID);
-    createResources(scope);
+    createResources();
   }
 
-  private static void createResources(Construct scope) {
-    NodeApiBuilder.create(scope)
-        .nodeTable(nodeTable(scope))
-        .uploadBucket(codeUploadBucket(scope))
-        .nodeRole(nodeRole(scope))
+  public static DevelopmentStack create(Construct scope) {
+    return new DevelopmentStack(scope);
+  }
+
+  private void createResources() {
+    NodeApiBuilder.create(this)
+        .nodeTable(nodeTable())
+        .uploadBucket(codeUploadBucket())
+        .runtimeBucket(runtimeBucket())
+        .nodeRole(nodeRole())
         .build();
-    RuntimeDeploymentBuilder.create(scope)
-        .runtimeBucket(runtimeBucket(scope))
-        .sourcePath(runtimeSourcePath(scope))
+    RuntimeDeploymentBuilder.create(this)
+        .runtimeBucket(runtimeBucket())
+        .sourcePath(runtimeSourcePath())
         .build();
   }
 
-  private static ITable nodeTable(Construct scope) {
-    return NodeTableBuilder.create(scope).build();
+  private ITable nodeTable() {
+    return NodeTableBuilder.create(this).build();
   }
 
-  private static IBucket runtimeBucket(Construct scope) {
-    return RuntimeBucketBuilder.create(scope).build();
+  private IBucket runtimeBucket() {
+    return RuntimeBucketBuilder.create(this).build();
   }
 
-  private static IBucket codeUploadBucket(Construct scope) {
-    return CodeUploadBucketBuilder.create(scope).build();
+  private IBucket codeUploadBucket() {
+    return CodeUploadBucketBuilder.create(this).build();
   }
 
-  private static IRole nodeRole(Construct scope) {
-    return NodeRoleBuilder.create(scope).build();
+  private IRole nodeRole() {
+    return NodeRoleBuilder.create(this).build();
   }
 
-  private static String runtimeSourcePath(Construct scope) {
+  private String runtimeSourcePath() {
     CfnParameter runtimeSourcePath =
-        CfnParameter.Builder.create(scope, RUNTIME_SOURCE_PATH)
+        CfnParameter.Builder.create(this, RUNTIME_SOURCE_PATH)
             .type("String")
             .description("Path to the source asset of the Lambda runtime")
             .build();

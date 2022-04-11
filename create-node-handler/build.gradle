@@ -14,7 +14,7 @@ dependencies {
 
 task("proguard", type: CirrusProGuardTask) {
     dependsOn tasks.build
-    def className = application.mainClassName
+    def className = application.mainClass
     def contextType = "com.amazonaws.services.lambda.runtime.Context"
     def eventType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent"
     def returnType = "com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse"

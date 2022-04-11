@@ -1,6 +1,7 @@
 plugins {
-    id "cirrus-java"
+    id "cirrus-application"
     id "cirrus-annotations"
+
 }
 
 // Versions of all dependencies, organized in descending alphabetical order.
@@ -8,6 +9,10 @@ def versions = [
         cdk1: "1.146.0",
         cdk2: "2.14.0",
 ]
+
+application {
+    mainClass = "org.cirrus.infrastructure.app.CirrusApp"
+}
 
 dependencies {
     implementation project(":common")

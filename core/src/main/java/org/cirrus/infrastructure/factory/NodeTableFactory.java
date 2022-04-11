@@ -19,8 +19,6 @@ final class NodeTableFactory {
   public static ITable nodeTable(@Builder.Parameter Construct scope) {
     return Table.Builder.create(scope, Keys.NODE_TABLE_NAME)
         .partitionKey(partitionKey())
-        .writeCapacity(5)
-        .readCapacity(5)
         .billingMode(BillingMode.PAY_PER_REQUEST)
         .build();
   }

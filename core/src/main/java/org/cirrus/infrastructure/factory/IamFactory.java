@@ -56,7 +56,7 @@ final class IamFactory {
 
   @Builder.Factory
   public static IRole nodeRole(@Builder.Parameter Construct scope) {
-    Role role = Role.Builder.create(scope, NODE_ROLE).build();
+    Role role = Role.Builder.create(scope, NODE_ROLE).assumedBy(lambdaPrincipal()).build();
     role.addToPolicy(lambdaPolicy(SEND_MESSAGE, GET_QUEUE_URL));
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(LAMBDA_SQS_EXECUTION_ROLE));
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(EFS_READ_WRITE_ROLE));
@@ -67,12 +67,12 @@ final class IamFactory {
     return PolicyStatement.Builder.create()
         .actions(Arrays.asList(actions))
         .resources(any())
-        .principals(lambdaPrincipal())
+        .principals(List.of(lambdaPrincipal()))
         .build();
   }
 
-  private static List<IPrincipal> lambdaPrincipal() {
-    return List.of(new ServicePrincipal(LAMBDA_SERVICE));
+  private static IPrincipal lambdaPrincipal() {
+    return new ServicePrincipal(LAMBDA_SERVICE);
   }
 
   private static List<String> any() {
