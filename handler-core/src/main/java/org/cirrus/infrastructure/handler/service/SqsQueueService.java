@@ -35,9 +35,6 @@ public class SqsQueueService implements QueueService {
         "", // TODO
         QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
         String.valueOf(config.receiveMessageWaitTimeSeconds()),
-        // TODO
-        // https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html#function-configuration
-        // https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagededuplicationid-property.html#working-with-visibility-timeouts
         QueueAttributeName.VISIBILITY_TIMEOUT,
         String.valueOf(config.visibilityTimeoutSeconds()),
         QueueAttributeName.FIFO_QUEUE,
