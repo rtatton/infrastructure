@@ -75,7 +75,6 @@ final class HandlerModule {
 
   @Provides
   public static CreateFunctionRequest.Builder runtimeBuilder() {
-    // TODO Should these just be provided directly?
     return CreateFunctionRequest.builder()
         .functionName(Resources.createRandomId())
         .role(System.getenv(Keys.NODE_FUNCTION_ROLE))
