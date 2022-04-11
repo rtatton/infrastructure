@@ -31,8 +31,6 @@ public class SqsQueueService implements QueueService {
         String.valueOf(config.maxMessageSizeBytes()),
         QueueAttributeName.MESSAGE_RETENTION_PERIOD,
         String.valueOf(config.messageRetentionPeriodSeconds()),
-        QueueAttributeName.POLICY,
-        "", // TODO
         QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
         String.valueOf(config.receiveMessageWaitTimeSeconds()),
         QueueAttributeName.VISIBILITY_TIMEOUT,
