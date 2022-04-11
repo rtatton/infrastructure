@@ -2,16 +2,15 @@ package org.cirrus.infrastructure.factory;
 
 import java.util.Arrays;
 import java.util.List;
-import org.immutables.builder.Builder;
+import software.amazon.awscdk.core.Construct;
 import software.amazon.awscdk.services.iam.IPrincipal;
 import software.amazon.awscdk.services.iam.IRole;
 import software.amazon.awscdk.services.iam.ManagedPolicy;
 import software.amazon.awscdk.services.iam.PolicyStatement;
 import software.amazon.awscdk.services.iam.Role;
 import software.amazon.awscdk.services.iam.ServicePrincipal;
-import software.constructs.Construct;
 
-final class IamFactory {
+public final class IamFactory {
 
   private static final String LAMBDA_SERVICE = "lambda.amazonaws.com";
   private static final String ANY = "*";
@@ -25,19 +24,16 @@ final class IamFactory {
   private static final String SEND_MESSAGE = "sqs:SendMessage";
   private static final String GET_QUEUE_URL = "sqs:GetQueueUrl";
   private static final String LAMBDA_SQS_EXECUTION_ROLE = "AWSLambdaSQSQueueExecutionRole";
-  private static final String EFS_READ_WRITE_ROLE = "AmazonElasticFileSystemClientReadWriteAccess";
   private static final String NODE_ROLE = "NodeRole";
 
   private IamFactory() {
     // no-op
   }
 
-  @Builder.Factory
   public static List<PolicyStatement> publishCodePolicy() {
     return List.of(lambdaPolicy(PUBLISH_LAYER));
   }
 
-  @Builder.Factory
   public static List<PolicyStatement> createNodePolicy() {
     return List.of(
         lambdaPolicy(
@@ -49,17 +45,14 @@ final class IamFactory {
             DELETE_QUEUE));
   }
 
-  @Builder.Factory
   public static List<PolicyStatement> deleteNodePolicy() {
     return List.of(lambdaPolicy(DELETE_FUNCTION, DELETE_EVENT_SOURCE_MAPPING, DELETE_QUEUE));
   }
 
-  @Builder.Factory
-  public static IRole nodeRole(@Builder.Parameter Construct scope) {
+  public static IRole nodeRole(Construct scope) {
     Role role = Role.Builder.create(scope, NODE_ROLE).assumedBy(lambdaPrincipal()).build();
     role.addToPolicy(lambdaPolicy(SEND_MESSAGE, GET_QUEUE_URL));
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(LAMBDA_SQS_EXECUTION_ROLE));
-    role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(EFS_READ_WRITE_ROLE));
     return role;
   }
 

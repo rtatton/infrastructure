@@ -1,33 +1,31 @@
 package org.cirrus.infrastructure.factory;
 
 import java.util.List;
+import org.cirrus.infrastructure.util.Context;
 import org.cirrus.infrastructure.util.Keys;
-import org.immutables.builder.Builder;
-import software.amazon.awscdk.RemovalPolicy;
+import software.amazon.awscdk.core.Construct;
+import software.amazon.awscdk.core.RemovalPolicy;
 import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.s3.IBucket;
 import software.amazon.awscdk.services.s3.deployment.BucketDeployment;
+import software.amazon.awscdk.services.s3.deployment.ISource;
 import software.amazon.awscdk.services.s3.deployment.Source;
-import software.constructs.Construct;
 
-final class BucketFactory {
+public final class BucketFactory {
 
   private BucketFactory() {
     // no-op
   }
 
-  @Builder.Factory
-  public static BucketDeployment runtimeDeployment(
-      @Builder.Parameter Construct scope, IBucket runtimeBucket, String sourcePath) {
-    return BucketDeployment.Builder.create(scope, null)
+  public static void runtimeDeployment(Construct scope, Context context, IBucket runtimeBucket) {
+    BucketDeployment.Builder.create(scope, null)
         .destinationBucket(runtimeBucket)
         .memoryLimit(128)
-        .sources(List.of(Source.asset(sourcePath)))
+        .sources(sources(context))
         .build();
   }
 
-  @Builder.Factory
-  public static IBucket runtimeBucket(@Builder.Parameter Construct scope) {
+  public static IBucket runtimeBucket(Construct scope) {
     return Bucket.Builder.create(scope, Keys.RUNTIME_BUCKET)
         .removalPolicy(RemovalPolicy.DESTROY)
         .autoDeleteObjects(true)
@@ -35,12 +33,16 @@ final class BucketFactory {
         .build();
   }
 
-  @Builder.Factory
-  public static IBucket codeUploadBucket(@Builder.Parameter Construct scope) {
+  public static IBucket codeUploadBucket(Construct scope) {
     return Bucket.Builder.create(scope, Keys.CODE_UPLOAD_BUCKET)
         .removalPolicy(RemovalPolicy.DESTROY)
         .autoDeleteObjects(true)
         .enforceSsl(true)
         .build();
+  }
+
+  private static List<ISource> sources(Context context) {
+    String sourcePath = context.get(Keys.RUNTIME_SOURCE_PATH);
+    return List.of(Source.asset(sourcePath));
   }
 }

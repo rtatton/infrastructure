@@ -15,9 +15,6 @@ public final class Keys {
   public static final String RUNTIME_BUCKET = "337f82a0-b3cc-4a23-8830-b464b6fd02cb";
   public static final String CODE_ID = "codeId";
   public static final String ARTIFACT_ID = "artifactId";
-  public static final String NODE_HANDLER = "runtime.handle_request";
-  public static final String NODE_RUNTIME = "python3.8";
-  public static final String NODE_RUNTIME_KEY = "aries-cloudagent-python";
   // Function keys
   public static final String FUNCTION_RUNTIME = "runtime";
   public static final String FUNCTION_MEMORY_SIZE = "memorySizeMegabytes";
@@ -36,15 +33,7 @@ public final class Keys {
   public static final String NODE_FUNCTION_HANDLER = "NODE_FUNCTION_HANDLER";
   public static final String NODE_FUNCTION_RUNTIME = "NODE_FUNCTION_RUNTIME";
   public static final String NODE_FUNCTION_ROLE = "NODE_FUNCTION_ROLE";
-  public static final String AWS_REGION = "AWS_REGION";
-  // DO NOT CHANGE VALUE; MUST BE 'AWS_ACCESS_KEY_ID'
-  public static final String AWS_ACCESS_KEY_ID = "AWS_ACCESS_KEY_ID";
-  // DO NOT CHANGE VALUE; MUST BE 'AWS_SECRET_ACCESS_KEY'
-  public static final String AWS_SECRET_ACCESS_KEY = "AWS_SECRET_ACCESS_KEY";
-  public static final String DYNAMODB_ENDPOINT = "DYNAMODB_ENDPOINT";
-  public static final String LAMBDA_ENDPOINT = "LAMBDA_ENDPOINT";
-  public static final String SQS_ENDPOINT = "SQS_ENDPOINT";
-  public static final String S3_ENDPOINT = "S3_ENDPOINT";
+  public static final String RUNTIME_SOURCE_PATH = "RUNTIME_SOURCE_PATH";
 
   private Keys() {
     // No-op

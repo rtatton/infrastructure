@@ -6,8 +6,7 @@ plugins {
 
 // Versions of all dependencies, organized in descending alphabetical order.
 def versions = [
-        cdk1: "1.152.0",
-        cdk2: "2.20.0",
+        cdk1: "1.152.0"
 ]
 
 application {
@@ -16,8 +15,10 @@ application {
 
 dependencies {
     implementation project(":common")
-    implementation "software.amazon.awscdk:aws-cdk-lib:$versions.cdk2"
-    implementation "software.amazon.awscdk:apigatewayv2-alpha:$versions.cdk2-alpha.0"
-    implementation "software.amazon.awscdk:apigatewayv2-integrations:$versions.cdk1"
+    implementation "software.amazon.awscdk:apigatewayv2:$versions.cdk1"
     implementation "software.amazon.awscdk:apigatewayv2-authorizers:$versions.cdk1"
+    implementation "software.amazon.awscdk:apigatewayv2-integrations:$versions.cdk1"
+    implementation "software.amazon.awscdk:core:$versions.cdk1"
+    implementation "software.amazon.awscdk:dynamodb:$versions.cdk1"
+    implementation "software.amazon.awscdk:s3-deployment:$versions.cdk1"
 }

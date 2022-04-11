@@ -1,9 +1,8 @@
 package org.cirrus.infrastructure.factory;
 
 import java.util.List;
-import org.cirrus.infrastructure.util.Keys;
 import org.immutables.builder.Builder;
-import software.amazon.awscdk.services.apigateway.LambdaRestApi;
+import software.amazon.awscdk.core.Construct;
 import software.amazon.awscdk.services.apigatewayv2.AddRoutesOptions;
 import software.amazon.awscdk.services.apigatewayv2.HttpApi;
 import software.amazon.awscdk.services.apigatewayv2.HttpMethod;
@@ -23,7 +22,6 @@ import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.iam.IRole;
 import software.amazon.awscdk.services.lambda.IFunction;
 import software.amazon.awscdk.services.s3.IBucket;
-import software.constructs.Construct;
 
 final class NodeApiFactory {
 
@@ -32,10 +30,6 @@ final class NodeApiFactory {
   private static final String PUBLISH_CODE_HANDLER = "PublishCodeHandler";
   private static final String CREATE_NODE_HANDLER = "CreateNodeHandler";
   private static final String DELETE_NODE_HANDLER = "DeleteNodeHandler";
-  private static final String UPLOAD_CODE_PATH = "../upload-code-handler";
-  private static final String PUBLISH_CODE_PATH = "../publish-code-handler";
-  private static final String CREATE_NODE_PATH = "../create-node-handler";
-  private static final String DELETE_NODE_PATH = "../delete-node-handler";
   private static final String NODE_ENDPOINT = "/node";
   private static final String DEV_STAGE_ID = "DevStage";
   private static final String DEV_STAGE = "dev";
@@ -61,8 +55,6 @@ final class NodeApiFactory {
   }
 
   private static HttpApi newApi(Construct scope) {
-    // TODO Left-off here: try migrating to REST API
-    LambdaRestApi.Builder.create(scope, API_ID).build();
     return HttpApi.Builder.create(scope, API_ID).defaultAuthorizer(authorizer(scope)).build();
   }
 
@@ -80,28 +72,14 @@ final class NodeApiFactory {
   }
 
   private static AddRoutesOptions uploadCode(Construct scope, IBucket uploadBucket) {
-    IFunction handler =
-        UploadCodeHandlerBuilder.create(scope)
-            .apiHandler(UPLOAD_CODE_HANDLER)
-            .codePath(UPLOAD_CODE_PATH)
-            .region(region())
-            .accessKeyId(accessKeyId())
-            .secretAccessKey(secretAccessKey())
-            .build();
+    IFunction handler = ApiHandlerFactory.uploadCodeHandler(scope);
     uploadBucket.grantPut(handler);
     return addRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET));
   }
 
   private static AddRoutesOptions publishCode(Construct scope) {
-    IFunction handler =
-        PublishCodeHandlerBuilder.create(scope)
-            .apiHandler(PUBLISH_CODE_HANDLER)
-            .codePath(PUBLISH_CODE_PATH)
-            .region(region())
-            .accessKeyId(accessKeyId())
-            .secretAccessKey(secretAccessKey())
-            .build();
-    PublishCodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
+    IFunction handler = ApiHandlerFactory.publishCodeHandler(scope);
+    IamFactory.publishCodePolicy().forEach(handler::addToRolePolicy);
     return addRouteOptions(handler, PUBLISH_CODE_HANDLER, List.of(HttpMethod.POST));
   }
 
@@ -112,48 +90,19 @@ final class NodeApiFactory {
       IBucket uploadBucket,
       IRole nodeRole) {
     IFunction handler =
-        CreateNodeHandlerBuilder.create(scope)
-            .apiHandler(CREATE_NODE_HANDLER)
-            .codePath(CREATE_NODE_PATH)
-            .region(region())
-            .accessKeyId(accessKeyId())
-            .secretAccessKey(secretAccessKey())
-            .nodeRole(nodeRole.getRoleArn())
-            .nodeHandler(Keys.NODE_HANDLER)
-            .nodeRuntime(Keys.NODE_RUNTIME)
-            .nodeRuntimeBucket(runtimeBucket.getBucketName())
-            .nodeRuntimeKey(Keys.NODE_RUNTIME_KEY)
-            .build();
+        ApiHandlerFactory.createNodeHandler(
+            scope, nodeRole.getRoleArn(), runtimeBucket.getBucketName());
     nodeTable.grantWriteData(handler);
     uploadBucket.grantRead(handler);
-    CreateNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
+    IamFactory.createNodePolicy().forEach(handler::addToRolePolicy);
     return addRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST));
   }
 
   private static AddRoutesOptions deleteNode(Construct scope, ITable nodeTable) {
-    IFunction handler =
-        DeleteNodeHandlerBuilder.create(scope)
-            .apiHandler(DELETE_NODE_HANDLER)
-            .codePath(DELETE_NODE_PATH)
-            .region(region())
-            .accessKeyId(accessKeyId())
-            .secretAccessKey(secretAccessKey())
-            .build();
+    IFunction handler = ApiHandlerFactory.deleteNodeHandler(scope);
     nodeTable.grantWriteData(handler);
-    DeleteNodePolicyBuilder.create().build().forEach(handler::addToRolePolicy);
+    IamFactory.deleteNodePolicy().forEach(handler::addToRolePolicy);
     return addRouteOptions(handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE));
-  }
-
-  private static String accessKeyId() {
-    return System.getenv(Keys.AWS_ACCESS_KEY_ID);
-  }
-
-  private static String secretAccessKey() {
-    return System.getenv(Keys.AWS_SECRET_ACCESS_KEY);
-  }
-
-  private static String region() {
-    return System.getenv(Keys.AWS_REGION);
   }
 
   private static AddRoutesOptions addRouteOptions(

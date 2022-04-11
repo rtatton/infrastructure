@@ -34,6 +34,14 @@ import software.amazon.awssdk.utils.builder.SdkBuilder;
 @Module(includes = HandlerBindings.class)
 final class HandlerModule {
 
+  private static final String ENDPOINT_DOMAIN = "amazonaws.com";
+  private static final String ENDPOINT_DELIMITER = ".";
+  private static final String LAMBDA = "lambda";
+  private static final String DYNAMODB = "dynamodb";
+  private static final String S3 = "s3";
+  private static final String SQS = "sqs";
+  private static final String AWS_REGION = "AWS_REGION";
+
   private HandlerModule() {
     // No-op
   }
@@ -42,7 +50,7 @@ final class HandlerModule {
   @Singleton
   public static Region region() {
     // Recommended to specify explicitly to improve Lambda performance.
-    return Region.of(System.getenv(Keys.AWS_REGION));
+    return Region.of(System.getenv(AWS_REGION));
   }
 
   @Provides
@@ -69,7 +77,7 @@ final class HandlerModule {
         .credentialsProvider(credentialsProvider)
         .httpClientBuilder(clientBuilder)
         .overrideConfiguration(SdkBuilder::build)
-        .endpointOverride(getEndpoint(Keys.LAMBDA_ENDPOINT))
+        .endpointOverride(endpoint(LAMBDA, region))
         .build();
   }
 
@@ -100,7 +108,7 @@ final class HandlerModule {
         .credentialsProvider(credentialsProvider)
         .httpClientBuilder(clientBuilder)
         .overrideConfiguration(SdkBuilder::build)
-        .endpointOverride(getEndpoint(Keys.SQS_ENDPOINT))
+        .endpointOverride(endpoint(SQS, region))
         .build();
   }
 
@@ -115,7 +123,7 @@ final class HandlerModule {
         .credentialsProvider(credentialsProvider)
         .httpClientBuilder(clientBuilder)
         .overrideConfiguration(SdkBuilder::build)
-        .endpointOverride(getEndpoint(Keys.DYNAMODB_ENDPOINT))
+        .endpointOverride(endpoint(DYNAMODB, region))
         .build();
   }
 
@@ -137,7 +145,7 @@ final class HandlerModule {
     return S3Presigner.builder()
         .region(region)
         .credentialsProvider(credentialsProvider)
-        .endpointOverride(getEndpoint(Keys.S3_ENDPOINT))
+        .endpointOverride(endpoint(S3, region))
         .dualstackEnabled(false)
         .fipsEnabled(false)
         .serviceConfiguration(
@@ -181,7 +189,7 @@ final class HandlerModule {
         .registerModule(new BlackbirdModule());
   }
 
-  private static URI getEndpoint(String variable) {
-    return URI.create(System.getenv(variable));
+  private static URI endpoint(String service, Region region) {
+    return URI.create(String.join(ENDPOINT_DELIMITER, service, region.toString(), ENDPOINT_DOMAIN));
   }
 }
