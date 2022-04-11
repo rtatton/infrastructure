@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import dagger.Module;
 import dagger.Provides;
+import java.net.URI;
 import java.time.Duration;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -23,11 +24,13 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.PackageType;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
+import software.amazon.awssdk.utils.builder.SdkBuilder;
 
 // TODO Refactor to be more modular
-// TODO Be more explicit https://youtu.be/ddg1u5HLwg8?t=999
+// All clients are explicitly configured; recommended to improve Lambda performance.
 @Module(includes = HandlerBindings.class)
 final class HandlerModule {
 
@@ -51,6 +54,7 @@ final class HandlerModule {
 
   @Provides
   public static SdkAsyncHttpClient.Builder<?> httpClientBuilder() {
+    // Recommended to improve Lambda performance.
     return AwsCrtAsyncHttpClient.builder();
   }
 
@@ -64,6 +68,8 @@ final class HandlerModule {
         .region(region)
         .credentialsProvider(credentialsProvider)
         .httpClientBuilder(clientBuilder)
+        .overrideConfiguration(SdkBuilder::build)
+        .endpointOverride(getEndpoint(Keys.LAMBDA_ENDPOINT))
         .build();
   }
 
@@ -94,6 +100,8 @@ final class HandlerModule {
         .region(region)
         .credentialsProvider(credentialsProvider)
         .httpClientBuilder(clientBuilder)
+        .overrideConfiguration(SdkBuilder::build)
+        .endpointOverride(getEndpoint(Keys.SQS_ENDPOINT))
         .build();
   }
 
@@ -107,6 +115,8 @@ final class HandlerModule {
         .region(region)
         .credentialsProvider(credentialsProvider)
         .httpClientBuilder(clientBuilder)
+        .overrideConfiguration(SdkBuilder::build)
+        .endpointOverride(getEndpoint(Keys.DYNAMODB_ENDPOINT))
         .build();
   }
 
@@ -125,7 +135,22 @@ final class HandlerModule {
   @Provides
   @Singleton
   public static S3Presigner signer(Region region, AwsCredentialsProvider credentialsProvider) {
-    return S3Presigner.builder().region(region).credentialsProvider(credentialsProvider).build();
+    return S3Presigner.builder()
+        .region(region)
+        .credentialsProvider(credentialsProvider)
+        .endpointOverride(getEndpoint(Keys.S3_ENDPOINT))
+        .dualstackEnabled(false)
+        .fipsEnabled(false)
+        .serviceConfiguration(
+            S3Configuration.builder()
+                .pathStyleAccessEnabled(false)
+                .accelerateModeEnabled(false)
+                .useArnRegionEnabled(true)
+                .multiRegionEnabled(true)
+                .checksumValidationEnabled(true)
+                .chunkedEncodingEnabled(false)
+                .build())
+        .build();
   }
 
   @Provides
@@ -155,5 +180,9 @@ final class HandlerModule {
     return new ObjectMapper()
         .registerModule(new Jdk8Module())
         .registerModule(new BlackbirdModule());
+  }
+
+  private static URI getEndpoint(String variable) {
+    return URI.create(System.getenv(variable));
   }
 }

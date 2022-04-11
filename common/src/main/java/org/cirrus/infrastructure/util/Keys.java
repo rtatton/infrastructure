@@ -41,6 +41,10 @@ public final class Keys {
   public static final String AWS_ACCESS_KEY_ID = "AWS_ACCESS_KEY_ID";
   // DO NOT CHANGE VALUE; MUST BE 'AWS_SECRET_ACCESS_KEY'
   public static final String AWS_SECRET_ACCESS_KEY = "AWS_SECRET_ACCESS_KEY";
+  public static final String DYNAMODB_ENDPOINT = "DYNAMODB_ENDPOINT";
+  public static final String LAMBDA_ENDPOINT = "LAMBDA_ENDPOINT";
+  public static final String SQS_ENDPOINT = "SQS_ENDPOINT";
+  public static final String S3_ENDPOINT = "S3_ENDPOINT";
 
   private Keys() {
     // No-op
