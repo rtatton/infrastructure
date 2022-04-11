@@ -18,11 +18,11 @@ final class BucketFactory {
 
   @Builder.Factory
   public static BucketDeployment runtimeDeployment(
-      @Builder.Parameter Construct scope, IBucket runtimeBucket) {
+      @Builder.Parameter Construct scope, IBucket runtimeBucket, String sourcePath) {
     return BucketDeployment.Builder.create(scope, null)
         .destinationBucket(runtimeBucket)
         .memoryLimit(128)
-        .sources(List.of(Source.asset(""))) // TODO - build locally or use release
+        .sources(List.of(Source.asset(sourcePath)))
         .build();
   }
 
