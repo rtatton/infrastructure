@@ -6,8 +6,8 @@ plugins {
 
 // Versions of all dependencies, organized in descending alphabetical order.
 def versions = [
-        cdk1: "1.146.0",
-        cdk2: "2.14.0",
+        cdk1: "1.152.0",
+        cdk2: "2.20.0",
 ]
 
 application {

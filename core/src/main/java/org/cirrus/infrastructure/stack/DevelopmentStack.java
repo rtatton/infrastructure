@@ -8,6 +8,7 @@ import org.cirrus.infrastructure.factory.RuntimeBucketBuilder;
 import org.cirrus.infrastructure.factory.RuntimeDeploymentBuilder;
 import software.amazon.awscdk.CfnParameter;
 import software.amazon.awscdk.Stack;
+import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.iam.IRole;
 import software.amazon.awscdk.services.s3.IBucket;
@@ -17,13 +18,9 @@ public class DevelopmentStack extends Stack {
   private static final String RUNTIME_SOURCE_PATH = "runtimeSourcePath";
   private static final String STACK_ID = "DevStack";
 
-  private DevelopmentStack(Construct scope) {
-    super(scope, STACK_ID);
+  public DevelopmentStack(Construct scope, StackProps props) {
+    super(scope, STACK_ID, props);
     createResources();
-  }
-
-  public static DevelopmentStack create(Construct scope) {
-    return new DevelopmentStack(scope);
   }
 
   private void createResources() {
