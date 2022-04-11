@@ -18,13 +18,11 @@ public abstract class FunctionConfig {
   }
 
   @Value.Default
-  @JsonProperty(Keys.FUNCTION_MEMORY_SIZE)
   public int memorySizeMegabytes() {
     return 128;
   }
 
   @Value.Default
-  @JsonProperty(Keys.FUNCTION_TIMEOUT)
   public int timeoutSeconds() {
     return 60;
   }
@@ -32,7 +30,6 @@ public abstract class FunctionConfig {
   @JsonProperty(Keys.ARTIFACT_ID)
   public abstract String artifactId();
 
-  @JsonProperty(Keys.FUNCTION_ENVIRONMENT)
   public abstract Map<String, String> environment();
 
   @Value.Check

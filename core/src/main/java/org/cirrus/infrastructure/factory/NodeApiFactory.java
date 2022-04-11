@@ -31,6 +31,7 @@ final class NodeApiFactory {
   private static final String CREATE_NODE_HANDLER = "CreateNodeHandler";
   private static final String DELETE_NODE_HANDLER = "DeleteNodeHandler";
   private static final String NODE_ENDPOINT = "/node";
+  private static final String CODE_ENDPOINT = "/code";
   private static final String DEV_STAGE_ID = "DevStage";
   private static final String DEV_STAGE = "dev";
   private static final String AUTHORIZER_ID = API_ID + "Authorizer";
@@ -72,15 +73,15 @@ final class NodeApiFactory {
   }
 
   private static AddRoutesOptions uploadCode(Construct scope, IBucket uploadBucket) {
-    IFunction handler = ApiHandlerFactory.uploadCodeHandler(scope);
+    IFunction handler = ApiHandlerFactory.uploadCodeHandler(scope, uploadBucket.getBucketName());
     uploadBucket.grantPut(handler);
-    return addRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET));
+    return addCodeRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET));
   }
 
   private static AddRoutesOptions publishCode(Construct scope) {
     IFunction handler = ApiHandlerFactory.publishCodeHandler(scope);
     IamFactory.publishCodePolicy().forEach(handler::addToRolePolicy);
-    return addRouteOptions(handler, PUBLISH_CODE_HANDLER, List.of(HttpMethod.POST));
+    return addCodeRouteOptions(handler, PUBLISH_CODE_HANDLER, List.of(HttpMethod.POST));
   }
 
   private static AddRoutesOptions createNode(
@@ -95,20 +96,30 @@ final class NodeApiFactory {
     nodeTable.grantWriteData(handler);
     uploadBucket.grantRead(handler);
     IamFactory.createNodePolicy().forEach(handler::addToRolePolicy);
-    return addRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST));
+    return addNodeRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST));
   }
 
   private static AddRoutesOptions deleteNode(Construct scope, ITable nodeTable) {
     IFunction handler = ApiHandlerFactory.deleteNodeHandler(scope);
     nodeTable.grantWriteData(handler);
     IamFactory.deleteNodePolicy().forEach(handler::addToRolePolicy);
-    return addRouteOptions(handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE));
+    return addNodeRouteOptions(handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE));
+  }
+
+  private static AddRoutesOptions addCodeRouteOptions(
+      IFunction handler, String handlerName, List<HttpMethod> methods) {
+    return addRouteOptions(handler, handlerName, CODE_ENDPOINT, methods);
+  }
+
+  private static AddRoutesOptions addNodeRouteOptions(
+      IFunction handler, String handlerName, List<HttpMethod> methods) {
+    return addRouteOptions(handler, handlerName, NODE_ENDPOINT, methods);
   }
 
   private static AddRoutesOptions addRouteOptions(
-      IFunction handler, String handlerName, List<HttpMethod> methods) {
+      IFunction handler, String handlerName, String endpoint, List<HttpMethod> methods) {
     return AddRoutesOptions.builder()
-        .path(NODE_ENDPOINT)
+        .path(endpoint)
         .methods(methods)
         .integration(new HttpLambdaIntegration(handlerName, handler))
         .build();

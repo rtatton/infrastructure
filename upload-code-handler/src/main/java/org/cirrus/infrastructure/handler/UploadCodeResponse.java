@@ -16,7 +16,6 @@ public abstract class UploadCodeResponse {
     return ImmutableUploadCodeResponse.builder();
   }
 
-  @JsonProperty(Keys.CODE_UPLOAD_URL)
   public abstract String uploadUrl();
 
   @JsonProperty(Keys.CODE_ID)

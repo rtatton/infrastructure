@@ -25,7 +25,6 @@ public abstract class PublishCodeRequest {
   @JsonProperty(Keys.CODE_ID)
   public abstract String codeId();
 
-  @JsonProperty(Keys.FUNCTION_RUNTIME)
   public abstract String runtime();
 
   @Value.Check

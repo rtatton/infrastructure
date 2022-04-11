@@ -85,15 +85,15 @@ final class HandlerModule {
   public static CreateFunctionRequest.Builder runtimeBuilder() {
     return CreateFunctionRequest.builder()
         .functionName(Resources.createRandomId())
-        .role(System.getenv(Keys.NODE_FUNCTION_ROLE))
-        .runtime(System.getenv(Keys.NODE_FUNCTION_RUNTIME))
-        .handler(System.getenv(Keys.NODE_FUNCTION_HANDLER))
+        .role(System.getenv(Keys.NODE_ROLE))
+        .runtime(System.getenv(Keys.NODE_RUNTIME))
+        .handler(System.getenv(Keys.NODE_HANDLER))
         .packageType(PackageType.ZIP)
         .code(
             builder ->
                 builder
-                    .s3Bucket(System.getenv(Keys.NODE_FUNCTION_BUCKET))
-                    .s3Key(System.getenv(Keys.NODE_FUNCTION_KEY)))
+                    .s3Bucket(System.getenv(Keys.NODE_BUCKET))
+                    .s3Key(System.getenv(Keys.NODE_KEY)))
         .publish(true);
   }
 
@@ -164,7 +164,7 @@ final class HandlerModule {
   @Singleton
   @Named("uploadBucket")
   public static String uploadBucket() {
-    return Keys.CODE_UPLOAD_BUCKET;
+    return System.getenv(Keys.CODE_UPLOAD_BUCKET);
   }
 
   @Provides

@@ -2,6 +2,7 @@ package org.cirrus.infrastructure.factory;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awscdk.core.AssetHashType;
 import software.amazon.awscdk.core.BundlingOptions;
@@ -42,8 +43,10 @@ public final class ApiHandlerFactory {
     // no-op
   }
 
-  public static IFunction uploadCodeHandler(Construct scope) {
-    return apiHandlerBuilder(scope, UPLOAD_CODE_HANDLER, UPLOAD_CODE_PATH).build();
+  public static IFunction uploadCodeHandler(Construct scope, String codeUploadBucket) {
+    return apiHandlerBuilder(scope, UPLOAD_CODE_HANDLER, UPLOAD_CODE_PATH)
+        .environment(Map.of(Keys.CODE_UPLOAD_BUCKET, codeUploadBucket))
+        .build();
   }
 
   public static IFunction publishCodeHandler(Construct scope) {
@@ -56,11 +59,11 @@ public final class ApiHandlerFactory {
         .environment(
             new HashMap<>() {
               {
-                put(Keys.NODE_FUNCTION_ROLE, nodeRole);
-                put(Keys.NODE_FUNCTION_HANDLER, NODE_HANDLER);
-                put(Keys.NODE_FUNCTION_RUNTIME, NODE_RUNTIME);
-                put(Keys.NODE_FUNCTION_BUCKET, nodeRuntimeBucket);
-                put(Keys.NODE_FUNCTION_KEY, NODE_RUNTIME_KEY);
+                put(Keys.NODE_ROLE, nodeRole);
+                put(Keys.NODE_HANDLER, NODE_HANDLER);
+                put(Keys.NODE_RUNTIME, NODE_RUNTIME);
+                put(Keys.NODE_BUCKET, nodeRuntimeBucket);
+                put(Keys.NODE_KEY, NODE_RUNTIME_KEY);
               }
             })
         .build();
@@ -100,7 +103,8 @@ public final class ApiHandlerFactory {
     return BundlingOptions.builder()
         .local((outputPath, bundlingOptions) -> tryBundle(codePath, outputPath))
         .outputType(BundlingOutput.ARCHIVED)
-        .image(null) // TODO
+        .image(Runtime.JAVA_11.getBundlingImage())
+        .user("root")
         .build();
   }
 

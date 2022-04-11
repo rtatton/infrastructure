@@ -31,12 +31,12 @@ public final class IamFactory {
   }
 
   public static List<PolicyStatement> publishCodePolicy() {
-    return List.of(lambdaPolicy(PUBLISH_LAYER));
+    return List.of(policyStatement(PUBLISH_LAYER));
   }
 
   public static List<PolicyStatement> createNodePolicy() {
     return List.of(
-        lambdaPolicy(
+        policyStatement(
             CREATE_FUNCTION,
             DELETE_FUNCTION,
             CREATE_EVENT_SOURCE_MAPPING,
@@ -46,21 +46,20 @@ public final class IamFactory {
   }
 
   public static List<PolicyStatement> deleteNodePolicy() {
-    return List.of(lambdaPolicy(DELETE_FUNCTION, DELETE_EVENT_SOURCE_MAPPING, DELETE_QUEUE));
+    return List.of(policyStatement(DELETE_FUNCTION, DELETE_EVENT_SOURCE_MAPPING, DELETE_QUEUE));
   }
 
   public static IRole nodeRole(Construct scope) {
     Role role = Role.Builder.create(scope, NODE_ROLE).assumedBy(lambdaPrincipal()).build();
-    role.addToPolicy(lambdaPolicy(SEND_MESSAGE, GET_QUEUE_URL));
+    role.addToPolicy(policyStatement(SEND_MESSAGE, GET_QUEUE_URL));
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(LAMBDA_SQS_EXECUTION_ROLE));
     return role;
   }
 
-  private static PolicyStatement lambdaPolicy(String... actions) {
+  private static PolicyStatement policyStatement(String... actions) {
     return PolicyStatement.Builder.create()
         .actions(Arrays.asList(actions))
         .resources(any())
-        .principals(List.of(lambdaPrincipal()))
         .build();
   }
 
