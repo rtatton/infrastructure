@@ -15,7 +15,7 @@ public final class BucketFactory {
   private static final String RUNTIME_DEPLOYMENT = "RuntimeBucketDeployment";
   private static final String RUNTIME_BUCKET = "RuntimeBucket";
   private static final String CODE_UPLOAD_BUCKET = "CodeUploadBucket";
-  private static final String RUNTIME_SOURCE_PATH = "RUNTIME_SOURCE_PATH";
+  private static final String RUNTIME_PATH = "runtime-path";
 
   private BucketFactory() {
     // no-op
@@ -46,7 +46,7 @@ public final class BucketFactory {
   }
 
   private static List<ISource> sources(Context context) {
-    String sourcePath = context.get(RUNTIME_SOURCE_PATH);
+    String sourcePath = context.get(RUNTIME_PATH);
     return List.of(Source.asset(sourcePath));
   }
 }
