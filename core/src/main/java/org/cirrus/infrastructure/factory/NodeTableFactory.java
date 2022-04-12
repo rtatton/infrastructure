@@ -7,6 +7,7 @@ import software.amazon.awscdk.services.dynamodb.AttributeType;
 import software.amazon.awscdk.services.dynamodb.BillingMode;
 import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.dynamodb.Table;
+import software.amazon.awscdk.services.dynamodb.TableEncryption;
 
 public final class NodeTableFactory {
 
@@ -18,6 +19,7 @@ public final class NodeTableFactory {
     return Table.Builder.create(scope, Keys.NODE_TABLE_NAME)
         .partitionKey(partitionKey())
         .billingMode(BillingMode.PAY_PER_REQUEST)
+        .encryption(TableEncryption.AWS_MANAGED)
         .build();
   }
 
