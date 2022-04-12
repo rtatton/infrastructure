@@ -2,6 +2,7 @@ package org.cirrus.infrastructure.factory;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awscdk.core.AssetHashType;
@@ -18,14 +19,8 @@ import software.amazon.awscdk.services.s3.assets.AssetOptions;
 
 public final class ApiHandlerFactory {
 
-  public static final String NODE_HANDLER = "runtime.handle_request";
-  public static final String NODE_RUNTIME = "python3.8";
-  public static final String NODE_RUNTIME_KEY = "aries-cloudagent-python";
   private static final int SUCCESS_EXIT_VALUE = 0;
-  private static final String BASH = "bash";
-  private static final String OPTION_C = "-c";
-  private static final String CD_THEN_BUILD_THEN_COPY_FORMAT =
-      "cd ./%1$s && ./gradlew build && cp build/distributions/%1$s.zip %2$s";
+  private static final String RELATIVE_PATH_TO_ROOT = "../";
   private static final String UPLOAD_CODE_HANDLER =
       "org.cirrus.infrastructure.handler.UploadCodeHandler";
   private static final String PUBLISH_CODE_HANDLER =
@@ -34,56 +29,52 @@ public final class ApiHandlerFactory {
       "org.cirrus.infrastructure.handler.CreateNodeHandler";
   private static final String DELETE_NODE_HANDLER =
       "org.cirrus.infrastructure.handler.DeleteNodeHandler";
-  private static final String UPLOAD_CODE_PATH = "../upload-code-handler";
-  private static final String PUBLISH_CODE_PATH = "../publish-code-handler";
-  private static final String CREATE_NODE_PATH = "../create-node-handler";
-  private static final String DELETE_NODE_PATH = "../delete-node-handler";
 
   private ApiHandlerFactory() {
     // no-op
   }
 
   public static IFunction uploadCodeHandler(Construct scope, String codeUploadBucket) {
-    return apiHandlerBuilder(scope, UPLOAD_CODE_HANDLER, UPLOAD_CODE_PATH)
+    return apiHandlerBuilder(scope, UPLOAD_CODE_HANDLER, Keys.UPLOAD_HANDLER)
         .environment(Map.of(Keys.CODE_UPLOAD_BUCKET, codeUploadBucket))
         .build();
   }
 
   public static IFunction publishCodeHandler(Construct scope) {
-    return apiHandlerBuilder(scope, PUBLISH_CODE_HANDLER, PUBLISH_CODE_PATH).build();
+    return apiHandlerBuilder(scope, PUBLISH_CODE_HANDLER, Keys.PUBLISH_HANDLER).build();
   }
 
   public static IFunction createNodeHandler(
       Construct scope, String nodeRole, String nodeRuntimeBucket) {
-    return apiHandlerBuilder(scope, CREATE_NODE_HANDLER, CREATE_NODE_PATH)
+    return apiHandlerBuilder(scope, CREATE_NODE_HANDLER, Keys.CREATE_HANDLER)
         .environment(
             new HashMap<>() {
               {
                 put(Keys.NODE_ROLE, nodeRole);
-                put(Keys.NODE_HANDLER, NODE_HANDLER);
-                put(Keys.NODE_RUNTIME, NODE_RUNTIME);
+                put(Keys.NODE_HANDLER, "runtime.handle_request");
+                put(Keys.NODE_RUNTIME, "python3.8");
                 put(Keys.NODE_BUCKET, nodeRuntimeBucket);
-                put(Keys.NODE_KEY, NODE_RUNTIME_KEY);
+                put(Keys.NODE_KEY, "aries-cloudagent-python");
               }
             })
         .build();
   }
 
   public static IFunction deleteNodeHandler(Construct scope) {
-    return apiHandlerBuilder(scope, DELETE_NODE_HANDLER, DELETE_NODE_PATH).build();
+    return apiHandlerBuilder(scope, DELETE_NODE_HANDLER, Keys.DELETE_HANDLER).build();
   }
 
   /**
    * @param scope CDK construct scope.
-   * @param handlerName Name of the Lambda function handler class.
-   * @param codePath Relative path (from root, contains cdk.json) to the directory that contains the
-   *     build files and source code for the Lambda function.
+   * @param handlerName Fully-qualified name of the Lambda function handler class.
+   * @param handlerModule Root directory containing the build files and source code for the handler.
    * @return CDK Lambda function construct builder.
    */
   private static Function.Builder apiHandlerBuilder(
-      Construct scope, String handlerName, String codePath) {
+      Construct scope, String handlerName, String handlerModule) {
+    String modulePath = pathToHandlerModule(handlerModule);
     return Function.Builder.create(scope, handlerName)
-        .code(Code.fromAsset(codePath, assetOptions(codePath)))
+        .code(Code.fromAsset(modulePath, assetOptions(handlerModule)))
         .runtime(Runtime.JAVA_11)
         .deadLetterQueueEnabled(true)
         .handler(handlerName)
@@ -92,40 +83,63 @@ public final class ApiHandlerFactory {
         .logRetention(RetentionDays.ONE_WEEK);
   }
 
-  private static AssetOptions assetOptions(String codePath) {
+  private static String pathToHandlerModule(String handlerModule) {
+    return RELATIVE_PATH_TO_ROOT + handlerModule;
+  }
+
+  private static AssetOptions assetOptions(String handlerModule) {
     return AssetOptions.builder()
         .assetHashType(AssetHashType.OUTPUT)
-        .bundling(bundlingOptions(codePath))
+        .bundling(bundlingOptions(handlerModule))
         .build();
   }
 
-  private static BundlingOptions bundlingOptions(String codePath) {
+  private static BundlingOptions bundlingOptions(String handlerModule) {
     return BundlingOptions.builder()
-        .local((outputPath, bundlingOptions) -> tryBundle(codePath, outputPath))
+        .local((outputPath, bundlingOptions) -> tryBundle(handlerModule, outputPath))
         .outputType(BundlingOutput.ARCHIVED)
         .image(Runtime.JAVA_11.getBundlingImage())
         .user("root")
+        .command(buildWithDocker(handlerModule))
         .build();
+  }
+
+  private static List<String> buildWithDocker(String handlerModule) {
+    String buildThenCopyOutput =
+        String.format(
+            "%s build && ls /asset-output/ && cp %s /asset-output/",
+            gradlew(), distPath(handlerModule));
+    return List.of("/bin/sh", "-c", buildThenCopyOutput);
   }
 
   /**
    * Reference:
    * https://github.com/aws-samples/i-love-my-local-farmer/blob/main/DeliveryApi/cdk/src/main/java/com/ilmlf/delivery/api/ApiStack.java
    */
-  private static boolean tryBundle(String codePath, String outputPath) {
+  private static boolean tryBundle(String handlerModule, String outputPath) {
     try {
-      return processBuilder(codePath, outputPath).start().waitFor() == SUCCESS_EXIT_VALUE;
+      return processBuilder(handlerModule, outputPath).start().waitFor() == SUCCESS_EXIT_VALUE;
     } catch (IOException | InterruptedException exception) {
       exception.printStackTrace();
       return false;
     }
   }
 
-  private static ProcessBuilder processBuilder(String codePath, String outputPath) {
-    return new ProcessBuilder(BASH, OPTION_C, cdThenBuildThenCp(codePath, outputPath));
+  private static ProcessBuilder processBuilder(String handlerModule, String outputPath) {
+    return new ProcessBuilder("bash", "-c", buildLocally(handlerModule, outputPath));
   }
 
-  private static String cdThenBuildThenCp(String codePath, String outputPath) {
-    return String.format(CD_THEN_BUILD_THEN_COPY_FORMAT, codePath, outputPath);
+  private static String buildLocally(String handlerModule, String outputPath) {
+    return String.format(
+        "cd %s && %s build && cp %s %s",
+        pathToHandlerModule(handlerModule), gradlew(), distPath(handlerModule), outputPath);
+  }
+
+  private static String gradlew() {
+    return RELATIVE_PATH_TO_ROOT + "gradlew";
+  }
+
+  private static String distPath(String handlerModule) {
+    return "build/distributions/" + handlerModule + "-" + Keys.VERSION + ".zip";
   }
 }

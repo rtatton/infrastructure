@@ -1,12 +1,17 @@
 package org.cirrus.infrastructure.util;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+
 /**
  * This utility class serves as the ground truth for any configurable constants that require
  * cross-referencing in multiple modules.
  */
 public final class Keys {
-  // System properties
-  public static final String VERSION = System.getProperty("version");
   // Node keys
   public static final String NODE_ID = "nodeId";
   public static final String FUNCTION_ID = "functionId";
@@ -22,8 +27,33 @@ public final class Keys {
   public static final String NODE_HANDLER = "FUNCTION_HANDLER";
   public static final String NODE_RUNTIME = "FUNCTION_RUNTIME";
   public static final String NODE_ROLE = "FUNCTION_ROLE";
+  // System properties
+  private static final Properties properties = loadProperties();
+  public static final String VERSION = getProperty("version");
+  public static final String UPLOAD_HANDLER = getProperty("uploadHandler");
+  public static final String PUBLISH_HANDLER = getProperty("publishHandler");
+  public static final String CREATE_HANDLER = getProperty("createHandler");
+  public static final String DELETE_HANDLER = getProperty("deleteHandler");
 
   private Keys() {
     // No-op
+  }
+
+  private static String getProperty(String key) {
+    String property = properties.getProperty(key);
+    if (property == null) {
+      throw new NoSuchElementException("Property '" + key + "'" + " could not be found");
+    }
+    return property;
+  }
+
+  private static Properties loadProperties() {
+    try {
+      Properties properties = new Properties();
+      properties.load(Files.newBufferedReader(Path.of("../gradle.properties")));
+      return properties;
+    } catch (IOException exception) {
+      throw new UncheckedIOException(exception);
+    }
   }
 }
