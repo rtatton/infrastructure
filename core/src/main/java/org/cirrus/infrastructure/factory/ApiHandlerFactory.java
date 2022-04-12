@@ -112,10 +112,6 @@ public final class ApiHandlerFactory {
     return List.of("/bin/sh", "-c", buildThenCopyOutput);
   }
 
-  /**
-   * Reference:
-   * https://github.com/aws-samples/i-love-my-local-farmer/blob/main/DeliveryApi/cdk/src/main/java/com/ilmlf/delivery/api/ApiStack.java
-   */
   private static boolean tryBundle(String handlerModule, String outputPath) {
     try {
       return processBuilder(handlerModule, outputPath).start().waitFor() == SUCCESS_EXIT_VALUE;
