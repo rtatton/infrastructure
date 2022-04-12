@@ -80,7 +80,7 @@ final class NodeApiFactory {
 
   private static AddRoutesOptions publishCode(Construct scope) {
     IFunction handler = ApiHandlerFactory.publishCodeHandler(scope);
-    IamFactory.publishCodePolicy().forEach(handler::addToRolePolicy);
+    handler.addToRolePolicy(IamFactory.publishCodePolicy());
     return addCodeRouteOptions(handler, PUBLISH_CODE_HANDLER, List.of(HttpMethod.POST));
   }
 
@@ -95,14 +95,14 @@ final class NodeApiFactory {
             scope, nodeRole.getRoleArn(), runtimeBucket.getBucketName());
     nodeTable.grantWriteData(handler);
     uploadBucket.grantRead(handler);
-    IamFactory.createNodePolicy().forEach(handler::addToRolePolicy);
+    handler.addToRolePolicy(IamFactory.createNodePolicy());
     return addNodeRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST));
   }
 
   private static AddRoutesOptions deleteNode(Construct scope, ITable nodeTable) {
     IFunction handler = ApiHandlerFactory.deleteNodeHandler(scope);
     nodeTable.grantWriteData(handler);
-    IamFactory.deleteNodePolicy().forEach(handler::addToRolePolicy);
+    handler.addToRolePolicy(IamFactory.deleteNodePolicy());
     return addNodeRouteOptions(handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE));
   }
 

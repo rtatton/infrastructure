@@ -30,23 +30,22 @@ public final class IamFactory {
     // no-op
   }
 
-  public static List<PolicyStatement> publishCodePolicy() {
-    return List.of(policyStatement(PUBLISH_LAYER));
+  public static PolicyStatement publishCodePolicy() {
+    return policyStatement(PUBLISH_LAYER);
   }
 
-  public static List<PolicyStatement> createNodePolicy() {
-    return List.of(
-        policyStatement(
-            CREATE_FUNCTION,
-            DELETE_FUNCTION,
-            CREATE_EVENT_SOURCE_MAPPING,
-            DELETE_EVENT_SOURCE_MAPPING,
-            CREATE_QUEUE,
-            DELETE_QUEUE));
+  public static PolicyStatement createNodePolicy() {
+    return policyStatement(
+        CREATE_FUNCTION,
+        DELETE_FUNCTION,
+        CREATE_EVENT_SOURCE_MAPPING,
+        DELETE_EVENT_SOURCE_MAPPING,
+        CREATE_QUEUE,
+        DELETE_QUEUE);
   }
 
-  public static List<PolicyStatement> deleteNodePolicy() {
-    return List.of(policyStatement(DELETE_FUNCTION, DELETE_EVENT_SOURCE_MAPPING, DELETE_QUEUE));
+  public static PolicyStatement deleteNodePolicy() {
+    return policyStatement(DELETE_FUNCTION, DELETE_EVENT_SOURCE_MAPPING, DELETE_QUEUE);
   }
 
   public static IRole nodeRole(Construct scope) {
