@@ -1,7 +1,12 @@
 package org.cirrus.infrastructure.util;
 
-/** This utility class serves as the ground truth for JSON keys and paths. */
+/**
+ * This utility class serves as the ground truth for any configurable constants that require
+ * cross-referencing in multiple modules.
+ */
 public final class Keys {
+  // System properties
+  public static final String VERSION = System.getProperty("version");
   // Node keys
   public static final String NODE_ID = "nodeId";
   public static final String FUNCTION_ID = "functionId";
