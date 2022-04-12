@@ -13,22 +13,20 @@ import software.amazon.awscdk.services.s3.IBucket;
 public class DevelopmentStack extends Stack {
 
   private static final String STACK_ID = "DevStack";
-  private final Context context;
 
   public DevelopmentStack(App scope, StackProps props) {
     super(scope, STACK_ID, props);
-    this.context = Context.of(scope.getNode());
-    createResources();
+    createResources(Context.of(scope.getNode()));
   }
 
-  private void createResources() {
+  private void createResources(Context context) {
     IBucket runtimeBucket = BucketFactory.runtimeBucket(this);
+    BucketFactory.runtimeDeployment(this, context, runtimeBucket);
     NodeApiBuilder.create(this)
         .nodeTable(NodeTableFactory.create(this))
         .uploadBucket(BucketFactory.codeUploadBucket(this))
         .runtimeBucket(runtimeBucket)
         .nodeRole(IamFactory.nodeRole(this))
         .build();
-    BucketFactory.runtimeDeployment(this, context, runtimeBucket);
   }
 }
