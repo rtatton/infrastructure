@@ -22,29 +22,24 @@ public final class ApiHandlerFactory {
   private static final int SUCCESS_EXIT_VALUE = 0;
   private static final String RELATIVE_PATH_TO_ROOT = "../";
   private static final String GRADLEW = RELATIVE_PATH_TO_ROOT + "gradlew";
-  private static final String HANDLER_PACKAGE = "org.cirrus.infrastructure.handler.";
-  private static final String UPLOAD_CODE_HANDLER = HANDLER_PACKAGE + "UploadCodeHandler";
-  private static final String PUBLISH_CODE_HANDLER = HANDLER_PACKAGE + "PublishCodeHandler";
-  private static final String CREATE_NODE_HANDLER = HANDLER_PACKAGE + "CreateNodeHandler";
-  private static final String DELETE_NODE_HANDLER = HANDLER_PACKAGE + "DeleteNodeHandler";
 
   private ApiHandlerFactory() {
     // no-op
   }
 
   public static IFunction uploadCodeHandler(Construct scope, String codeUploadBucket) {
-    return apiHandlerBuilder(scope, UPLOAD_CODE_HANDLER, Keys.UPLOAD_HANDLER)
+    return apiHandlerBuilder(scope, Keys.UPLOAD_HANDLER_PATH, Keys.UPLOAD_HANDLER_MODULE)
         .environment(Map.of(Keys.CODE_UPLOAD_BUCKET, codeUploadBucket))
         .build();
   }
 
   public static IFunction publishCodeHandler(Construct scope) {
-    return apiHandlerBuilder(scope, PUBLISH_CODE_HANDLER, Keys.PUBLISH_HANDLER).build();
+    return apiHandlerBuilder(scope, Keys.PUBLISH_HANDLER_PATH, Keys.PUBLISH_HANDLER_MODULE).build();
   }
 
   public static IFunction createNodeHandler(
       Construct scope, String nodeRole, String nodeRuntimeBucket) {
-    return apiHandlerBuilder(scope, CREATE_NODE_HANDLER, Keys.CREATE_HANDLER)
+    return apiHandlerBuilder(scope, Keys.CREATE_HANDLER_PATH, Keys.CREATE_HANDLER_MODULE)
         .environment(
             new HashMap<>() {
               {
@@ -59,22 +54,22 @@ public final class ApiHandlerFactory {
   }
 
   public static IFunction deleteNodeHandler(Construct scope) {
-    return apiHandlerBuilder(scope, DELETE_NODE_HANDLER, Keys.DELETE_HANDLER).build();
+    return apiHandlerBuilder(scope, Keys.DELETE_HANDLER_PATH, Keys.DELETE_HANDLER_MODULE).build();
   }
 
   /**
    * @param scope CDK construct scope.
-   * @param handlerName Fully-qualified name of the Lambda function handler class.
+   * @param handlerPath Fully-qualified (package and class name) of the Lambda function handler.
    * @param handlerModule Root directory containing the build files and source code for the handler.
    * @return CDK Lambda function construct builder.
    */
   private static Function.Builder apiHandlerBuilder(
-      Construct scope, String handlerName, String handlerModule) {
-    return Function.Builder.create(scope, handlerName)
+      Construct scope, String handlerPath, String handlerModule) {
+    return Function.Builder.create(scope, handlerPath)
         .code(Code.fromAsset(pathToHandlerModule(handlerModule), assetOptions(handlerModule)))
         .runtime(Runtime.JAVA_11)
         .deadLetterQueueEnabled(true)
-        .handler(handlerName)
+        .handler(handlerPath)
         .timeout(Duration.seconds(60))
         .memorySize(128)
         .logRetention(RetentionDays.ONE_WEEK);

@@ -1,6 +1,7 @@
 package org.cirrus.infrastructure.factory;
 
 import java.util.List;
+import org.cirrus.infrastructure.util.Keys;
 import org.immutables.builder.Builder;
 import software.amazon.awscdk.core.CfnOutput;
 import software.amazon.awscdk.core.Construct;
@@ -27,16 +28,12 @@ import software.amazon.awscdk.services.s3.IBucket;
 final class NodeApiFactory {
 
   private static final String API_ID = "NodeApi";
-  private static final String UPLOAD_CODE_HANDLER = "UploadCodeHandler";
-  private static final String PUBLISH_CODE_HANDLER = "PublishCodeHandler";
-  private static final String CREATE_NODE_HANDLER = "CreateNodeHandler";
-  private static final String DELETE_NODE_HANDLER = "DeleteNodeHandler";
+  private static final String AUTHORIZER_ID = API_ID + "Authorizer";
+  private static final String USER_POOL_ID = API_ID + "UserPool";
   private static final String NODE_ENDPOINT = "/node";
   private static final String CODE_ENDPOINT = "/code";
   private static final String DEV_STAGE_ID = "DevStage";
   private static final String DEV_STAGE = "dev";
-  private static final String AUTHORIZER_ID = API_ID + "Authorizer";
-  private static final String USER_POOL_ID = API_ID + "UserPool";
 
   private NodeApiFactory() {
     // no-op
@@ -82,13 +79,13 @@ final class NodeApiFactory {
   private static AddRoutesOptions uploadCode(Construct scope, IBucket uploadBucket) {
     IFunction handler = ApiHandlerFactory.uploadCodeHandler(scope, uploadBucket.getBucketName());
     uploadBucket.grantPut(handler);
-    return addCodeRouteOptions(handler, UPLOAD_CODE_HANDLER, List.of(HttpMethod.GET));
+    return addCodeRouteOptions(handler, Keys.UPLOAD_HANDLER_NAME, List.of(HttpMethod.GET));
   }
 
   private static AddRoutesOptions publishCode(Construct scope) {
     IFunction handler = ApiHandlerFactory.publishCodeHandler(scope);
     handler.addToRolePolicy(IamFactory.publishCodePolicy());
-    return addCodeRouteOptions(handler, PUBLISH_CODE_HANDLER, List.of(HttpMethod.POST));
+    return addCodeRouteOptions(handler, Keys.PUBLISH_HANDLER_NAME, List.of(HttpMethod.POST));
   }
 
   private static AddRoutesOptions createNode(
@@ -103,14 +100,14 @@ final class NodeApiFactory {
     nodeTable.grantWriteData(handler);
     uploadBucket.grantRead(handler);
     handler.addToRolePolicy(IamFactory.createNodePolicy());
-    return addNodeRouteOptions(handler, CREATE_NODE_HANDLER, List.of(HttpMethod.POST));
+    return addNodeRouteOptions(handler, Keys.CREATE_HANDLER_NAME, List.of(HttpMethod.POST));
   }
 
   private static AddRoutesOptions deleteNode(Construct scope, ITable nodeTable) {
     IFunction handler = ApiHandlerFactory.deleteNodeHandler(scope);
     nodeTable.grantWriteData(handler);
     handler.addToRolePolicy(IamFactory.deleteNodePolicy());
-    return addNodeRouteOptions(handler, DELETE_NODE_HANDLER, List.of(HttpMethod.DELETE));
+    return addNodeRouteOptions(handler, Keys.DELETE_HANDLER_NAME, List.of(HttpMethod.DELETE));
   }
 
   private static AddRoutesOptions addCodeRouteOptions(
