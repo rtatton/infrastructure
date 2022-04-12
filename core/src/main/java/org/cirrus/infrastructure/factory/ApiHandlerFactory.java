@@ -21,14 +21,12 @@ public final class ApiHandlerFactory {
 
   private static final int SUCCESS_EXIT_VALUE = 0;
   private static final String RELATIVE_PATH_TO_ROOT = "../";
-  private static final String UPLOAD_CODE_HANDLER =
-      "org.cirrus.infrastructure.handler.UploadCodeHandler";
-  private static final String PUBLISH_CODE_HANDLER =
-      "org.cirrus.infrastructure.handler.PublishCodeHandler";
-  private static final String CREATE_NODE_HANDLER =
-      "org.cirrus.infrastructure.handler.CreateNodeHandler";
-  private static final String DELETE_NODE_HANDLER =
-      "org.cirrus.infrastructure.handler.DeleteNodeHandler";
+  private static final String GRADLEW = RELATIVE_PATH_TO_ROOT + "gradlew";
+  private static final String HANDLER_PACKAGE = "org.cirrus.infrastructure.handler.";
+  private static final String UPLOAD_CODE_HANDLER = HANDLER_PACKAGE + "UploadCodeHandler";
+  private static final String PUBLISH_CODE_HANDLER = HANDLER_PACKAGE + "PublishCodeHandler";
+  private static final String CREATE_NODE_HANDLER = HANDLER_PACKAGE + "CreateNodeHandler";
+  private static final String DELETE_NODE_HANDLER = HANDLER_PACKAGE + "DeleteNodeHandler";
 
   private ApiHandlerFactory() {
     // no-op
@@ -72,9 +70,8 @@ public final class ApiHandlerFactory {
    */
   private static Function.Builder apiHandlerBuilder(
       Construct scope, String handlerName, String handlerModule) {
-    String modulePath = pathToHandlerModule(handlerModule);
     return Function.Builder.create(scope, handlerName)
-        .code(Code.fromAsset(modulePath, assetOptions(handlerModule)))
+        .code(Code.fromAsset(pathToHandlerModule(handlerModule), assetOptions(handlerModule)))
         .runtime(Runtime.JAVA_11)
         .deadLetterQueueEnabled(true)
         .handler(handlerName)
@@ -108,7 +105,7 @@ public final class ApiHandlerFactory {
     String buildThenCopyOutput =
         String.format(
             "%s build && ls /asset-output/ && cp %s /asset-output/",
-            gradlew(), distPath(handlerModule));
+            GRADLEW, distPath(handlerModule));
     return List.of("/bin/sh", "-c", buildThenCopyOutput);
   }
 
@@ -128,11 +125,7 @@ public final class ApiHandlerFactory {
   private static String buildLocally(String handlerModule, String outputPath) {
     return String.format(
         "cd %s && %s build && cp %s %s",
-        pathToHandlerModule(handlerModule), gradlew(), distPath(handlerModule), outputPath);
-  }
-
-  private static String gradlew() {
-    return RELATIVE_PATH_TO_ROOT + "gradlew";
+        pathToHandlerModule(handlerModule), GRADLEW, distPath(handlerModule), outputPath);
   }
 
   private static String distPath(String handlerModule) {
