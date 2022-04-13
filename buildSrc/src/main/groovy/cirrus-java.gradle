@@ -21,7 +21,7 @@ def versions = [
 ]
 
 group "org.cirrus"
-version System.getProperty("version")
+version property("version")
 
 dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:$versions.jUnit"
