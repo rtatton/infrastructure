@@ -3,7 +3,6 @@ package org.cirrus.infrastructure.factory;
 import java.util.List;
 import org.cirrus.infrastructure.util.Keys;
 import org.immutables.builder.Builder;
-import software.amazon.awscdk.core.CfnOutput;
 import software.amazon.awscdk.core.Construct;
 import software.amazon.awscdk.services.apigatewayv2.AddRoutesOptions;
 import software.amazon.awscdk.services.apigatewayv2.HttpApi;
@@ -54,13 +53,10 @@ final class NodeApiFactory {
   }
 
   private static HttpApi newApi(Construct scope) {
-    HttpApi api =
-        HttpApi.Builder.create(scope, API_ID)
-            .createDefaultStage(true)
-            .defaultAuthorizer(authorizer(scope))
-            .build();
-    CfnOutput.Builder.create(scope, API_ID).value(api.getUrl()).exportName(API_ID).build();
-    return api;
+    return HttpApi.Builder.create(scope, API_ID)
+        .createDefaultStage(true)
+        .defaultAuthorizer(authorizer(scope))
+        .build();
   }
 
   private static void addRoutes(
