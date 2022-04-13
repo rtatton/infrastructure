@@ -9,6 +9,8 @@ import software.amazon.awscdk.core.AssetHashType;
 import software.amazon.awscdk.core.BundlingOptions;
 import software.amazon.awscdk.core.BundlingOutput;
 import software.amazon.awscdk.core.Construct;
+import software.amazon.awscdk.core.DockerVolume;
+import software.amazon.awscdk.core.DockerVolumeConsistency;
 import software.amazon.awscdk.core.Duration;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
@@ -88,20 +90,15 @@ public final class ApiHandlerFactory {
 
   private static BundlingOptions bundlingOptions(String handlerModule) {
     return BundlingOptions.builder()
+        .outputType(BundlingOutput.AUTO_DISCOVER)
+        // Try to bundle locally first...
         .local((outputPath, bundlingOptions) -> tryBundle(handlerModule, outputPath))
-        .outputType(BundlingOutput.ARCHIVED)
-        .image(Runtime.JAVA_11.getBundlingImage())
-        .user("root")
+        // and then try to bundle with Docker if local bundling fails.
         .command(buildWithDocker(handlerModule))
+        .image(Runtime.JAVA_11.getBundlingImage())
+        .volumes(List.of(volume()))
+        .user("root")
         .build();
-  }
-
-  private static List<String> buildWithDocker(String handlerModule) {
-    String buildThenCopyOutput =
-        String.format(
-            "%s build && ls /asset-output/ && cp %s /asset-output/",
-            GRADLEW, distPath(handlerModule));
-    return List.of("/bin/sh", "-c", buildThenCopyOutput);
   }
 
   private static boolean tryBundle(String handlerModule, String outputPath) {
@@ -119,8 +116,22 @@ public final class ApiHandlerFactory {
 
   private static String buildLocally(String handlerModule, String outputPath) {
     return String.format(
-        "cd %s && %s build && cp %s %s",
+        "(cd %s && %s build && cp %s %s)",
         pathToHandlerModule(handlerModule), GRADLEW, distPath(handlerModule), outputPath);
+  }
+
+  private static List<String> buildWithDocker(String handlerModule) {
+    String buildThenCopy = GRADLEW + " build && cp " + distPath(handlerModule) + " /asset-output/";
+    return List.of("/bin/sh", "-c", buildThenCopy);
+  }
+
+  // TODO(rtatton) Verify container path works as expected.
+  private static DockerVolume volume() {
+    return DockerVolume.builder()
+        .consistency(DockerVolumeConsistency.DELEGATED)
+        .hostPath(RELATIVE_PATH_TO_ROOT + System.getProperty("user.dir"))
+        .containerPath("/root/root")
+        .build();
   }
 
   private static String distPath(String handlerModule) {
