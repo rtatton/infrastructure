@@ -72,10 +72,10 @@ public final class ApiHandlerFactory {
   }
 
   private static Code assetCode(String handlerModule) {
-    return Code.fromAsset(pathToHandlerModule(handlerModule), assetOptions(handlerModule));
+    return Code.fromAsset(pathToModule(handlerModule), assetOptions(handlerModule));
   }
 
-  private static String pathToHandlerModule(String handlerModule) {
+  private static String pathToModule(String handlerModule) {
     return RELATIVE_PATH_TO_ROOT + handlerModule;
   }
 
@@ -113,8 +113,8 @@ public final class ApiHandlerFactory {
 
   private static String buildLocally(String handlerModule, String outputPath) {
     return String.format(
-        "(cd %s && %s build && cp %s %s)",
-        pathToHandlerModule(handlerModule), GRADLEW, distPath(handlerModule), outputPath);
+        "(cd %s && %s && cp %s %s)",
+        pathToModule(handlerModule), build(), distPath(handlerModule), outputPath);
   }
 
   private static List<String> dockerBuildUnsupported() {
@@ -122,9 +122,12 @@ public final class ApiHandlerFactory {
   }
 
   private static List<String> buildWithDocker(String handlerModule) {
-    String buildThenCopy =
-        GRADLEW + " check distZip && cp " + distPath(handlerModule) + " /asset-output/";
+    String buildThenCopy = build() + " && cp " + distPath(handlerModule) + " /asset-output/";
     return List.of("/bin/sh", "-c", buildThenCopy);
+  }
+
+  private static String build() {
+    return GRADLEW + " clean check distZip";
   }
 
   // TODO(rtatton) Verify container path works before using buildWithDocker().
