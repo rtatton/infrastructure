@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.cirrus.infrastructure.util.HandlerProps;
 import org.cirrus.infrastructure.util.Keys;
 import software.amazon.awscdk.core.AssetHashType;
 import software.amazon.awscdk.core.BundlingOptions;
@@ -30,18 +31,18 @@ public final class ApiHandlerFactory {
   }
 
   public static IFunction uploadCodeHandler(Construct scope, String codeUploadBucket) {
-    return apiHandlerBuilder(scope, Keys.UPLOAD_HANDLER_PATH, Keys.UPLOAD_HANDLER_MODULE)
+    return apiHandlerBuilder(scope, Keys.uploadHandlerProps())
         .environment(Map.of(Keys.CODE_UPLOAD_BUCKET, codeUploadBucket))
         .build();
   }
 
   public static IFunction publishCodeHandler(Construct scope) {
-    return apiHandlerBuilder(scope, Keys.PUBLISH_HANDLER_PATH, Keys.PUBLISH_HANDLER_MODULE).build();
+    return apiHandlerBuilder(scope, Keys.publishHandlerProps()).build();
   }
 
   public static IFunction createNodeHandler(
       Construct scope, String nodeRole, String nodeRuntimeBucket) {
-    return apiHandlerBuilder(scope, Keys.CREATE_HANDLER_PATH, Keys.CREATE_HANDLER_MODULE)
+    return apiHandlerBuilder(scope, Keys.createHandlerProps())
         .environment(
             new HashMap<>() {
               {
@@ -56,25 +57,24 @@ public final class ApiHandlerFactory {
   }
 
   public static IFunction deleteNodeHandler(Construct scope) {
-    return apiHandlerBuilder(scope, Keys.DELETE_HANDLER_PATH, Keys.DELETE_HANDLER_MODULE).build();
+    return apiHandlerBuilder(scope, Keys.deleteHandlerProps()).build();
   }
 
   /**
    * @param scope CDK construct scope.
-   * @param handlerPath Fully-qualified (package and class name) of the Lambda function handler.
-   * @param handlerModule Root directory containing the build files and source code for the handler.
-   * @return CDK Lambda function construct builder.
    */
-  private static Function.Builder apiHandlerBuilder(
-      Construct scope, String handlerPath, String handlerModule) {
-    return Function.Builder.create(scope, handlerPath)
-        .code(Code.fromAsset(pathToHandlerModule(handlerModule), assetOptions(handlerModule)))
+  private static Function.Builder apiHandlerBuilder(Construct scope, HandlerProps props) {
+    return Function.Builder.create(scope, props.handlerName())
+        .code(assetCode(props.handlerModule()))
         .runtime(Runtime.JAVA_11)
-        .deadLetterQueueEnabled(true)
-        .handler(handlerPath)
+        .handler(props.handlerPath())
         .timeout(Duration.seconds(60))
         .memorySize(128)
         .logRetention(RetentionDays.ONE_WEEK);
+  }
+
+  private static Code assetCode(String handlerModule) {
+    return Code.fromAsset(pathToHandlerModule(handlerModule), assetOptions(handlerModule));
   }
 
   private static String pathToHandlerModule(String handlerModule) {
@@ -90,13 +90,12 @@ public final class ApiHandlerFactory {
 
   private static BundlingOptions bundlingOptions(String handlerModule) {
     return BundlingOptions.builder()
-        .outputType(BundlingOutput.AUTO_DISCOVER)
+        .outputType(BundlingOutput.ARCHIVED)
         // Try to bundle locally first...
         .local((outputPath, bundlingOptions) -> tryBundle(handlerModule, outputPath))
         // and then try to bundle with Docker if local bundling fails.
-        .command(buildWithDocker(handlerModule))
+        .command(dockerBuildUnsupported())
         .image(Runtime.JAVA_11.getBundlingImage())
-        .volumes(List.of(volume()))
         .user("root")
         .build();
   }
@@ -120,12 +119,17 @@ public final class ApiHandlerFactory {
         pathToHandlerModule(handlerModule), GRADLEW, distPath(handlerModule), outputPath);
   }
 
+  private static List<String> dockerBuildUnsupported() {
+    return List.of("/bin/sh", "-c", "echo 'Docker build not supported.'");
+  }
+
   private static List<String> buildWithDocker(String handlerModule) {
-    String buildThenCopy = GRADLEW + " build && cp " + distPath(handlerModule) + " /asset-output/";
+    String buildThenCopy =
+        GRADLEW + " check distZip && cp " + distPath(handlerModule) + " /asset-output/";
     return List.of("/bin/sh", "-c", buildThenCopy);
   }
 
-  // TODO(rtatton) Verify container path works as expected.
+  // TODO(rtatton) Verify container path works before using buildWithDocker().
   private static DockerVolume volume() {
     return DockerVolume.builder()
         .consistency(DockerVolumeConsistency.DELEGATED)
