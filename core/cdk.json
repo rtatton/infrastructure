@@ -26,6 +26,7 @@
     "@aws-cdk/core:target-partitions": [
       "aws",
       "aws-cn"
-    ]
+    ],
+    "runtime-path": "src/main/resources/aries-cloudagent-python-0.7.3.zip"
   }
 }
