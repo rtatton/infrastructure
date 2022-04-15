@@ -49,6 +49,38 @@ public final class Keys {
     // No-op
   }
 
+  public static HandlerProps uploadHandlerProps() {
+    return HandlerProps.builder()
+        .handlerName(UPLOAD_HANDLER_NAME)
+        .handlerPath(UPLOAD_HANDLER_PATH)
+        .handlerModule(UPLOAD_HANDLER_MODULE)
+        .build();
+  }
+
+  public static HandlerProps publishHandlerProps() {
+    return HandlerProps.builder()
+        .handlerName(PUBLISH_HANDLER_NAME)
+        .handlerPath(PUBLISH_HANDLER_PATH)
+        .handlerModule(PUBLISH_HANDLER_MODULE)
+        .build();
+  }
+
+  public static HandlerProps createHandlerProps() {
+    return HandlerProps.builder()
+        .handlerName(CREATE_HANDLER_NAME)
+        .handlerPath(CREATE_HANDLER_PATH)
+        .handlerModule(CREATE_HANDLER_MODULE)
+        .build();
+  }
+
+  public static HandlerProps deleteHandlerProps() {
+    return HandlerProps.builder()
+        .handlerName(DELETE_HANDLER_NAME)
+        .handlerPath(DELETE_HANDLER_PATH)
+        .handlerModule(DELETE_HANDLER_MODULE)
+        .build();
+  }
+
   private static String getProperty(String key) {
     String property = properties.getProperty(key);
     if (property == null) {
