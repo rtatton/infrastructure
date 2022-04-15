@@ -23,7 +23,8 @@ public final class IamFactory {
   private static final String DELETE_QUEUE = "sqs:DeleteQueue";
   private static final String SEND_MESSAGE = "sqs:SendMessage";
   private static final String GET_QUEUE_URL = "sqs:GetQueueUrl";
-  private static final String LAMBDA_SQS_EXECUTION_ROLE = "AWSLambdaSQSQueueExecutionRole";
+  private static final String LAMBDA_SQS_EXECUTION_ROLE =
+      "service-role/AWSLambdaSQSQueueExecutionRole";
   private static final String NODE_ROLE = "NodeRole";
 
   private IamFactory() {
@@ -49,7 +50,8 @@ public final class IamFactory {
   }
 
   public static IRole nodeRole(Construct scope) {
-    Role role = Role.Builder.create(scope, NODE_ROLE).assumedBy(lambdaPrincipal()).build();
+    IPrincipal lambdaPrincipal = new ServicePrincipal(LAMBDA_SERVICE);
+    Role role = Role.Builder.create(scope, NODE_ROLE).assumedBy(lambdaPrincipal).build();
     role.addToPolicy(policyStatement(SEND_MESSAGE, GET_QUEUE_URL));
     role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(LAMBDA_SQS_EXECUTION_ROLE));
     return role;
@@ -58,15 +60,7 @@ public final class IamFactory {
   private static PolicyStatement policyStatement(String... actions) {
     return PolicyStatement.Builder.create()
         .actions(Arrays.asList(actions))
-        .resources(any())
+        .resources(List.of(ANY))
         .build();
-  }
-
-  private static IPrincipal lambdaPrincipal() {
-    return new ServicePrincipal(LAMBDA_SERVICE);
-  }
-
-  private static List<String> any() {
-    return List.of(ANY);
   }
 }

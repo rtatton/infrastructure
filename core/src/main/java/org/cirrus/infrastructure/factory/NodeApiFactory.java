@@ -150,7 +150,7 @@ final class NodeApiFactory {
                 .build())
         .selfSignUpEnabled(true)
         .mfa(Mfa.REQUIRED)
-        .accountRecovery(AccountRecovery.PHONE_WITHOUT_MFA_AND_EMAIL)
+        .accountRecovery(AccountRecovery.PHONE_AND_EMAIL)
         .build();
   }
 
