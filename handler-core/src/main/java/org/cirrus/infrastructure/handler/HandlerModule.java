@@ -34,7 +34,8 @@ import software.amazon.awssdk.utils.builder.SdkBuilder;
 @Module(includes = HandlerBindings.class)
 final class HandlerModule {
 
-  private static final String ENDPOINT_DOMAIN = "amazonaws.com";
+  private static final String ENDPOINT_SCHEME = "https://";
+  private static final String ENDPOINT_BASE_DOMAIN = "amazonaws.com";
   private static final String ENDPOINT_DELIMITER = ".";
   private static final String LAMBDA = "lambda";
   private static final String DYNAMODB = "dynamodb";
@@ -189,7 +190,11 @@ final class HandlerModule {
         .registerModule(new BlackbirdModule());
   }
 
-  private static URI endpoint(String service, Region region) {
-    return URI.create(String.join(ENDPOINT_DELIMITER, service, region.toString(), ENDPOINT_DOMAIN));
+  private static URI endpoint(String serviceName, Region region) {
+    return URI.create(ENDPOINT_SCHEME + qualifiedDomain(serviceName, region));
+  }
+
+  private static String qualifiedDomain(String serviceName, Region region) {
+    return String.join(ENDPOINT_DELIMITER, serviceName, region.toString(), ENDPOINT_BASE_DOMAIN);
   }
 }

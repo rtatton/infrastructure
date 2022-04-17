@@ -8,6 +8,11 @@ import org.cirrus.infrastructure.handler.api.ApiResponse;
 public class CreateNodeHandler extends ApiHandler {
 
   private static final ApiCommand command = CreateNodeApi.create();
+  private static final HandlerComponent component = DaggerHandlerComponent.create();
+
+  public CreateNodeHandler() {
+    super(component.mapper(), component.logger());
+  }
 
   @Override
   public ApiResponse run(ApiRequest request) {

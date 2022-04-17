@@ -60,14 +60,16 @@ public final class ApiHandlerFactory {
     return apiHandlerBuilder(scope, Keys.deleteHandlerProps()).build();
   }
 
-  /** @param scope CDK construct scope. */
+  /**
+   * @param scope CDK construct scope.
+   */
   private static Function.Builder apiHandlerBuilder(Construct scope, HandlerProps props) {
     return Function.Builder.create(scope, props.handlerName())
         .code(assetCode(props.handlerModule()))
         .runtime(Runtime.JAVA_11)
         .handler(props.handlerPath())
         .timeout(Duration.seconds(60))
-        .memorySize(128)
+        .memorySize(2048)
         .logRetention(RetentionDays.ONE_WEEK);
   }
 
@@ -127,7 +129,7 @@ public final class ApiHandlerFactory {
   }
 
   private static String build() {
-    return GRADLEW + " clean check distZip";
+    return GRADLEW + " clean check handlerZip";
   }
 
   // TODO(rtatton) Verify container path works before using buildWithDocker().

@@ -1,0 +1,12 @@
+plugins {
+    id "cirrus-application"
+    id "cirrus-annotations"
+}
+
+task handlerZip(type: Zip) {
+    from compileJava
+    from processResources
+    into("lib") {
+        from configurations.runtimeClasspath
+    }
+}

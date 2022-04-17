@@ -4,18 +4,40 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
+import org.cirrus.infrastructure.handler.util.Logger;
+import org.cirrus.infrastructure.handler.util.Mapper;
 
 public abstract class ApiHandler
     implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse>, ApiCommand {
 
+  private final Mapper mapper;
+  private final Logger logger;
+
+  protected ApiHandler(Mapper mapper, Logger logger) {
+    this.mapper = mapper;
+    this.logger = logger;
+  }
+
   @Override
   public APIGatewayV2HTTPResponse handleRequest(APIGatewayV2HTTPEvent event, Context context) {
-    ApiRequest request = ApiRequest.of(event.getBody());
+    ApiRequest request = toRequest(event);
     ApiResponse response = run(request);
-    return APIGatewayV2HTTPResponse.builder()
-        .withBody(response.body())
-        .withStatusCode(response.status())
-        .withIsBase64Encoded(false)
-        .build();
+    return mapResponse(response);
+  }
+
+  private ApiRequest toRequest(APIGatewayV2HTTPEvent event) {
+    logger.debug("Received API request:%n", mapper.write(event));
+    return ApiRequest.of(event.getBody());
+  }
+
+  private APIGatewayV2HTTPResponse mapResponse(ApiResponse response) {
+    APIGatewayV2HTTPResponse mapped =
+        APIGatewayV2HTTPResponse.builder()
+            .withBody(response.body())
+            .withStatusCode(response.status())
+            .withIsBase64Encoded(false)
+            .build();
+    logger.debug("Returning API response:%n", mapper.write(mapped));
+    return mapped;
   }
 }

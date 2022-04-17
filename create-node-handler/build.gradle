@@ -1,6 +1,5 @@
 plugins {
-    id "cirrus-application"
-    id "cirrus-annotations"
+    id "cirrus-handler"
 }
 
 application {
