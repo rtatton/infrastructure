@@ -1,3 +1,3 @@
 #!/bin/sh
 
-(cd core  && cdk synth)
+(cd core  && rm -rf cdk.out && cdk synth)

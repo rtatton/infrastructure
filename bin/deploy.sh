@@ -1,3 +1,3 @@
 #!/bin/sh
 
-(cd core && cdk deploy --no-previous-parameters)
+(cd core && rm -rf cdk.out && cdk deploy --no-previous-parameters --outputs-file ./cdk-outputs.json)

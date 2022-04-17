@@ -1,0 +1,8 @@
+{
+  "DevStack": {
+    "userPoolBaseUrl": "https://project-cirrus.auth.us-east-1.amazoncognito.com",
+    "apiUrl": "https://0z2he9qlw9.execute-api.us-east-1.amazonaws.com/",
+    "userPoolClientId": "51bh9b9je51hrqtdbaptg7n73j",
+    "userPoolId": "us-east-1_iT5711o87"
+  }
+}
