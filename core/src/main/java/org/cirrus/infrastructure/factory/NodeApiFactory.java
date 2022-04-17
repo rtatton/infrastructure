@@ -2,6 +2,7 @@ package org.cirrus.infrastructure.factory;
 
 import java.util.List;
 import org.cirrus.infrastructure.util.Keys;
+import org.cirrus.infrastructure.util.Outputs;
 import org.immutables.builder.Builder;
 import software.amazon.awscdk.core.Construct;
 import software.amazon.awscdk.services.apigatewayv2.AddRoutesOptions;
@@ -12,13 +13,8 @@ import software.amazon.awscdk.services.apigatewayv2.IHttpApi;
 import software.amazon.awscdk.services.apigatewayv2.IHttpRouteAuthorizer;
 import software.amazon.awscdk.services.apigatewayv2.authorizers.HttpUserPoolAuthorizer;
 import software.amazon.awscdk.services.apigatewayv2.integrations.HttpLambdaIntegration;
-import software.amazon.awscdk.services.cognito.AccountRecovery;
 import software.amazon.awscdk.services.cognito.IUserPool;
-import software.amazon.awscdk.services.cognito.Mfa;
-import software.amazon.awscdk.services.cognito.PasswordPolicy;
-import software.amazon.awscdk.services.cognito.StandardAttribute;
-import software.amazon.awscdk.services.cognito.StandardAttributes;
-import software.amazon.awscdk.services.cognito.UserPool;
+import software.amazon.awscdk.services.cognito.IUserPoolClient;
 import software.amazon.awscdk.services.dynamodb.ITable;
 import software.amazon.awscdk.services.iam.IRole;
 import software.amazon.awscdk.services.lambda.IFunction;
@@ -28,11 +24,12 @@ final class NodeApiFactory {
 
   private static final String API_ID = "NodeApi";
   private static final String AUTHORIZER_ID = API_ID + "Authorizer";
-  private static final String USER_POOL_ID = API_ID + "UserPool";
   private static final String NODE_ENDPOINT = "/node";
   private static final String CODE_ENDPOINT = "/code";
   private static final String DEV_STAGE_ID = "DevStage";
   private static final String DEV_STAGE = "dev";
+  private static final String API_URL_OUTPUT = "apiUrl";
+  private static final String IDENTITY_SOURCE = "$request.header.Authorization";
 
   private NodeApiFactory() {
     // no-op
@@ -53,10 +50,9 @@ final class NodeApiFactory {
   }
 
   private static HttpApi newApi(Construct scope) {
-    return HttpApi.Builder.create(scope, API_ID)
-        .createDefaultStage(true)
-        .defaultAuthorizer(authorizer(scope))
-        .build();
+    HttpApi api =
+        HttpApi.Builder.create(scope, API_ID).defaultAuthorizer(authorizer(scope)).build();
+    return Outputs.output(scope, API_URL_OUTPUT, api, HttpApi::getUrl);
   }
 
   private static void addRoutes(
@@ -74,7 +70,7 @@ final class NodeApiFactory {
 
   private static AddRoutesOptions uploadCode(Construct scope, IBucket uploadBucket) {
     IFunction handler = ApiHandlerFactory.uploadCodeHandler(scope, uploadBucket.getBucketName());
-    uploadBucket.grantPut(handler);
+    uploadBucket.grantWrite(handler);
     return addCodeRouteOptions(handler, Keys.UPLOAD_HANDLER_NAME, List.of(HttpMethod.GET));
   }
 
@@ -130,30 +126,16 @@ final class NodeApiFactory {
   }
 
   private static IHttpRouteAuthorizer authorizer(Construct scope) {
-    return HttpUserPoolAuthorizer.Builder.create(AUTHORIZER_ID, userPool(scope)).build();
-  }
-
-  private static IUserPool userPool(Construct scope) {
-    return UserPool.Builder.create(scope, USER_POOL_ID)
-        .passwordPolicy(
-            PasswordPolicy.builder()
-                .minLength(10)
-                .requireDigits(true)
-                .requireLowercase(true)
-                .requireUppercase(true)
-                .requireSymbols(true)
-                .build())
-        .standardAttributes(
-            StandardAttributes.builder()
-                .email(StandardAttribute.builder().required(true).mutable(true).build())
-                .phoneNumber(StandardAttribute.builder().required(true).mutable(true).build())
-                .build())
-        .selfSignUpEnabled(true)
-        .mfa(Mfa.REQUIRED)
-        .accountRecovery(AccountRecovery.PHONE_AND_EMAIL)
+    IUserPool userPool = CognitoFactory.userPool(scope);
+    IUserPoolClient client = CognitoFactory.userPoolClient(scope, userPool);
+    CognitoFactory.userPoolDomain(scope, userPool);
+    return HttpUserPoolAuthorizer.Builder.create(AUTHORIZER_ID, userPool)
+        .userPoolClients(List.of(client))
+        .identitySource(List.of(IDENTITY_SOURCE))
         .build();
   }
 
+  // TODO This doesn't actually track the metrics
   private static void addMetrics(HttpApi api) {
     api.metricCount();
     api.metricClientError();
