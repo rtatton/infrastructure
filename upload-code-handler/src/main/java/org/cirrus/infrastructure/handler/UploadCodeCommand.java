@@ -4,20 +4,16 @@ import java.util.concurrent.CompletionException;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.exception.FailedCodeUploadException;
-import org.cirrus.infrastructure.handler.exception.FailedMappingException;
 import org.cirrus.infrastructure.handler.service.FunctionService;
-import org.cirrus.infrastructure.handler.util.Mapper;
 import org.cirrus.infrastructure.handler.util.Resources;
 
 public class UploadCodeCommand implements Command<UploadCodeRequest, UploadCodeResponse> {
 
   private final FunctionService functionService;
-  private final Mapper mapper;
 
   @Inject
-  public UploadCodeCommand(FunctionService functionService, Mapper mapper) {
+  public UploadCodeCommand(FunctionService functionService) {
     this.functionService = functionService;
-    this.mapper = mapper;
   }
 
   /**
@@ -38,20 +34,5 @@ public class UploadCodeCommand implements Command<UploadCodeRequest, UploadCodeR
     } catch (CompletionException exception) {
       throw CirrusException.cast(exception.getCause());
     }
-  }
-
-  /**
-   * @param input A JSON-formatted {@link UploadCodeRequest}
-   * @return A JSON-formatted {@link UploadCodeResponse}
-   * @throws FailedMappingException Thrown when the input fails to be converted into a {@link
-   *     UploadCodeRequest} instance, or the output fails to be converted into a {@link
-   *     UploadCodeResponse} instance.
-   * @see UploadCodeCommand#run(UploadCodeRequest)
-   */
-  @Override
-  public String runFromString(String input) {
-    UploadCodeRequest request = mapper.read(input, UploadCodeRequest.class);
-    UploadCodeResponse response = run(request);
-    return mapper.write(response);
   }
 }

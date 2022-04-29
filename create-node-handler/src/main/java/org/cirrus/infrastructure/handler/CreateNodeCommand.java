@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.exception.FailedEventSourceMappingException;
-import org.cirrus.infrastructure.handler.exception.FailedMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceCreationException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageWriteException;
@@ -16,7 +15,6 @@ import org.cirrus.infrastructure.handler.model.QueueConfig;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
-import org.cirrus.infrastructure.handler.util.Mapper;
 import org.cirrus.infrastructure.handler.util.Resources;
 
 public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeResponse> {
@@ -24,18 +22,15 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
   private final FunctionService functionService;
   private final QueueService queueService;
   private final StorageService<NodeRecord> storageService;
-  private final Mapper mapper;
 
   @Inject
   public CreateNodeCommand(
       FunctionService functionService,
       QueueService queueService,
-      StorageService<NodeRecord> storageService,
-      Mapper mapper) {
+      StorageService<NodeRecord> storageService) {
     this.functionService = functionService;
     this.queueService = queueService;
     this.storageService = storageService;
-    this.mapper = mapper;
   }
 
   /**
@@ -68,20 +63,6 @@ public class CreateNodeCommand implements Command<CreateNodeRequest, CreateNodeR
     } catch (CompletionException exception) {
       throw CirrusException.cast(exception.getCause());
     }
-  }
-
-  /**
-   * @param input A JSON-formatted {@link CreateNodeRequest}
-   * @return A JSON-formatted {@link CreateNodeResponse}
-   * @throws FailedMappingException Thrown when the input fails to be converted into a {@link
-   *     CreateNodeRequest} instance, or the output fails to be converted into a {@link
-   *     CreateNodeResponse} instance.
-   * @see CreateNodeCommand#run(CreateNodeRequest)
-   */
-  public String runFromString(String input) {
-    CreateNodeRequest request = mapper.read(input, CreateNodeRequest.class);
-    CreateNodeResponse response = run(request);
-    return mapper.write(response);
   }
 
   private CompletableFuture<Node> createNodeOrRollback(CreateNodeRequest request) {

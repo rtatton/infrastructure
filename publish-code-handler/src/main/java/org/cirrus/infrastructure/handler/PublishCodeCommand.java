@@ -4,19 +4,15 @@ import java.util.concurrent.CompletionException;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.exception.FailedCodePublicationException;
-import org.cirrus.infrastructure.handler.exception.FailedMappingException;
 import org.cirrus.infrastructure.handler.service.FunctionService;
-import org.cirrus.infrastructure.handler.util.Mapper;
 
 public class PublishCodeCommand implements Command<PublishCodeRequest, PublishCodeResponse> {
 
   private final FunctionService functionService;
-  private final Mapper mapper;
 
   @Inject
-  public PublishCodeCommand(FunctionService functionService, Mapper mapper) {
+  public PublishCodeCommand(FunctionService functionService) {
     this.functionService = functionService;
-    this.mapper = mapper;
   }
 
   /**
@@ -37,20 +33,5 @@ public class PublishCodeCommand implements Command<PublishCodeRequest, PublishCo
     } catch (CompletionException exception) {
       throw CirrusException.cast(exception.getCause());
     }
-  }
-
-  /**
-   * @param input A JSON-formatted {@link PublishCodeRequest}
-   * @return A JSON-formatted {@link PublishCodeResponse}
-   * @throws FailedMappingException Thrown when the input fails to be converted into a {@link
-   *     PublishCodeRequest} instance, or the output fails to be converted into a {@link
-   *     PublishCodeResponse} instance.
-   * @see PublishCodeCommand#run(PublishCodeRequest)
-   */
-  @Override
-  public String runFromString(String input) {
-    PublishCodeRequest request = mapper.read(input, PublishCodeRequest.class);
-    PublishCodeResponse response = run(request);
-    return mapper.write(response);
   }
 }

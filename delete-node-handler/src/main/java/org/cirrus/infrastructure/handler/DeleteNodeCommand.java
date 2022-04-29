@@ -4,7 +4,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import javax.inject.Inject;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
-import org.cirrus.infrastructure.handler.exception.FailedMappingException;
 import org.cirrus.infrastructure.handler.exception.FailedResourceDeletionException;
 import org.cirrus.infrastructure.handler.exception.FailedStorageDeleteException;
 import org.cirrus.infrastructure.handler.exception.NoSuchNodeException;
@@ -12,25 +11,21 @@ import org.cirrus.infrastructure.handler.model.NodeRecord;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.service.QueueService;
 import org.cirrus.infrastructure.handler.service.StorageService;
-import org.cirrus.infrastructure.handler.util.Mapper;
 
 public class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeResponse> {
 
   private final FunctionService functionService;
   private final QueueService queueService;
   private final StorageService<NodeRecord> storageService;
-  private final Mapper mapper;
 
   @Inject
   public DeleteNodeCommand(
       FunctionService functionService,
       QueueService queueService,
-      StorageService<NodeRecord> storageService,
-      Mapper mapper) {
+      StorageService<NodeRecord> storageService) {
     this.functionService = functionService;
     this.queueService = queueService;
     this.storageService = storageService;
-    this.mapper = mapper;
   }
 
   /**
@@ -52,20 +47,6 @@ public class DeleteNodeCommand implements Command<DeleteNodeRequest, DeleteNodeR
     } catch (CompletionException exception) {
       throw CirrusException.cast(exception.getCause());
     }
-  }
-
-  /**
-   * @param input A JSON-formatted {@link DeleteNodeRequest}
-   * @return A JSON-formatted {@link DeleteNodeResponse}
-   * @throws FailedMappingException Thrown when the input fails to be converted into a {@link
-   *     DeleteNodeRequest} instance, or the output fails to be converted into a {@link
-   *     DeleteNodeResponse} instance.
-   * @see DeleteNodeCommand#run(DeleteNodeRequest)
-   */
-  public String runFromString(String input) {
-    DeleteNodeRequest request = mapper.read(input, DeleteNodeRequest.class);
-    DeleteNodeResponse response = run(request);
-    return mapper.write(response);
   }
 
   private CompletableFuture<?> deleteFunction(CompletableFuture<NodeRecord> deleteRecord) {
