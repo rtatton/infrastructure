@@ -33,7 +33,7 @@ public class DeleteNodeApi implements ApiCommand {
       status = HttpStatus.OK;
     } catch (CirrusException exception) {
       body = exception.getMessage();
-      status = HttpStatus.OK;
+      status = HttpStatus.BAD_REQUEST;
     }
     return ApiResponse.of(body, status);
   }
