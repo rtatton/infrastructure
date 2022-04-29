@@ -27,13 +27,20 @@ public class UploadCodeApi implements ApiCommand {
   @Override
   public ApiResponse run(ApiRequest request) {
     String body;
+    int status;
     try {
-      UploadCodeRequest mapped = mapper.read(request.body(), UploadCodeRequest.class);
-      UploadCodeResponse response = command.run(mapped);
-      body = mapper.write(response);
+      body = run(request.body());
+      status = HttpStatus.OK;
     } catch (CirrusException exception) {
       body = exception.getMessage();
+      status = HttpStatus.BAD_REQUEST;
     }
-    return ApiResponse.of(body, HttpStatus.CREATED);
+    return ApiResponse.of(body, status);
+  }
+
+  private String run(String body) {
+    UploadCodeRequest mapped = mapper.read(body, UploadCodeRequest.class);
+    UploadCodeResponse response = command.run(mapped);
+    return mapper.write(response);
   }
 }

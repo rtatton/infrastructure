@@ -27,13 +27,20 @@ public class CreateNodeApi implements ApiCommand {
   @Override
   public ApiResponse run(ApiRequest request) {
     String body;
+    int status;
     try {
-      CreateNodeRequest mapped = mapper.read(request.body(), CreateNodeRequest.class);
-      CreateNodeResponse response = command.run(mapped);
-      body = mapper.write(response);
+      body = run(request.body());
+      status = HttpStatus.CREATED;
     } catch (CirrusException exception) {
       body = exception.getMessage();
+      status = HttpStatus.BAD_REQUEST;
     }
-    return ApiResponse.of(body, HttpStatus.CREATED);
+    return ApiResponse.of(body, status);
+  }
+
+  private String run(String body) {
+    CreateNodeRequest mapped = mapper.read(body, CreateNodeRequest.class);
+    CreateNodeResponse response = command.run(mapped);
+    return mapper.write(response);
   }
 }

@@ -27,13 +27,20 @@ public class DeleteNodeApi implements ApiCommand {
   @Override
   public ApiResponse run(ApiRequest request) {
     String body;
+    int status;
     try {
-      DeleteNodeRequest mapped = mapper.read(request.body(), DeleteNodeRequest.class);
-      DeleteNodeResponse response = command.run(mapped);
-      body = mapper.write(response);
+      body = run(request.body());
+      status = HttpStatus.OK;
     } catch (CirrusException exception) {
       body = exception.getMessage();
+      status = HttpStatus.OK;
     }
-    return ApiResponse.of(body, HttpStatus.CREATED);
+    return ApiResponse.of(body, status);
+  }
+
+  private String run(String body) {
+    DeleteNodeRequest mapped = mapper.read(body, DeleteNodeRequest.class);
+    DeleteNodeResponse response = command.run(mapped);
+    return mapper.write(response);
   }
 }

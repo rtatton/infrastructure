@@ -27,13 +27,20 @@ public class PublishCodeApi implements ApiCommand {
   @Override
   public ApiResponse run(ApiRequest request) {
     String body;
+    int status;
     try {
-      PublishCodeRequest mapped = mapper.read(request.body(), PublishCodeRequest.class);
-      PublishCodeResponse response = command.run(mapped);
-      body = mapper.write(response);
+      body = run(request.body());
+      status = HttpStatus.CREATED;
     } catch (CirrusException exception) {
       body = exception.getMessage();
+      status = HttpStatus.BAD_REQUEST;
     }
-    return ApiResponse.of(body, HttpStatus.CREATED);
+    return ApiResponse.of(body, status);
+  }
+
+  private String run(String body) {
+    PublishCodeRequest mapped = mapper.read(body, PublishCodeRequest.class);
+    PublishCodeResponse response = command.run(mapped);
+    return mapper.write(response);
   }
 }
