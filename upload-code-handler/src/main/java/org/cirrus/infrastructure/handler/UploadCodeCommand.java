@@ -7,7 +7,7 @@ import org.cirrus.infrastructure.handler.exception.FailedCodeUploadException;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 import org.cirrus.infrastructure.handler.util.Resources;
 
-public class UploadCodeCommand implements Command<UploadCodeRequest, UploadCodeResponse> {
+public final class UploadCodeCommand implements Command<UploadCodeRequest, UploadCodeResponse> {
 
   private final FunctionService functionService;
 

@@ -7,13 +7,15 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import org.cirrus.infrastructure.handler.util.Logger;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-public abstract class ApiHandler
+public class ApiHandler
     implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse>, ApiCommand {
 
+  private final ApiCommand command;
   private final Mapper mapper;
   private final Logger logger;
 
-  protected ApiHandler(Mapper mapper, Logger logger) {
+  protected ApiHandler(ApiCommand command, Mapper mapper, Logger logger) {
+    this.command = command;
     this.mapper = mapper;
     this.logger = logger;
   }
@@ -23,6 +25,11 @@ public abstract class ApiHandler
     ApiRequest request = toRequest(event);
     ApiResponse response = run(request);
     return mapResponse(response);
+  }
+
+  @Override
+  public ApiResponse run(ApiRequest request) {
+    return command.run(request);
   }
 
   private ApiRequest toRequest(APIGatewayV2HTTPEvent event) {

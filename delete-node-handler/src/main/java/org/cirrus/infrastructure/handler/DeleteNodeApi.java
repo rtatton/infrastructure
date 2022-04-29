@@ -8,14 +8,14 @@ import org.cirrus.infrastructure.handler.api.HttpStatus;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-public class DeleteNodeApi implements ApiCommand {
+public final class DeleteNodeApi implements ApiCommand {
 
   private static final DeleteNodeComponent component = DaggerDeleteNodeComponent.create();
   private final Command<DeleteNodeRequest, DeleteNodeResponse> command;
   private final Mapper mapper;
 
   @Inject
-  public DeleteNodeApi(DeleteNodeCommand command, Mapper mapper) {
+  DeleteNodeApi(Command<DeleteNodeRequest, DeleteNodeResponse> command, Mapper mapper) {
     this.command = command;
     this.mapper = mapper;
   }

@@ -6,7 +6,7 @@ import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.exception.FailedCodePublicationException;
 import org.cirrus.infrastructure.handler.service.FunctionService;
 
-public class PublishCodeCommand implements Command<PublishCodeRequest, PublishCodeResponse> {
+public final class PublishCodeCommand implements Command<PublishCodeRequest, PublishCodeResponse> {
 
   private final FunctionService functionService;
 

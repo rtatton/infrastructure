@@ -8,14 +8,14 @@ import org.cirrus.infrastructure.handler.api.HttpStatus;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-public class CreateNodeApi implements ApiCommand {
+public final class CreateNodeApi implements ApiCommand {
 
   private static final CreateNodeComponent component = DaggerCreateNodeComponent.create();
   private final Command<CreateNodeRequest, CreateNodeResponse> command;
   private final Mapper mapper;
 
   @Inject
-  public CreateNodeApi(CreateNodeCommand command, Mapper mapper) {
+  public CreateNodeApi(Command<CreateNodeRequest, CreateNodeResponse> command, Mapper mapper) {
     this.command = command;
     this.mapper = mapper;
   }

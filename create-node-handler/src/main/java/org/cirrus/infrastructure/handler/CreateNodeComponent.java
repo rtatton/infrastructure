@@ -4,7 +4,7 @@ import dagger.Component;
 import javax.inject.Singleton;
 
 @Singleton
-@Component(modules = HandlerModule.class)
+@Component(modules = {HandlerModule.class, CreateNodeBindings.class})
 interface CreateNodeComponent {
 
   CreateNodeApi api();
