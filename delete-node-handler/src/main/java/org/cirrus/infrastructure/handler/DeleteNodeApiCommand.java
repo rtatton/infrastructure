@@ -39,8 +39,8 @@ public final class DeleteNodeApiCommand implements ApiCommand {
   }
 
   private String run(String body) {
-    DeleteNodeRequest mapped = mapper.read(body, DeleteNodeRequest.class);
-    DeleteNodeResponse response = command.run(mapped);
+    DeleteNodeRequest request = mapper.read(body, DeleteNodeRequest.class);
+    DeleteNodeResponse response = command.run(request);
     return mapper.write(response);
   }
 }

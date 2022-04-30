@@ -39,8 +39,8 @@ public final class UploadCodeApiCommand implements ApiCommand {
   }
 
   private String run(String body) {
-    UploadCodeRequest mapped = mapper.read(body, UploadCodeRequest.class);
-    UploadCodeResponse response = command.run(mapped);
+    UploadCodeRequest request = mapper.read(body, UploadCodeRequest.class);
+    UploadCodeResponse response = command.run(request);
     return mapper.write(response);
   }
 }

@@ -39,8 +39,8 @@ public final class CreateNodeApiCommand implements ApiCommand {
   }
 
   private String run(String body) {
-    CreateNodeRequest mapped = mapper.read(body, CreateNodeRequest.class);
-    CreateNodeResponse response = command.run(mapped);
+    CreateNodeRequest request = mapper.read(body, CreateNodeRequest.class);
+    CreateNodeResponse response = command.run(request);
     return mapper.write(response);
   }
 }

@@ -39,8 +39,8 @@ public final class PublishCodeApiCommand implements ApiCommand {
   }
 
   private String run(String body) {
-    PublishCodeRequest mapped = mapper.read(body, PublishCodeRequest.class);
-    PublishCodeResponse response = command.run(mapped);
+    PublishCodeRequest request = mapper.read(body, PublishCodeRequest.class);
+    PublishCodeResponse response = command.run(request);
     return mapper.write(response);
   }
 }
