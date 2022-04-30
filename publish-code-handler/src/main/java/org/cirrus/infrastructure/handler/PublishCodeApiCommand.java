@@ -8,19 +8,19 @@ import org.cirrus.infrastructure.handler.api.HttpStatus;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-public final class DeleteNodeApi implements ApiCommand {
+public final class PublishCodeApiCommand implements ApiCommand {
 
-  private static final DeleteNodeComponent component = DaggerDeleteNodeComponent.create();
-  private final Command<DeleteNodeRequest, DeleteNodeResponse> command;
+  private static final PublishCodeComponent component = DaggerPublishCodeComponent.create();
+  private final Command<PublishCodeRequest, PublishCodeResponse> command;
   private final Mapper mapper;
 
   @Inject
-  DeleteNodeApi(Command<DeleteNodeRequest, DeleteNodeResponse> command, Mapper mapper) {
+  PublishCodeApiCommand(Command<PublishCodeRequest, PublishCodeResponse> command, Mapper mapper) {
     this.command = command;
     this.mapper = mapper;
   }
 
-  public static DeleteNodeApi create() {
+  public static PublishCodeApiCommand create() {
     return component.api();
   }
 
@@ -30,7 +30,7 @@ public final class DeleteNodeApi implements ApiCommand {
     int status;
     try {
       body = run(request.body());
-      status = HttpStatus.OK;
+      status = HttpStatus.CREATED;
     } catch (CirrusException exception) {
       body = exception.getMessage();
       status = HttpStatus.BAD_REQUEST;
@@ -39,8 +39,8 @@ public final class DeleteNodeApi implements ApiCommand {
   }
 
   private String run(String body) {
-    DeleteNodeRequest mapped = mapper.read(body, DeleteNodeRequest.class);
-    DeleteNodeResponse response = command.run(mapped);
+    PublishCodeRequest mapped = mapper.read(body, PublishCodeRequest.class);
+    PublishCodeResponse response = command.run(mapped);
     return mapper.write(response);
   }
 }

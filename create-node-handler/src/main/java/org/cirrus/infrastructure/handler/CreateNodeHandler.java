@@ -5,7 +5,7 @@ import org.cirrus.infrastructure.handler.api.ApiHandler;
 
 public final class CreateNodeHandler extends ApiHandler {
 
-  private static final ApiCommand command = CreateNodeApi.create();
+  private static final ApiCommand command = CreateNodeApiCommand.create();
   private static final HandlerComponent component = DaggerHandlerComponent.create();
 
   public CreateNodeHandler() {

@@ -8,19 +8,19 @@ import org.cirrus.infrastructure.handler.api.HttpStatus;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-public final class CreateNodeApi implements ApiCommand {
+public final class UploadCodeApiCommand implements ApiCommand {
 
-  private static final CreateNodeComponent component = DaggerCreateNodeComponent.create();
-  private final Command<CreateNodeRequest, CreateNodeResponse> command;
+  private static final UploadCodeComponent component = DaggerUploadCodeComponent.create();
+  private final Command<UploadCodeRequest, UploadCodeResponse> command;
   private final Mapper mapper;
 
   @Inject
-  public CreateNodeApi(Command<CreateNodeRequest, CreateNodeResponse> command, Mapper mapper) {
+  UploadCodeApiCommand(Command<UploadCodeRequest, UploadCodeResponse> command, Mapper mapper) {
     this.command = command;
     this.mapper = mapper;
   }
 
-  public static CreateNodeApi create() {
+  public static UploadCodeApiCommand create() {
     return component.api();
   }
 
@@ -30,7 +30,7 @@ public final class CreateNodeApi implements ApiCommand {
     int status;
     try {
       body = run(request.body());
-      status = HttpStatus.CREATED;
+      status = HttpStatus.OK;
     } catch (CirrusException exception) {
       body = exception.getMessage();
       status = HttpStatus.BAD_REQUEST;
@@ -39,8 +39,8 @@ public final class CreateNodeApi implements ApiCommand {
   }
 
   private String run(String body) {
-    CreateNodeRequest mapped = mapper.read(body, CreateNodeRequest.class);
-    CreateNodeResponse response = command.run(mapped);
+    UploadCodeRequest mapped = mapper.read(body, UploadCodeRequest.class);
+    UploadCodeResponse response = command.run(mapped);
     return mapper.write(response);
   }
 }

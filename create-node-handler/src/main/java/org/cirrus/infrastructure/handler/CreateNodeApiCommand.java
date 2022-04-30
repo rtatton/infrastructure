@@ -8,19 +8,19 @@ import org.cirrus.infrastructure.handler.api.HttpStatus;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-public final class PublishCodeApi implements ApiCommand {
+public final class CreateNodeApiCommand implements ApiCommand {
 
-  private static final PublishCodeComponent component = DaggerPublishCodeComponent.create();
-  private final Command<PublishCodeRequest, PublishCodeResponse> command;
+  private static final CreateNodeComponent component = DaggerCreateNodeComponent.create();
+  private final Command<CreateNodeRequest, CreateNodeResponse> command;
   private final Mapper mapper;
 
   @Inject
-  public PublishCodeApi(Command<PublishCodeRequest, PublishCodeResponse> command, Mapper mapper) {
+  CreateNodeApiCommand(Command<CreateNodeRequest, CreateNodeResponse> command, Mapper mapper) {
     this.command = command;
     this.mapper = mapper;
   }
 
-  public static PublishCodeApi create() {
+  public static CreateNodeApiCommand create() {
     return component.api();
   }
 
@@ -39,8 +39,8 @@ public final class PublishCodeApi implements ApiCommand {
   }
 
   private String run(String body) {
-    PublishCodeRequest mapped = mapper.read(body, PublishCodeRequest.class);
-    PublishCodeResponse response = command.run(mapped);
+    CreateNodeRequest mapped = mapper.read(body, CreateNodeRequest.class);
+    CreateNodeResponse response = command.run(mapped);
     return mapper.write(response);
   }
 }

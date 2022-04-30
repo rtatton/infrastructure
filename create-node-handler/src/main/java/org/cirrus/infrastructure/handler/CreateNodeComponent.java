@@ -7,5 +7,5 @@ import javax.inject.Singleton;
 @Component(modules = {HandlerModule.class, CreateNodeBindings.class})
 interface CreateNodeComponent {
 
-  CreateNodeApi api();
+  CreateNodeApiCommand api();
 }

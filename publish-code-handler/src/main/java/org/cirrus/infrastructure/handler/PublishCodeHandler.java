@@ -5,7 +5,7 @@ import org.cirrus.infrastructure.handler.api.ApiHandler;
 
 public final class PublishCodeHandler extends ApiHandler {
 
-  private static final ApiCommand command = PublishCodeApi.create();
+  private static final ApiCommand command = PublishCodeApiCommand.create();
   private static final HandlerComponent component = DaggerHandlerComponent.create();
 
   public PublishCodeHandler() {

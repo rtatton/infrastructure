@@ -7,5 +7,5 @@ import javax.inject.Singleton;
 @Component(modules = {HandlerModule.class, PublishCodeBindings.class})
 interface PublishCodeComponent {
 
-  PublishCodeApi api();
+  PublishCodeApiCommand api();
 }

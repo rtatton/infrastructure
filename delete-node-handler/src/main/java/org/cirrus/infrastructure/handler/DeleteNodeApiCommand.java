@@ -8,19 +8,19 @@ import org.cirrus.infrastructure.handler.api.HttpStatus;
 import org.cirrus.infrastructure.handler.exception.CirrusException;
 import org.cirrus.infrastructure.handler.util.Mapper;
 
-public final class UploadCodeApi implements ApiCommand {
+public final class DeleteNodeApiCommand implements ApiCommand {
 
-  private static final UploadCodeComponent component = DaggerUploadCodeComponent.create();
-  private final Command<UploadCodeRequest, UploadCodeResponse> command;
+  private static final DeleteNodeComponent component = DaggerDeleteNodeComponent.create();
+  private final Command<DeleteNodeRequest, DeleteNodeResponse> command;
   private final Mapper mapper;
 
   @Inject
-  public UploadCodeApi(Command<UploadCodeRequest, UploadCodeResponse> command, Mapper mapper) {
+  DeleteNodeApiCommand(Command<DeleteNodeRequest, DeleteNodeResponse> command, Mapper mapper) {
     this.command = command;
     this.mapper = mapper;
   }
 
-  public static UploadCodeApi create() {
+  public static DeleteNodeApiCommand create() {
     return component.api();
   }
 
@@ -39,8 +39,8 @@ public final class UploadCodeApi implements ApiCommand {
   }
 
   private String run(String body) {
-    UploadCodeRequest mapped = mapper.read(body, UploadCodeRequest.class);
-    UploadCodeResponse response = command.run(mapped);
+    DeleteNodeRequest mapped = mapper.read(body, DeleteNodeRequest.class);
+    DeleteNodeResponse response = command.run(mapped);
     return mapper.write(response);
   }
 }

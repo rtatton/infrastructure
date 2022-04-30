@@ -5,7 +5,7 @@ import org.cirrus.infrastructure.handler.api.ApiHandler;
 
 public final class UploadCodeHandler extends ApiHandler {
 
-  private static final ApiCommand command = UploadCodeApi.create();
+  private static final ApiCommand command = UploadCodeApiCommand.create();
   private static final HandlerComponent component = DaggerHandlerComponent.create();
 
   public UploadCodeHandler() {

@@ -7,5 +7,5 @@ import javax.inject.Singleton;
 @Component(modules = {HandlerModule.class, UploadCodeBindings.class})
 interface UploadCodeComponent {
 
-  UploadCodeApi api();
+  UploadCodeApiCommand api();
 }
