@@ -60,9 +60,7 @@ public final class ApiHandlerFactory {
     return apiHandlerBuilder(scope, Keys.deleteHandlerProps()).build();
   }
 
-  /**
-   * @param scope CDK construct scope.
-   */
+  /** @param scope CDK construct scope. */
   private static Function.Builder apiHandlerBuilder(Construct scope, HandlerProps props) {
     return Function.Builder.create(scope, props.handlerName())
         .code(assetCode(props.handlerModule()))
